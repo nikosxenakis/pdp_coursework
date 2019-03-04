@@ -1,6 +1,6 @@
 #COMPILER OPTIONS
 CFLAGS := -std=c++11 # -g -Wall -O3 -cc=icc
-CC := g++ # mpicc 
+CC := mpicxx
 
 actor_framework: actor.cpp
 	$(CC) $(CFLAGS) -g -c -o actor_framework.o $<

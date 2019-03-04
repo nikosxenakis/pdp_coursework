@@ -1,6 +1,6 @@
 #COMPILER OPTIONS
-CFLAGS := -Wc++11-extensions -std=c++11 # -g -Wall -O3 -cc=icc
-CC := g++ # mpicc 
+CFLAGS := -g -Wall -O3 -cc=icc
+CC := mpicc
 
 #DIRECTORIES
 BASE_DIR := .
@@ -11,19 +11,17 @@ EXE_DIR := $(BASE_DIR)
 ACTOR_DIR := ../actor_framework
 
 #FILES
-SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
-OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
+SRC_FILES := $(wildcard $(SRC_DIR)/*.c)
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC_FILES))
 EXE := $(EXE_DIR)/parapoxvirus_simulation
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADER_DIR)/%.hpp
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(HEADER_DIR)/%.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 parapoxvirus_simulation:
 	@echo " Creating parapoxvirus_simulation executable..."
-	# $(CC) $(CFLAGS)-g -c -o main.o main.cpp
 	make $(OBJ_FILES)
-	# $(CC) $(CFLAGS) -o parapoxvirus_simulation squirrel.o main.o $(ACTOR_DIR)/actor_framework.o
-	@$(CC) $(CFLAGS) -o $@ $(OBJ_FILES) $^ main.o $(ACTOR_DIR)/actor_framework.o
+	@$(CC) $(CFLAGS) -o $@ $(OBJ_FILES) $^
 
 clean:
 	@echo " Cleaning..."
