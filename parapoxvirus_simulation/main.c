@@ -22,148 +22,9 @@ int hashWorkerId(int i) {
 	return i-1;
 }
 
-static void workerCode();
-
-static void check_workers(int max_proc_num, MPI_Request *initialWorkerRequests, MPI_Request *initialWorkerBirthRequests, int activeWorkers) {
-	int returnCode, i;
-	int masterStatus = masterPoll();
-	int worker_pid;
-
-	while (masterStatus) {
-		masterStatus=masterPoll();
-		for (i=0;i<max_proc_num;i++) {
-			worker_pid=hashWorkerId(i);
-
-			// Checks all outstanding workers that master spawned to see if they have completed
-			if ( initialWorkerRequests[worker_pid] != MPI_REQUEST_NULL) {
-
-				MPI_Test(&initialWorkerRequests[worker_pid], &returnCode, MPI_STATUS_IGNORE);
-				if (returnCode)
-				{
-					activeWorkers--;
-					initialWorkerRequests[worker_pid] = MPI_REQUEST_NULL;
-					initialWorkerBirthRequests[worker_pid] = MPI_REQUEST_NULL;
-				}
-			}
-
-			printf("%d\n", activeWorkers);
-			if(activeWorkers > 0)
-			{
-				if (initialWorkerBirthRequests[worker_pid] != MPI_REQUEST_NULL) {
-
-					MPI_Test(&initialWorkerBirthRequests[worker_pid], &returnCode, MPI_STATUS_IGNORE);
-					if (returnCode)
-					{
-						initialWorkerBirthRequests[worker_pid] = MPI_REQUEST_NULL;
-						MPI_Irecv(NULL, 0, MPI_INT, worker_pid, 1, MPI_COMM_WORLD, &initialWorkerBirthRequests[worker_pid]);
-						// activeWorkers++;
-					}
-				}
-			}
-			
-		}
-		// If we have no more active workers then quit poll loop which will effectively shut the pool down when  processPoolFinalise is called
-		if (activeWorkers==0) break;
-	}
-	printf("OUTT\n");
-}
-
 static void masterStartWorker(int *actors_array, int activeWorkers) {
 	int workerPid = startWorkerProcess();			
 	actors_array[activeWorkers] = workerPid;
-}
-
-int main(int argc, char* argv[]) {
-	// Call MPI initialize first
-	MPI_Init(&argc, &argv);
-
-	/*
-	 * Initialise the process pool.
-     * The return code is = 1 for worker to do some work, 0 for do nothing and stop and 2 for this is the master so call master poll
-     * For workers this subroutine will block until the master has woken it up to do some work
-	 */
-	int statusCode = processPoolInit();
-	if (statusCode == 1) {
-		// A worker so do the worker tasks
-		workerCode();
-	} else if (statusCode == 2) {
-		/*
-		 * This is the master, each call to master poll will block until a message is received and then will handle it and return
-         * 1 to continue polling and running the pool and 0 to quit.
-         * Basically it just starts 10 workers and then registers when each one has completed. When they have all completed it
-         * shuts the entire pool down
-		 */
-		int i, activeWorkers=0;
-		MPI_Request *initialWorkerRequests;
-		MPI_Request *initialWorkerBirthRequests;
-		int worker_type;
-
-		int cells, squirells, infection_level, max_months;
-		int max_proc_num;
-		int cells_deployed=0, squirells_deployed=0, clock_deployed=0;
-		int clockPid = -1;
-
-		cells = atoi(argv[1]);
-		squirells = atoi(argv[2]);
-		infection_level = atoi(argv[3]);
-		max_months = atoi(argv[4]);
-
-		printf("CELLS: %s\n", argv[1]);
-		printf("SQUIRRELS: %s\n", argv[2]);
-		printf("INFECTION_LEVEL: %s\n", argv[3]);
-		printf("MAX_MONTHS: %s\n", argv[4]);
-
-		max_proc_num = cells + squirells + 1;
-		initialWorkerRequests = malloc(max_proc_num*sizeof(MPI_Request));
-		initialWorkerBirthRequests = malloc(max_proc_num*sizeof(MPI_Request));
-
-
-		for (i=0;i<max_proc_num;i++) {
-			int workerPid = startWorkerProcess();			
-
-			// death message
-			MPI_Irecv(NULL, 0, MPI_INT, workerPid, 0, MPI_COMM_WORLD, &initialWorkerRequests[hashWorkerId(i)]);
-
-			worker_type = NONE;
-
-			// send what type of worker to create
-			if(clock_deployed < 1) {
-				worker_type = CLOCK;
-				clockPid = workerPid;
-				clock_deployed++;
-			}
-			else if(squirells_deployed < squirells) {
-				worker_type = SQUIRREL;
-				squirells_deployed++;
-				// birth message
-				MPI_Irecv(NULL, 0, MPI_INT, workerPid, 1, MPI_COMM_WORLD, &initialWorkerBirthRequests[hashWorkerId(i)]);
-			}
-
-			// Send type
-			MPI_Send(&worker_type, 1, MPI_INT, workerPid, 0, MPI_COMM_WORLD);
-
-			// Send clock
-			MPI_Send(&clockPid, 1, MPI_INT, workerPid, 0, MPI_COMM_WORLD);
-
-			// Send max_months
-			MPI_Send(&max_months, 1, MPI_INT, workerPid, 0, MPI_COMM_WORLD);
-
-			activeWorkers++;
-			printf("Master: spawned worker. pid = %d, type = %d\n", workerPid, worker_type);
-		}
-		activeWorkers--;
-
-		// Send workers number to clock
-		MPI_Send(&activeWorkers, 1, MPI_INT, clockPid, 0, MPI_COMM_WORLD);
-
-		check_workers(max_proc_num, initialWorkerRequests, initialWorkerBirthRequests, activeWorkers);
-
-	}
-	// Finalizes the process pool, call this before closing down MPI
-	processPoolFinalise();
-	// Finalize MPI, ensure you have closed the process pool first
-	MPI_Finalize();
-	return 0;
 }
 
 static void squirrel_worker_code(int myRank, int parentId, int clockPid, int max_months) {
@@ -318,7 +179,27 @@ static void clock_worker_code(int parentId, int max_months) {
 
 }
 
-static int die(int myRank, int parentId, int clockPid) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static int die(int myRank, int parentId) {
 	printf("worker %d died\n", myRank);
 	MPI_Send(NULL, 0, MPI_INT, parentId, 0, MPI_COMM_WORLD);
 	MPI_Send(NULL, 0, MPI_INT, parentId, 1, MPI_COMM_WORLD);
@@ -330,34 +211,141 @@ static void workerCode() {
 	while (workerStatus) {
 		int myRank, parentId, worker_type=-1;
 		MPI_Status status;
-		int clockPid;
 		int max_months=0;
 
 		MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
-		parentId = getCommandData();	// We encode the parent ID in the wake up command data
+		parentId = getCommandData();
 
 		// get worker type
 		MPI_Recv(&worker_type, 1, MPI_INT, parentId, 0, MPI_COMM_WORLD, &status);
 
-		// get clockPid
-		MPI_Recv(&clockPid, 1, MPI_INT, parentId, 0, MPI_COMM_WORLD, &status);
-
 		// get max_months
 		MPI_Recv(&max_months, 1, MPI_INT, parentId, 0, MPI_COMM_WORLD, &status);
 
-		printf("Worker: started. pid = %d, type %d, parent = %d, clock = %d\n", myRank, worker_type, parentId, clockPid);
+		printf("Worker: started. pid = %d, type %d, parent = %d\n", myRank, worker_type, parentId);
 
 
-		if(worker_type == CLOCK)
-		{
-			clock_worker_code(parentId, max_months);
-		}
-		else if(worker_type == SQUIRREL)
-		{
-			squirrel_worker_code(myRank, parentId, clockPid, max_months);
-		}
+		// if(worker_type == CLOCK)
+		// {
+		// 	clock_worker_code(parentId, max_months);
+		// }
+		// else if(worker_type == SQUIRREL)
+		// {
+		// 	squirrel_worker_code(myRank, parentId, clockPid, max_months);
+		// }
 
-		workerStatus = die(myRank, parentId, clockPid);
+		workerStatus = die(myRank, parentId);
 
 	}
+}
+
+static void check_workers(int max_actors, MPI_Request *deathRequests, MPI_Request *birthRequests) {
+	int returnCode, i;
+	int worker_pid;
+	int masterStatus = masterPoll();
+
+	while (masterStatus) {
+		masterStatus=masterPoll();
+		for (i=0; i<max_actors; i++) {
+
+			worker_pid=hashWorkerId(i);
+
+			// Checks all outstanding workers that master spawned to see if they have completed
+			if ( deathRequests[worker_pid] != MPI_REQUEST_NULL) {
+
+				MPI_Test(&deathRequests[worker_pid], &returnCode, MPI_STATUS_IGNORE);
+				if (returnCode)
+				{
+					activeWorkers--;
+					deathRequests[worker_pid] = MPI_REQUEST_NULL;
+				}
+			}
+
+			if (birthRequests[worker_pid] != MPI_REQUEST_NULL) {
+
+				MPI_Test(&birthRequests[worker_pid], &returnCode, MPI_STATUS_IGNORE);
+				if (returnCode)
+				{
+					birthRequests[worker_pid] = MPI_REQUEST_NULL;
+					MPI_Irecv(NULL, 0, MPI_INT, worker_pid, 1, MPI_COMM_WORLD, &birthRequests[worker_pid]);
+				}
+			}
+			
+		}
+
+		if (activeWorkers==0) break;
+	}
+}
+
+static void masterCode(int argc, char* argv[]) {
+	int i, activeWorkers=0, max_actors=0;
+	MPI_Request *initialWorkerRequests, *initialWorkerBirthRequests;
+	int worker_type;
+	int cells, squirells, infection_level, max_months;
+	int cells_deployed=0, squirells_deployed=0;
+	int *actor_pids;
+
+	cells = atoi(argv[1]);
+	squirells = atoi(argv[2]);
+	infection_level = atoi(argv[3]);
+	max_months = atoi(argv[4]);
+
+	printf("CELLS: %s\n", argv[1]);
+	printf("SQUIRRELS: %s\n", argv[2]);
+	printf("INFECTION_LEVEL: %s\n", argv[3]);
+	printf("MAX_MONTHS: %s\n", argv[4]);
+
+	max_actors = cells + squirells;
+
+	deathRequests = malloc(max_actors*sizeof(MPI_Request));
+	birthRequests = malloc(max_actors*sizeof(MPI_Request));
+	actor_pids = malloc(max_actors*sizeof(int));
+
+	for (i=0; i<max_actors; i++) {
+
+		int actor_pid = startWorkerProcess();			
+		actor_pids[i]=actor_pid;
+		// death message
+		MPI_Irecv(NULL, 0, MPI_INT, actor_pid, 0, MPI_COMM_WORLD, &deathRequests[hashWorkerId(i)]);
+		// birth message
+		MPI_Irecv(NULL, 0, MPI_INT, actor_pid, 1, MPI_COMM_WORLD, &birthRequests[hashWorkerId(i)]);
+
+		// send what type of worker to create
+		if(squirells_deployed < squirells) {
+			worker_type = SQUIRREL;
+			squirells_deployed++;
+		}
+		else if(cells_deployed < cells) {
+			worker_type = CELL;
+			cells_deployed++;
+		}
+
+		// Send type
+		MPI_Send(&worker_type, 1, MPI_INT, actor_pid, 0, MPI_COMM_WORLD);
+
+		// Send max_months
+		MPI_Send(&max_months, 1, MPI_INT, actor_pid, 0, MPI_COMM_WORLD);
+
+		printf("Master: spawned worker. pid = %d, type = %d\n", actor_pid, worker_type);
+	}
+
+	check_workers(max_actors, deathRequests, birthRequests);
+}
+
+int main(int argc, char* argv[]) {
+
+	MPI_Init(&argc, &argv);
+
+	int statusCode = processPoolInit();
+
+	if (statusCode == 1) {
+		workerCode();
+	}
+	else if (statusCode == 2) {
+		masterCode(argc, argv);
+	}
+
+	processPoolFinalise();
+	MPI_Finalize();
+	return 0;
 }
