@@ -1,14 +1,14 @@
 #ifndef SQUIRREL_H
 #define SQUIRREL_H
 
-typedef struct Squirrel
-{
-	int squirel_id;
-} Squirrel;
+#include "actor.h"
 
-void spawn();
-void die();
-void act();
+class Squirrel: public Actor
+{
+
+public:
+	Squirrel(int id);
+
+};
 
 #endif
-
