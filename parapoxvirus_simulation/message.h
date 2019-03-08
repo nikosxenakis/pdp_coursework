@@ -4,7 +4,6 @@
 #include <mpi.h>
 #include <iostream>
 #include <string>
-#include "actor.h"
 
 using namespace std;
 
@@ -23,7 +22,7 @@ public:
 
 	Message();
 	Message(int command);
-	Message(int command, Actor *actor);
+	Message(int command, int id, int type);
 	void print();
 	string get_string_command(int command);
 };

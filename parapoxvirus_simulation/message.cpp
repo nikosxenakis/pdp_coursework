@@ -7,10 +7,10 @@ Message::Message(int command) {
 	this->command = command;
 }
 
-Message::Message(int command, Actor *actor) {
+Message::Message(int command, int id, int type) {
 	this->command = command;
-	this->actor_id = actor->get_id();
-	this->actor_type = actor->get_type();
+	this->actor_id = actor_id;
+	this->actor_type = actor_type;
 }
 
 void Message::print() {
