@@ -65,7 +65,6 @@ void Master::run() {
 
 	do
 	{
-		// check messages
 		MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &outstanding, &status);
 		if(outstanding) {
 			source_pid=status.MPI_SOURCE;
@@ -90,6 +89,16 @@ void Master::parse_message(Message message) {
 			}
 		}
 		Master::active_actors--;
+	}
+	if(message.command == SPAWN_ACTOR_COMMAND) {
+		Actor *actor;
+		int actor_type = message.actor_type;
+
+		if(actor_type == ACTOR_TYPE_SQUIRREL)
+			actor = new Squirrel();
+
+		Master::spawn_actor(actor);
+
 	}
 }
 

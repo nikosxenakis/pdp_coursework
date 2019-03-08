@@ -33,15 +33,7 @@ void Worker::run() {
 			exit_command = this->parse_message(message);
 		}
 		else {
-			this->print();
-
-			for (auto actor : this->actors) {
-				Message message = Message(KILL_ACTOR_COMMAND, actor);
-				message.print();
-
-				Messenger::send_message(master_pid, message);
-				this->remove_actor(actor);
-			}
+			this->compute();
 		}
 	} while(!exit_command);
 
@@ -51,10 +43,10 @@ void Worker::run() {
 int Worker::parse_message(Message message) {
 	int command = 0;
 	int ret_val = 0;
-	message.print();
+
 	if(message.command == KILL_WORKER_COMMAND) {
 		int blocking = 1;
-    	Messenger::send_message(master_pid, Message(KILL_WORKER_COMMAND), blocking);
+    	Messenger::send_message(this->master_pid, Message(KILL_WORKER_COMMAND), blocking);
     	ret_val = 1;
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
@@ -63,6 +55,31 @@ int Worker::parse_message(Message message) {
 	}
 
 	return ret_val;
+}
+
+void Worker::compute() {
+
+	static happen = 1;
+
+	if(happen) {
+
+		int command = SPAWN_ACTOR_COMMAND;
+		Actor *actor;
+		int actor_type = ACTOR_TYPE_SQUIRREL
+
+		if(actor_type == ACTOR_TYPE_SQUIRREL)
+			actor = new Squirrel();
+
+		Message message = Message(command, actor);
+		Messenger::send_message(this->master_pid, message);
+
+		happen=0;
+	}
+			// for (auto actor : this->actors) {
+			// 	Message message = Message(KILL_ACTOR_COMMAND, actor);
+			// 	Messenger::send_message(master_pid, message);
+			// 	this->remove_actor(actor);
+			// }
 }
 
 void Worker::finalize() {

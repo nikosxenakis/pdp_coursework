@@ -32,7 +32,7 @@ public:
 	void add_actor(Actor *actor);
 	void remove_actor(Actor *actor);
 	Actor* find_actor(int actor_id);
-
+	void compute();
 	~Worker();
 	void check_messages();
 	void process_message();
