@@ -21,16 +21,15 @@ void Master::initialize_master(int pid, int workers_num) {
 }
 
 void Master::spawn_actor(Actor *actor) {
-	actor->print();
-
 	Worker *worker = Master::find_available_worker();
 	worker->add_actor(actor);
 
 	int command = SPAWN_ACTOR_COMMAND;
 	Message message = Message(command, actor);
+	// message.print();
+	// worker->print();
 	Messenger::send_message(worker->get_pid(), message);
 	Master::active_actors++;
-
 }
 
 Worker * Master::find_available_worker() {
@@ -63,7 +62,7 @@ Actor* find_actor(int id) {
 }
 
 void Master::run() {
-	int outstanding, source_pid;
+	int outstanding, source_pid, exit_command = 0;
 	MPI_Status status;
 
 	do
@@ -77,14 +76,12 @@ void Master::run() {
 		}
 		else {
 			if(Master::active_actors == 0)
-				break;
+				exit_command = 1;
 		}
-	} while(1);
+	} while(!exit_command);
 }
 
 void Master::parse_message(Message message) {
-			message.print();
-
 	if(message.command == KILL_ACTOR_COMMAND) {
 		Actor *actor = nullptr;
 	    for (auto worker : Master::workers) {

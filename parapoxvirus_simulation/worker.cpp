@@ -29,17 +29,20 @@ void Worker::run() {
 		MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &outstanding, &status);
 		if(outstanding) {
 			source_pid=status.MPI_SOURCE;
+			cout << "HERE";
 			Message message = Messenger::receive_message(source_pid);
 			exit_command = this->parse_message(message);
 		}
 		else {
-			for (auto actor : this->actors) {
-				Message message(KILL_ACTOR_COMMAND, actor);
-				message.print();
+			// this->print();
 
-				// Messenger::send_message(master_pid, message);
-				// this->remove_actor(actor);
-			}
+			// for (auto actor : this->actors) {
+			// 	Message message = Message(KILL_ACTOR_COMMAND, actor);
+			// 	message.print();
+
+			// 	Messenger::send_message(master_pid, message);
+			// 	this->remove_actor(actor);
+			// }
 		}
 	} while(!exit_command);
 
@@ -49,7 +52,7 @@ void Worker::run() {
 int Worker::parse_message(Message message) {
 	int command = 0;
 	int ret_val = 0;
-
+	message.print();
 	if(message.command == KILL_WORKER_COMMAND) {
 		int blocking = 1;
     	Messenger::send_message(master_pid, Message(KILL_WORKER_COMMAND), blocking);
@@ -57,6 +60,7 @@ int Worker::parse_message(Message message) {
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
 		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type);
+		actor->print();
 		this->add_actor(actor);
 	}
 
