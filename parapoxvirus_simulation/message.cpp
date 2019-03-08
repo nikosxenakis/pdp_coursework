@@ -7,7 +7,7 @@ Message::Message(int command) {
 	this->command = command;
 }
 
-Message::Message(int command, int id, int type) {
+Message::Message(int command, int actor_id, int actor_type) {
 	this->command = command;
 	this->actor_id = actor_id;
 	this->actor_type = actor_type;

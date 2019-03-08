@@ -14,12 +14,9 @@ using namespace std;
 // 	STATE_2
 // } Actor_state;
 
-// typedef struct Actor {
-// } Actor;
-
 // static void check_messages();
 // static void process_message();
-// static void die();
+
 class Actor
 {
 
@@ -35,6 +32,7 @@ public:
 	int get_type();
 	virtual void compute() = 0;
 	void create_actor(int actor_type);
+	void die();
 };
 
 #endif

@@ -22,7 +22,7 @@ public:
 
 	Message();
 	Message(int command);
-	Message(int command, int id, int type);
+	Message(int command, int actor_id, int actor_type);
 	void print();
 	string get_string_command(int command);
 };

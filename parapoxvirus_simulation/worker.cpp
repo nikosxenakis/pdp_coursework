@@ -51,6 +51,9 @@ int Worker::parse_message(Message message) {
 		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid);
 		this->add_actor(actor);
 	}
+	else if(message.command == KILL_ACTOR_COMMAND) {
+		this->remove_actor(this->find_actor(message.actor_id));
+	}
 
 	return ret_val;
 }

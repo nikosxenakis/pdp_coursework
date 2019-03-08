@@ -21,7 +21,10 @@ int Actor::get_type() {
 void Actor::create_actor(int actor_type) {
 	int command = SPAWN_ACTOR_COMMAND;
 	Message message = Message(command, -1, actor_type);
-	// cout << "Create actor" << endl;
-	// message.print();
+	Messenger::send_message(this->master_pid, message);
+}
+
+void Actor::die() {
+	Message message = Message(KILL_ACTOR_COMMAND, this->get_id(), this->get_type());
 	Messenger::send_message(this->master_pid, message);
 }

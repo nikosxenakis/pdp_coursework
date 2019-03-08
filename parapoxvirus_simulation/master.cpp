@@ -22,15 +22,26 @@ void Master::initialize_master(int pid, int workers_num) {
 
 void Master::spawn_actor(int actor_type) {
 	Worker *worker = Master::find_available_worker();
-
 	Actor *actor = Actor_factory::create(Master::active_actors, actor_type, worker->get_pid());
-
 	worker->add_actor(actor);
-
-	int command = SPAWN_ACTOR_COMMAND;
-	Message message = Message(command, actor->get_id(), actor->get_type());
-	Messenger::send_message(worker->get_pid(), message);
 	Master::active_actors++;
+	Message message = Message(SPAWN_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+	Messenger::send_message(worker->get_pid(), message);
+}
+
+void Master::kill_actor(int actor_id) {
+	Actor *actor = nullptr;
+    for (auto worker : Master::workers) {
+    	actor = worker->find_actor(actor_id);
+		if(actor != nullptr) {
+			worker->remove_actor(actor);
+			Message message = Message(KILL_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+			Messenger::send_message(worker->get_pid(), message);
+			break;
+		}
+	}
+	Master::active_actors--;
+
 }
 
 Worker * Master::find_available_worker() {
@@ -75,6 +86,12 @@ void Master::run() {
 			Master::parse_message(message);
 		}
 		else {
+
+
+			cout << Master::active_actors << endl;
+
+
+
 			if(Master::active_actors == 0)
 				exit_command = 1;
 		}
@@ -102,18 +119,6 @@ void Master::finalize() {
 
 	cout << "Master finalize" << endl;
 	// free all memory
-}
-
-void Master::kill_actor(int actor_id) {
-	Actor *actor = nullptr;
-    for (auto worker : Master::workers) {
-    	actor = worker->find_actor(actor_id);
-		if(actor != nullptr) {
-			worker->remove_actor(actor);
-			break;
-		}
-	}
-	Master::active_actors--;
 }
 
 void Master::print() {}
