@@ -46,7 +46,6 @@ int main(int argc, char* argv[]) {
 	MPI_Init(&argc, &argv);
 
 	Input_Data *input_data = new Input_Data(argc, argv);
-	// input_data->print();
 
 	Messenger::init_types();
 

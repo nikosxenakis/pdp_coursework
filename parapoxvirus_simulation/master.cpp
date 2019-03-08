@@ -26,8 +26,6 @@ void Master::spawn_actor(Actor *actor) {
 
 	int command = SPAWN_ACTOR_COMMAND;
 	Message message = Message(command, actor);
-	// message.print();
-	// worker->print();
 	Messenger::send_message(worker->get_pid(), message);
 	Master::active_actors++;
 }
