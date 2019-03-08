@@ -12,8 +12,11 @@ class Messenger
 {
 
 public:
+	static MPI_Datatype Message_type;
+	static void init_types();
 	static void send_message(int worker_pid, Message message);
-	// static Message read_message(Message message);
+	static void send_message(int worker_pid, Message message, int blocking);
+	static Message receive_message(int source_pid);
 };
 
 #endif

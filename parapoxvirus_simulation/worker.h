@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 #include "actor.h"
+#include "message.h"
+#include "messenger.h"
+#include "actor_factory.h"
 
 using namespace std;
 
@@ -24,7 +27,11 @@ public:
 	int get_pid();
 	void print();
 	void run();
+	int parse_message(Message message);
+	void finalize();
 	void add_actor(Actor *actor);
+	void remove_actor(Actor *actor);
+	Actor* find_actor(int actor_id);
 
 	~Worker();
 	void check_messages();

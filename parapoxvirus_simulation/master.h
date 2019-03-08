@@ -29,9 +29,8 @@ public:
 	static void spawn_actor(Actor *actor);
 	static Worker* find_available_worker();
 	static Actor* find_actor(int id);
-
 	static void run();
-
+	static void parse_message(Message message);
 	static void kill_actor(int id);
 	static void finalize();
 	static void print();

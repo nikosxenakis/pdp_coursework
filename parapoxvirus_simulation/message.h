@@ -3,11 +3,15 @@
 
 #include <mpi.h>
 #include <iostream>
+#include <string>
 #include "actor.h"
 
 using namespace std;
 
 #define SPAWN_ACTOR_COMMAND 0
+#define KILL_ACTOR_COMMAND 1
+
+#define KILL_WORKER_COMMAND 10
 
 class Message
 {
@@ -17,8 +21,11 @@ public:
 	int actor_id;
 	int actor_type;
 
+	Message();
+	Message(int command);
 	Message(int command, Actor *actor);
 	void print();
+	string get_string_command(int command);
 };
 
 #endif

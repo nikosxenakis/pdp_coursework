@@ -8,25 +8,33 @@
 #include "pool.h"
 #include "master.h"
 #include "squirrel.h"
+#include "messenger.h"
 
 #define UPPER_BOUND_BUFFER_SIZE 10000
 
 static void worker_code(int pid) {
-	int master_pid;
-	master_pid = getCommandData();
+	int master_pid = getCommandData();
 	Worker *worker = new Worker(pid, master_pid);
+
 	worker->run();
+
+	worker->finalize();
+
 }
 
 static void master_code(int pid, Input_Data *input_data) {
 	Master::initialize_master(pid, input_data->workers_num);
 	//parse the data
 	// then spawn
-	int actor_id = 0;
-
-	Master::spawn_actor(new Squirrel(actor_id));
-
+	for (int i = 0; i < input_data->squirells; ++i)
+	{
+		Master::spawn_actor(new Squirrel(Master::active_actors));
+	}
+	
 	Master::run();
+
+	Master::finalize();
+
 }
 
 int main(int argc, char* argv[]) {
@@ -39,6 +47,8 @@ int main(int argc, char* argv[]) {
 
 	Input_Data *input_data = new Input_Data(argc, argv);
 	// input_data->print();
+
+	Messenger::init_types();
 
 	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
 

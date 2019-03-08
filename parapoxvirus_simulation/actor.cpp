@@ -10,7 +10,7 @@ int Actor::get_id() {
 }
 
 void Actor::print() {
-	cout << "This is an actor" << endl;
+	cout << "Actor: id = " << this->id << ", type = " << this->type << endl;
 }
 
 int Actor::get_type() {
