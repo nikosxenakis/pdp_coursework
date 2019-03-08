@@ -3,7 +3,6 @@
 
 #include <mpi.h>
 #include <iostream>
-#include "actor.h"
 #include "message.h"
 
 using namespace std;

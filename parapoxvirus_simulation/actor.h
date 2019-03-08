@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include "actor_types.h"
+#include "message.h"
+#include "messenger.h"
 
 using namespace std;
 
@@ -23,10 +25,11 @@ class Actor
 
 protected:
 	int id;
+	int master_pid;
 	int type;
 
 public:
-	Actor(int id);
+	Actor(int id, int master_pid);
 	int get_id();
 	void print();
 	int get_type();

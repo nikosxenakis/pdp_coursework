@@ -20,12 +20,15 @@ void Master::initialize_master(int pid, int workers_num) {
 	Master::init_workers();
 }
 
-void Master::spawn_actor(Actor *actor) {
+void Master::spawn_actor(int actor_type) {
 	Worker *worker = Master::find_available_worker();
+
+	Actor *actor = Actor_factory::create(Master::active_actors, actor_type, worker->get_pid());
+
 	worker->add_actor(actor);
 
 	int command = SPAWN_ACTOR_COMMAND;
-	Message message = Message(command, actor);
+	Message message = Message(command, actor->get_id(), actor->get_type());
 	Messenger::send_message(worker->get_pid(), message);
 	Master::active_actors++;
 }
@@ -83,8 +86,7 @@ void Master::parse_message(Message message) {
 		Master::kill_actor(message.actor_id);
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
-		Actor *actor = Actor_factory::create(Master::active_actors, message.actor_type);
-		Master::spawn_actor(actor);
+		Master::spawn_actor(message.actor_type);
 	}
 }
 

@@ -48,7 +48,7 @@ int Worker::parse_message(Message message) {
     	ret_val = 1;
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
-		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type);
+		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid);
 		this->add_actor(actor);
 	}
 
@@ -89,19 +89,10 @@ Actor* Worker::find_actor(int actor_id) {
 
 void Worker::kill_all_actors() {
 	for (auto actor : this->actors) {
-		Message message = Message(KILL_ACTOR_COMMAND, actor);
+		Message message = Message(KILL_ACTOR_COMMAND, actor->get_id(), actor->get_type());
 		Messenger::send_message(master_pid, message);
 		this->remove_actor(actor);
 	}
-}
-
-void Worker::create_actor(int actor_type) {
-	int command = SPAWN_ACTOR_COMMAND;
-	Actor *actor = Actor_factory::create(actor_type);
-	Message message = Message(command, actor);
-	// cout << "Create actor" << endl;
-	// message.print();
-	Messenger::send_message(this->master_pid, message);
 }
 
 Worker::~Worker() {

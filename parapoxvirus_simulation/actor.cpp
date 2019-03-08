@@ -1,7 +1,8 @@
 #include "actor.h"
 
-Actor::Actor(int id) {
+Actor::Actor(int id, int master_pid) {
 	this->id = id;
+	this->master_pid = master_pid;
 	this->type = ACTOR_TYPE_NONE;
 }
 
@@ -18,5 +19,9 @@ int Actor::get_type() {
 }
 
 void Actor::create_actor(int actor_type) {
-	// this->worker->create_actor(actor_type);
+	int command = SPAWN_ACTOR_COMMAND;
+	Message message = Message(command, -1, actor_type);
+	// cout << "Create actor" << endl;
+	// message.print();
+	Messenger::send_message(this->master_pid, message);
 }

@@ -26,7 +26,7 @@ public:
 	static vector<Worker*> workers;
 
 	static void initialize_master(int pid, int workers_num);
-	static void spawn_actor(Actor *actor);
+	static void spawn_actor(int actor_type);
 	static Worker* find_available_worker();
 	static Actor* find_actor(int id);
 	static void run();

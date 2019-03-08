@@ -10,7 +10,7 @@ class Squirrel: public Actor
 {
 
 public:
-	Squirrel(int id);
+	Squirrel(int id, int master_pid);
 	void compute() override;
 };
 

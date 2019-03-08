@@ -27,8 +27,7 @@ static void master_code(int pid, Input_Data *input_data) {
 	// then spawn
 	for (int i = 0; i < input_data->squirells; ++i)
 	{
-		Actor *actor = Actor_factory::create(Master::active_actors, ACTOR_TYPE_SQUIRREL);
-		Master::spawn_actor(actor);
+		Master::spawn_actor(ACTOR_TYPE_SQUIRREL);
 	}
 	
 	Master::run();
