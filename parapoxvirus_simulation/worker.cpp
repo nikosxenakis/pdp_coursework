@@ -36,8 +36,6 @@ void Worker::run() {
 			this->compute();
 		}
 	} while(!exit_command);
-
-
 }
 
 int Worker::parse_message(Message message) {
@@ -59,27 +57,10 @@ int Worker::parse_message(Message message) {
 
 void Worker::compute() {
 
-	static happen = 1;
-
-	if(happen) {
-
-		int command = SPAWN_ACTOR_COMMAND;
-		Actor *actor;
-		int actor_type = ACTOR_TYPE_SQUIRREL
-
-		if(actor_type == ACTOR_TYPE_SQUIRREL)
-			actor = new Squirrel();
-
-		Message message = Message(command, actor);
-		Messenger::send_message(this->master_pid, message);
-
-		happen=0;
+	for (auto actor : this->actors) {
+		actor->compute();
 	}
-			// for (auto actor : this->actors) {
-			// 	Message message = Message(KILL_ACTOR_COMMAND, actor);
-			// 	Messenger::send_message(master_pid, message);
-			// 	this->remove_actor(actor);
-			// }
+
 }
 
 void Worker::finalize() {
@@ -106,18 +87,23 @@ Actor* Worker::find_actor(int actor_id) {
     return nullptr;
 }
 
+void Worker::kill_all_actors() {
+	for (auto actor : this->actors) {
+		Message message = Message(KILL_ACTOR_COMMAND, actor);
+		Messenger::send_message(master_pid, message);
+		this->remove_actor(actor);
+	}
+}
+
+void Worker::create_actor(int actor_type) {
+	int command = SPAWN_ACTOR_COMMAND;
+	Actor *actor = Actor_factory::create(actor_type);
+	Message message = Message(command, actor);
+	// cout << "Create actor" << endl;
+	// message.print();
+	Messenger::send_message(this->master_pid, message);
+}
+
 Worker::~Worker() {
-
-}
-
-void Worker::check_messages() {
-
-}
-
-void Worker::process_message() {
-
-}
-
-void Worker::compute() {
 
 }

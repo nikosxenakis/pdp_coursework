@@ -7,7 +7,6 @@
 #include "input_data.h"
 #include "pool.h"
 #include "master.h"
-#include "squirrel.h"
 #include "messenger.h"
 
 #define UPPER_BOUND_BUFFER_SIZE 10000
@@ -28,7 +27,8 @@ static void master_code(int pid, Input_Data *input_data) {
 	// then spawn
 	for (int i = 0; i < input_data->squirells; ++i)
 	{
-		Master::spawn_actor(new Squirrel(Master::active_actors));
+		Actor *actor = Actor_factory::create(Master::active_actors, ACTOR_TYPE_SQUIRREL);
+		Master::spawn_actor(actor);
 	}
 	
 	Master::run();

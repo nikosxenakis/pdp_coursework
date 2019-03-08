@@ -31,7 +31,7 @@ public:
 	static Actor* find_actor(int id);
 	static void run();
 	static void parse_message(Message message);
-	static void kill_actor(int id);
+	static void kill_actor(int actor_id);
 	static void finalize();
 	static void print();
 };

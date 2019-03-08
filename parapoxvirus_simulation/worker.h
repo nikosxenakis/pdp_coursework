@@ -33,10 +33,9 @@ public:
 	void remove_actor(Actor *actor);
 	Actor* find_actor(int actor_id);
 	void compute();
+	void kill_all_actors();
+	void create_actor(int actor_type);
 	~Worker();
-	void check_messages();
-	void process_message();
-	void compute();
 };
 
 #endif

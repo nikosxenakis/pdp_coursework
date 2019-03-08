@@ -2,11 +2,9 @@
 #define ACTOR_H
 
 #include <iostream>
+#include "actor_types.h"
 
 using namespace std;
-
-#define ACTOR_TYPE_NONE 0
-#define ACTOR_TYPE_SQUIRREL 1
 
 // typedef enum Actor_state {
 // 	STATE_0 = 0,
@@ -19,8 +17,6 @@ using namespace std;
 
 // static void check_messages();
 // static void process_message();
-// static void compute();
-// static void create_actor();
 // static void die();
 class Actor
 {
@@ -34,7 +30,8 @@ public:
 	int get_id();
 	void print();
 	int get_type();
-
+	virtual void compute() = 0;
+	void create_actor(int actor_type);
 };
 
 #endif

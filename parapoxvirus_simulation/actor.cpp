@@ -16,3 +16,7 @@ void Actor::print() {
 int Actor::get_type() {
 	return this->type;
 }
+
+void Actor::create_actor(int actor_type) {
+	// this->worker->create_actor(actor_type);
+}

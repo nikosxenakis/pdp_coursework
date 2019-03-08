@@ -15,6 +15,7 @@ class Actor_factory
 
 public:
 	static Actor* create(int id, int type);
+	static Actor* create(int type);
 };
 
 #endif

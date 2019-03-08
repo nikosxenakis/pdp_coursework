@@ -2,13 +2,16 @@
 #define SQUIRREL_H
 
 #include "actor.h"
+#include <iostream>
+
+using namespace std;
 
 class Squirrel: public Actor
 {
 
 public:
 	Squirrel(int id);
-
+	void compute() override;
 };
 
 #endif

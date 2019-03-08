@@ -80,25 +80,11 @@ void Master::run() {
 
 void Master::parse_message(Message message) {
 	if(message.command == KILL_ACTOR_COMMAND) {
-		Actor *actor = nullptr;
-	    for (auto worker : Master::workers) {
-	    	actor = worker->find_actor(message.actor_id);
-			if(actor != nullptr) {
-				worker->remove_actor(actor);
-				break;
-			}
-		}
-		Master::active_actors--;
+		Master::kill_actor(message.actor_id);
 	}
-	if(message.command == SPAWN_ACTOR_COMMAND) {
-		Actor *actor;
-		int actor_type = message.actor_type;
-
-		if(actor_type == ACTOR_TYPE_SQUIRREL)
-			actor = new Squirrel();
-
+	else if(message.command == SPAWN_ACTOR_COMMAND) {
+		Actor *actor = Actor_factory::create(Master::active_actors, message.actor_type);
 		Master::spawn_actor(actor);
-
 	}
 }
 
@@ -116,5 +102,16 @@ void Master::finalize() {
 	// free all memory
 }
 
-void Master::kill_actor(int id) {}
+void Master::kill_actor(int actor_id) {
+	Actor *actor = nullptr;
+    for (auto worker : Master::workers) {
+    	actor = worker->find_actor(actor_id);
+		if(actor != nullptr) {
+			worker->remove_actor(actor);
+			break;
+		}
+	}
+	Master::active_actors--;
+}
+
 void Master::print() {}
