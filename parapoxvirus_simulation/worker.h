@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include "actor.h"
 #include "message.h"
 #include "messenger.h"
@@ -21,7 +22,7 @@ private:
 
 public:
 	vector<Actor*> actors;
-	vector<Actor*> known_actors;
+	map<int, vector<Actor*>> known_actors;
 	Worker(int pid, int master_pid);
 	int get_load();
 	int get_pid();
@@ -30,7 +31,8 @@ public:
 	int parse_message(Message message);
 	void finalize();
 	void add_actor(Actor *actor);
-	void remove_actor(Actor *actor);
+	void remove_actor(int actor_id);
+	void discover_actor(int worker_pid, Actor *actor);
 	Actor* find_actor(int actor_id);
 	void compute();
 	void kill_all_actors();

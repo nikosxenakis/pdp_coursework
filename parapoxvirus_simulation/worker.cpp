@@ -4,7 +4,7 @@ Worker::Worker(int pid, int master_pid) {
 	this->pid = pid;
 	this->master_pid = master_pid;
 	this->actors = vector<Actor*>();
-	this->known_actors = vector<Actor*>();
+	this->known_actors = map<int, vector<Actor*>>();
 }
 
 int Worker::get_load() {
@@ -43,16 +43,33 @@ int Worker::parse_message(Message message) {
 	int ret_val = 0;
 
 	if(message.command == KILL_WORKER_COMMAND) {
-		int blocking = 1;
-    	Messenger::send_message(this->master_pid, Message(KILL_WORKER_COMMAND), blocking);
+    	Messenger::send_blocking_message(this->master_pid, Message(KILL_WORKER_COMMAND));
     	ret_val = 1;
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
-		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid);
+		cout << "SPAWN_ACTOR_COMMAND\n";
+		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
 		this->add_actor(actor);
 	}
 	else if(message.command == KILL_ACTOR_COMMAND) {
-		this->remove_actor(this->find_actor(message.actor_id));
+		cout << "KILL_ACTOR_COMMAND\n";
+		this->remove_actor(message.actor_id);
+	}
+	else if(message.command == DISCOVER_ACTOR_COMMAND) {
+		// cout << "DISCOVER_ACTOR_COMMAND\n";
+		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
+		this->discover_actor(message.worker_pid, actor);
+
+		for (auto tmp_actor : this->actors) {
+			tmp_actor->discover_actor(message.worker_pid, actor);
+		}
+	}
+	else {
+		for (auto actor : this->actors) {
+			if(actor->get_id() == message.actor_id_dest) {
+				actor->parse_message(message);
+			}
+		}
 	}
 
 	return ret_val;
@@ -74,12 +91,16 @@ void Worker::add_actor(Actor *actor) {
 	this->actors.push_back(actor);
 }
 
-void Worker::remove_actor(Actor *actor) {
+void Worker::remove_actor(int actor_id) {
 	for (int i = 0; i < this->actors.size(); ++i)
 	{
-		if(this->actors[i] == actor)
+		if(this->actors[i]->get_id() == actor_id)
 			this->actors.erase(this->actors.begin() + i);
 	}
+}
+
+void Worker::discover_actor(int worker_pid, Actor *actor) {
+	this->known_actors[worker_pid].push_back(actor);
 }
 
 Actor* Worker::find_actor(int actor_id) {
@@ -94,7 +115,6 @@ void Worker::kill_all_actors() {
 	for (auto actor : this->actors) {
 		Message message = Message(KILL_ACTOR_COMMAND, actor->get_id(), actor->get_type());
 		Messenger::send_message(master_pid, message);
-		this->remove_actor(actor);
 	}
 }
 

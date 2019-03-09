@@ -3,6 +3,7 @@
 int Master::pid = 0;
 int Master::workers_num = 0;
 int Master::active_actors = 0;
+int Master::next_actor_id = 0;
 vector<Worker*> Master::workers;
 
 void Master::init_workers() {
@@ -16,17 +17,22 @@ void Master::init_workers() {
 void Master::initialize_master(int pid, int workers_num) {
 	Master::pid = pid;
 	Master::workers_num = workers_num;
-	Master::active_actors = 0;
 	Master::init_workers();
 }
 
 void Master::spawn_actor(int actor_type) {
 	Worker *worker = Master::find_available_worker();
-	Actor *actor = Actor_factory::create(Master::active_actors, actor_type, worker->get_pid());
+	Actor *actor = Actor_factory::create(Master::next_actor_id, actor_type, Master::pid, worker->get_pid());
 	worker->add_actor(actor);
 	Master::active_actors++;
-	Message message = Message(SPAWN_ACTOR_COMMAND, actor->get_id(), actor->get_type());
-	Messenger::send_message(worker->get_pid(), message);
+	Master::next_actor_id++;
+	Message spawn_message = Message(SPAWN_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+	Messenger::send_message(worker->get_pid(), spawn_message);
+
+	Message discover_message = Message(DISCOVER_ACTOR_COMMAND, actor->get_id(), actor->get_type(), worker->get_pid());
+    for (auto worker : Master::workers) {
+		Messenger::send_message(worker->get_pid(), discover_message);
+    }
 }
 
 void Master::kill_actor(int actor_id) {
@@ -34,14 +40,13 @@ void Master::kill_actor(int actor_id) {
     for (auto worker : Master::workers) {
     	actor = worker->find_actor(actor_id);
 		if(actor != nullptr) {
-			worker->remove_actor(actor);
+			worker->remove_actor(actor->get_id());
 			Message message = Message(KILL_ACTOR_COMMAND, actor->get_id(), actor->get_type());
 			Messenger::send_message(worker->get_pid(), message);
-			break;
+			Master::active_actors--;
+			return;
 		}
 	}
-	Master::active_actors--;
-
 }
 
 Worker * Master::find_available_worker() {
@@ -64,7 +69,7 @@ Worker * Master::find_available_worker() {
     return worker_min;
 }
 
-Actor* find_actor(int id) {
+Actor* Master::find_actor(int id) {
     for (auto worker : Master::workers) {
 	    for (auto actor : worker->actors) {
 	    	if(actor->get_id() == id)
@@ -83,14 +88,11 @@ void Master::run() {
 		if(outstanding) {
 			source_pid=status.MPI_SOURCE;
 			Message message = Messenger::receive_message(source_pid);
-			Master::parse_message(message);
+			Master::parse_message(source_pid, message);
 		}
 		else {
 
-
-			cout << Master::active_actors << endl;
-
-
+			// cout << Master::active_actors << endl;
 
 			if(Master::active_actors == 0)
 				exit_command = 1;
@@ -98,11 +100,13 @@ void Master::run() {
 	} while(!exit_command);
 }
 
-void Master::parse_message(Message message) {
+void Master::parse_message(int source_pid, Message message) {
 	if(message.command == KILL_ACTOR_COMMAND) {
+		cout << "KILL_ACTOR_COMMAND\n";
 		Master::kill_actor(message.actor_id);
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
+		cout << "SPAWN_ACTOR_COMMAND\n";
 		Master::spawn_actor(message.actor_type);
 	}
 }

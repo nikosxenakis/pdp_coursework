@@ -23,6 +23,7 @@ public:
 	static int pid;
 	static int workers_num;
 	static int active_actors;
+	static int next_actor_id;
 	static vector<Worker*> workers;
 
 	static void initialize_master(int pid, int workers_num);
@@ -30,7 +31,7 @@ public:
 	static Worker* find_available_worker();
 	static Actor* find_actor(int id);
 	static void run();
-	static void parse_message(Message message);
+	static void parse_message(int source_pid, Message message);
 	static void kill_actor(int actor_id);
 	static void finalize();
 	static void print();
