@@ -14,11 +14,8 @@
 static void worker_code(int pid) {
 	int master_pid = getCommandData();
 	Worker *worker = new Worker(pid, master_pid);
-
 	worker->run();
-
 	worker->finalize();
-
 }
 
 static void master_code(int pid, Input_Data *input_data) {
@@ -33,7 +30,6 @@ static void master_code(int pid, Input_Data *input_data) {
 	Master::run();
 
 	Master::finalize();
-
 }
 
 int main(int argc, char* argv[]) {

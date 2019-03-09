@@ -90,23 +90,25 @@ void Master::run() {
 			Message message = Messenger::receive_message(source_pid);
 			Master::parse_message(source_pid, message);
 		}
-		else {
-
-			// cout << Master::active_actors << endl;
-
-			if(Master::active_actors == 0)
-				exit_command = 1;
-		}
+		exit_command = Master::compute();
 	} while(!exit_command);
+}
+
+int Master::compute() {
+	cout << Master::active_actors << endl;
+
+	if(Master::active_actors == 0 || Master::active_actors == MAX_ACTORS)
+		return 1;
+	return 0;
 }
 
 void Master::parse_message(int source_pid, Message message) {
 	if(message.command == KILL_ACTOR_COMMAND) {
-		cout << "KILL_ACTOR_COMMAND\n";
+		// cout << "KILL_ACTOR_COMMAND\n";
 		Master::kill_actor(message.actor_id);
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
-		cout << "SPAWN_ACTOR_COMMAND\n";
+		// cout << "SPAWN_ACTOR_COMMAND\n";
 		Master::spawn_actor(message.actor_type);
 	}
 }
@@ -116,9 +118,12 @@ void Master::finalize() {
     	Messenger::send_message(worker->get_pid(), Message(KILL_WORKER_COMMAND));
 	}
     for (auto worker : Master::workers) {
-		Message message = Messenger::receive_message(worker->get_pid());
-		if(message.command != KILL_WORKER_COMMAND)
-			cout << "ERROR" << endl;
+    	Message message;
+    	do {
+    		//discard messages
+    		message = Messenger::receive_message(worker->get_pid());
+    	} while (message.command != KILL_WORKER_COMMAND);
+
 	}
 
 	cout << "Master finalize" << endl;

@@ -14,6 +14,8 @@
 
 using namespace std;
 
+#define MAX_ACTORS 200
+
 class Master
 {
 private:
@@ -31,6 +33,7 @@ public:
 	static Worker* find_available_worker();
 	static Actor* find_actor(int id);
 	static void run();
+	static int compute();
 	static void parse_message(int source_pid, Message message);
 	static void kill_actor(int actor_id);
 	static void finalize();

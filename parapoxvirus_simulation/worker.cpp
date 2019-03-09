@@ -47,12 +47,12 @@ int Worker::parse_message(Message message) {
     	ret_val = 1;
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
-		cout << "SPAWN_ACTOR_COMMAND\n";
+		// cout << "SPAWN_ACTOR_COMMAND\n";
 		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
 		this->add_actor(actor);
 	}
 	else if(message.command == KILL_ACTOR_COMMAND) {
-		cout << "KILL_ACTOR_COMMAND\n";
+		// cout << "KILL_ACTOR_COMMAND\n";
 		this->remove_actor(message.actor_id);
 	}
 	else if(message.command == DISCOVER_ACTOR_COMMAND) {
@@ -65,11 +65,9 @@ int Worker::parse_message(Message message) {
 		}
 	}
 	else {
-		for (auto actor : this->actors) {
-			if(actor->get_id() == message.actor_id_dest) {
-				actor->parse_message(message);
-			}
-		}
+		Actor *actor = this->find_actor(message.actor_id_dest);
+		if(actor)
+			actor->parse_message(message);
 	}
 
 	return ret_val;

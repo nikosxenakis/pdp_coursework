@@ -13,6 +13,7 @@ using namespace std;
 #define KILL_WORKER_COMMAND 10
 
 #define VISIT_ACTOR_COMMAND 20
+#define PING_ACTOR_COMMAND 21
 
 class Message
 {
