@@ -2,6 +2,7 @@
 
 int Master::pid = 0;
 int Master::workers_num = 0;
+int Master::max_actors_num = 0;
 int Master::active_actors = 0;
 int Master::next_actor_id = 0;
 vector<Worker*> Master::workers;
@@ -14,9 +15,10 @@ void Master::init_workers() {
     }
 }
 
-void Master::initialize_master(int pid, int workers_num) {
+void Master::initialize_master(int pid, int workers_num, int max_actors_num) {
 	Master::pid = pid;
 	Master::workers_num = workers_num;
+	Master::max_actors_num = max_actors_num;
 	Master::init_workers();
 }
 
@@ -78,7 +80,16 @@ Actor* Master::find_actor(int id) {
     }
 }
 
+void Master::start_simulation() {
+    for (auto worker : Master::workers) {
+    	Messenger::send_blocking_message(worker->get_pid(), Message(START_WORKER_COMMAND));
+	}
+}
+
 void Master::run() {
+
+	Master::start_simulation();
+
 	int outstanding, source_pid, exit_command = 0;
 	MPI_Status status;
 
@@ -95,9 +106,9 @@ void Master::run() {
 }
 
 int Master::compute() {
-	cout << Master::active_actors << endl;
+	// cout << Master::active_actors << endl;
 
-	if(Master::active_actors == 0 || Master::active_actors == MAX_ACTORS)
+	if(Master::active_actors == 0 || Master::active_actors == Master::max_actors_num)
 		return 1;
 	return 0;
 }

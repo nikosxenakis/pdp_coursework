@@ -9,27 +9,23 @@ make parapoxvirus_simulation;
 SQUIRRELS=34
 CELLS=16
 CLOCKS=1
-MAX_SQUIRRELS=200
 INFECTION_LEVEL=4
 MAX_MONTHS=24
-
+MAX_ACTORS_NUM=200
 
 
 
 
 # TEST
-SQUIRRELS=20
+SQUIRRELS=3
 MAX_MONTHS=5
 CELLS=0
-MAX_SQUIRRELS=10
+MAX_ACTORS_NUM=10
 
 
+PROC_NUM=4
 
-
-PROC_NUM=11
-WORKERS_NUM=10
-
-mpirun -n $PROC_NUM ./parapoxvirus_simulation/parapoxvirus_simulation $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $WORKERS_NUM
+mpirun -n $PROC_NUM ./parapoxvirus_simulation/parapoxvirus_simulation $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $PROC_NUM $MAX_ACTORS_NUM
 
 
 # mpicxx -o ./parapoxvirus_simulation/parapoxvirus_simulation ./parapoxvirus_simulation/worker.o ./parapoxvirus_simulation/master.o ./parapoxvirus_simulation/actor.o ./parapoxvirus_simulation/input_data.o

@@ -27,6 +27,7 @@ public:
 	int get_load();
 	int get_pid();
 	void print();
+	void start_simulation();
 	void run();
 	int parse_message(Message message);
 	void finalize();

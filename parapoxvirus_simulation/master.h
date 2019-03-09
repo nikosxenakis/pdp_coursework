@@ -14,8 +14,6 @@
 
 using namespace std;
 
-#define MAX_ACTORS 200
-
 class Master
 {
 private:
@@ -24,14 +22,16 @@ private:
 public:
 	static int pid;
 	static int workers_num;
+	static int max_actors_num;
 	static int active_actors;
 	static int next_actor_id;
 	static vector<Worker*> workers;
 
-	static void initialize_master(int pid, int workers_num);
+	static void initialize_master(int pid, int workers_num, int max_actors_num);
 	static void spawn_actor(int actor_type);
 	static Worker* find_available_worker();
 	static Actor* find_actor(int id);
+	static void start_simulation();
 	static void run();
 	static int compute();
 	static void parse_message(int source_pid, Message message);

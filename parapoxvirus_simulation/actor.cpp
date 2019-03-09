@@ -40,16 +40,29 @@ void Actor::die() {
 }
 
 Actor* Actor::get_actor(int actor_id) {
+	
+	cout << "Search " << actor_id << endl;
+	cout << this->known_actors[0][0];
+	cout << this->known_actors[1][0];
+	cout << this->known_actors[2][0];
+
 	for (map<int, vector<Actor*>>::iterator it = (this->known_actors).begin(); it != (this->known_actors.end()); ++it) {
+					// cout << "Saw worker " << it->first << endl;
+
 		for (auto actor : it->second) {
-			if(actor->get_id() == actor_id)
+			// cout << "Saw actor " << actor->get_id() << endl;
+
+			if(actor->get_id() == actor_id) {
+				// cout << "FOUND";
 				return actor;
+			}
 		}
 	}
 	return nullptr;
 }
 
 void Actor::discover_actor(int worker_pid, Actor *actor) {
+	cout << "Actor " << this->get_id() << " discoved in worker " << worker_pid << " the Actor " << actor->get_id() << endl;
 	this->known_actors[worker_pid].push_back(actor);
 }
 

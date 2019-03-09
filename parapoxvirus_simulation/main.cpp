@@ -19,7 +19,7 @@ static void worker_code(int pid) {
 }
 
 static void master_code(int pid, Input_Data *input_data) {
-	Master::initialize_master(pid, input_data->workers_num);
+	Master::initialize_master(pid, input_data->workers_num, input_data->max_actors_num);
 	//parse the data
 	// then spawn
 	for (int i = 0; i < input_data->squirells; ++i)

@@ -5,7 +5,8 @@ Input_Data::Input_Data(int argc, char* argv[]) {
 	this->squirells = atoi(argv[2]);
 	this->infection_level = atoi(argv[3]);
 	this->max_months = atoi(argv[4]);
-	this->workers_num = atoi(argv[5]);
+	this->workers_num = atoi(argv[5]) - 1;
+	this->max_actors_num = atoi(argv[6]);
 }
 
 Input_Data::~Input_Data() {
@@ -18,4 +19,5 @@ void Input_Data::print() {
 	cout << "INFECTION_LEVEL: " << this->infection_level << endl;
 	cout << "MAX_MONTHS: " << this->max_months << endl;
 	cout << "WORKERS_NUM: " << this->workers_num << endl;
+	cout << "MAX_ACTORS_NUM: " << this->max_actors_num << endl;
 }

@@ -19,7 +19,18 @@ void Worker::print() {
 	cout << "Worker " << this->pid << " with load = " << this->actors.size() << endl;
 }
 
+void Worker::start_simulation() {
+	int command = -1;
+	Message message;
+
+	do {
+		message = Messenger::receive_message(this->master_pid);
+	} while(message.command != START_WORKER_COMMAND);
+}
+
 void Worker::run() {
+
+	this->start_simulation();
 
 	int outstanding, source_pid, exit_command = 0;
 	MPI_Status status;
@@ -32,9 +43,7 @@ void Worker::run() {
 			Message message = Messenger::receive_message(source_pid);
 			exit_command = this->parse_message(message);
 		}
-		else {
-			this->compute();
-		}
+		this->compute();
 	} while(!exit_command);
 }
 
