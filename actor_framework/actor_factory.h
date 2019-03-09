@@ -7,6 +7,7 @@
 #include <vector>
 #include "actor.h"
 #include "squirrel.h"
+#include "clock.h"
 
 using namespace std;
 
@@ -15,7 +16,6 @@ class Actor_factory
 
 public:
 	static Actor* create(int id, int type, int master_pid, int worker_pid);
-	// static Actor* create(int type);
 };
 
 #endif

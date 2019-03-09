@@ -4,19 +4,9 @@
 #include <mpi.h>
 #include <iostream>
 #include <string>
+#include "commands.h"
 
 using namespace std;
-
-#define SPAWN_ACTOR_COMMAND 0
-#define KILL_ACTOR_COMMAND 1
-#define DISCOVER_ACTOR_COMMAND 2
-#define FORGET_ACTOR_COMMAND 3
-
-#define KILL_WORKER_COMMAND 10
-#define START_WORKER_COMMAND 11
-
-#define VISIT_ACTOR_COMMAND 20
-#define PING_ACTOR_COMMAND 21
 
 class Message
 {

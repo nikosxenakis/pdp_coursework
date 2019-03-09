@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "worker.h"
 #include "pool.h"
+#include "worker.h"
 #include "actor.h"
 #include "message.h"
 #include "messenger.h"

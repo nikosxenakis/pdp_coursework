@@ -111,7 +111,7 @@ void Master::run() {
 }
 
 int Master::compute() {
-	cout << Master::active_actors << endl;
+	// cout << Master::active_actors << endl;
 
 	if(Master::active_actors == 0 || Master::active_actors == Master::max_actors_num)
 		return 1;

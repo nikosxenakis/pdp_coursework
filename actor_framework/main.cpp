@@ -23,12 +23,11 @@ static void master_code(int pid, Input_Data *input_data) {
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	workers_num = world_size - 1;
 	Master::initialize_master(pid, workers_num, input_data->max_actors_num);
-	//parse the data
-	// then spawn
+
+	for (int i = 0; i < input_data->clocks; ++i)
+		Master::spawn_actor(ACTOR_TYPE_CLOCK);
 	for (int i = 0; i < input_data->squirells; ++i)
-	{
 		Master::spawn_actor(ACTOR_TYPE_SQUIRREL);
-	}
 	
 	Master::run();
 

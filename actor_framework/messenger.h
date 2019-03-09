@@ -7,8 +7,7 @@
 
 using namespace std;
 
-class Messenger
-{
+class Messenger {
 
 public:
 	static MPI_Datatype Message_type;

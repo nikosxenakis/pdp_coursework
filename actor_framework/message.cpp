@@ -52,4 +52,8 @@ string Message::get_string_command() {
 		return "VISIT_ACTOR_COMMAND";
 	else if(this->command == 21)
 		return "PING_ACTOR_COMMAND";
+	else if(this->command == 30)
+		return "TIMESTEP_START";
+	else if(this->command == 31)
+		return "TIMESTEP_END";
 }

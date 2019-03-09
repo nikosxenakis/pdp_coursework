@@ -52,6 +52,18 @@ Actor* Actor::get_actor(int actor_id) {
 	return nullptr;
 }
 
+vector<Actor*> Actor::get_actors_by_type(int actor_type) {
+	vector<Actor*> v;
+    for( const auto& worker : this->known_actors ) {
+        for( const auto& actor : worker.second ) {
+			if(actor->get_type() == actor_type) {
+				v.push_back(actor);
+			}  
+        }
+    }
+	return v;
+}
+
 void Actor::discover_actor(int worker_pid, Actor *actor) {
 	// cout << "Actor " << this->get_id() << ": discoved Actor " << actor->get_id() << " in worker " << worker_pid << endl;
 	this->known_actors[worker_pid].push_back(actor);
@@ -81,8 +93,10 @@ int Actor::find_worker(int actor_id) {
 
 void Actor::send_msg(int actor_id, Message message) {
 	int worker_pid = this->find_worker(actor_id);
-	if(worker_pid != -1)
+	if(worker_pid != -1) {
+		message.actor_id_dest = actor_id;
 		Messenger::send_message(worker_pid, message);
+	}
 	else
 		cout << "ERROR\n";
 }

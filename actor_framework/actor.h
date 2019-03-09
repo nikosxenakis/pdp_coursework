@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "actor_interface.h"
 #include "actor_types.h"
 #include "message.h"
 #include "messenger.h"
@@ -14,7 +13,7 @@ using namespace std;
 #define COMPUTE 0
 #define PARSE_MESSAGE 1
 
-class Actor: public Actor_interface {
+class Actor {
 
 private:
 	int id;
@@ -46,6 +45,7 @@ public:
 	void create_actor(int actor_type);
 	void die();
 	Actor* get_actor(int actor_id);
+	vector<Actor*> get_actors_by_type(int actor_type);
 	void send_msg(int actor_id, Message message);
 	void set_state(int state);
 	void register_state(int type, int state, void (f)(Actor*));
