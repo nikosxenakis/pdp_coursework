@@ -46,18 +46,31 @@ Actor* Actor::get_actor(int actor_id) {
 	cout << this->known_actors[1][0];
 	cout << this->known_actors[2][0];
 
-	for (map<int, vector<Actor*>>::iterator it = (this->known_actors).begin(); it != (this->known_actors.end()); ++it) {
-					// cout << "Saw worker " << it->first << endl;
-
-		for (auto actor : it->second) {
+    for( const auto worker : this->known_actors )
+    {
+		// cout << "Saw worker " << worker->first << endl;
+        for( const auto actor : worker.second )
+        {
 			// cout << "Saw actor " << actor->get_id() << endl;
-
 			if(actor->get_id() == actor_id) {
-				// cout << "FOUND";
+				cout << "FOUND";
 				return actor;
-			}
-		}
-	}
+			}  
+        }
+    }
+
+	// for (map<int, vector<Actor*>>::iterator it = (this->known_actors).begin(); it != (this->known_actors.end()); ++it) {
+	// 				// cout << "Saw worker " << it->first << endl;
+
+	// 	for (auto actor : it->second) {
+	// 		// cout << "Saw actor " << actor->get_id() << endl;
+
+	// 		if(actor->get_id() == actor_id) {
+	// 			// cout << "FOUND";
+	// 			return actor;
+	// 		}
+	// 	}
+	// }
 	return nullptr;
 }
 
