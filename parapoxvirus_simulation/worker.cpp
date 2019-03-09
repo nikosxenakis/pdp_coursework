@@ -1,10 +1,12 @@
 #include "worker.h"
 
-Worker::Worker(int pid, int master_pid) {
+Worker::Worker(int pid, int master_pid, int init_actors_num) {
 	this->pid = pid;
 	this->master_pid = master_pid;
+	this->init_actors_num = init_actors_num;
 	this->actors = vector<Actor*>();
 	this->known_actors = map<int, vector<Actor*>>();
+	this->start_simulation = 0;
 }
 
 int Worker::get_load() {
@@ -19,19 +21,7 @@ void Worker::print() {
 	cout << "Worker " << this->pid << " with load = " << this->actors.size() << endl;
 }
 
-void Worker::start_simulation() {
-	int command = -1;
-	Message message;
-
-	do {
-		message = Messenger::receive_message(this->master_pid);
-	} while(message.command != START_WORKER_COMMAND);
-}
-
 void Worker::run() {
-
-	this->start_simulation();
-
 	int outstanding, source_pid, exit_command = 0;
 	MPI_Status status;
 
@@ -48,10 +38,23 @@ void Worker::run() {
 }
 
 int Worker::parse_message(Message message) {
-	int command = 0;
 	int ret_val = 0;
 
-	if(message.command == KILL_WORKER_COMMAND) {
+	// cout << "Worker " << this->get_pid() << ": received " << message.get_string_command() << " command\n";
+
+	if(message.command == START_WORKER_COMMAND) {
+		while(this->get_total_actors_num() < this->init_actors_num);
+		this->start_simulation = 1;
+		cout << "Worker " << this->get_pid() << " start_simulation\n";
+		cout << "Worker " << this->get_pid() << " knows Actors ";
+	    for( const auto& worker : this->known_actors ) {
+        	for( const auto& actor : worker.second ) {
+				cout << actor->get_id() << " ";
+        	}
+    	}
+    	cout << endl;
+	}
+	else if(message.command == KILL_WORKER_COMMAND) {
     	Messenger::send_blocking_message(this->master_pid, Message(KILL_WORKER_COMMAND));
     	ret_val = 1;
 	}
@@ -59,6 +62,7 @@ int Worker::parse_message(Message message) {
 		// cout << "SPAWN_ACTOR_COMMAND\n";
 		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
 		this->add_actor(actor);
+		this->update_actor(actor);
 	}
 	else if(message.command == KILL_ACTOR_COMMAND) {
 		// cout << "KILL_ACTOR_COMMAND\n";
@@ -66,11 +70,19 @@ int Worker::parse_message(Message message) {
 	}
 	else if(message.command == DISCOVER_ACTOR_COMMAND) {
 		// cout << "DISCOVER_ACTOR_COMMAND\n";
-		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
+		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, message.worker_pid);
 		this->discover_actor(message.worker_pid, actor);
 
 		for (auto tmp_actor : this->actors) {
 			tmp_actor->discover_actor(message.worker_pid, actor);
+		}
+	}
+	else if(message.command == FORGET_ACTOR_COMMAND) {
+		// cout << "FORGET_ACTOR_COMMAND\n";
+		this->forget_actor(message.actor_id);
+
+		for (auto tmp_actor : this->actors) {
+			tmp_actor->forget_actor(message.actor_id);
 		}
 	}
 	else {
@@ -82,12 +94,23 @@ int Worker::parse_message(Message message) {
 	return ret_val;
 }
 
+int Worker::get_total_actors_num() {
+	int count = 0;
+    for( const auto& worker : this->known_actors ) {
+        for( const auto& actor : worker.second ) {
+			count++;
+        }
+    }
+  	return count;
+}
+
 void Worker::compute() {
+	if(this->start_simulation == 0)
+		return;
 
 	for (auto actor : this->actors) {
 		actor->compute();
 	}
-
 }
 
 void Worker::finalize() {
@@ -108,6 +131,24 @@ void Worker::remove_actor(int actor_id) {
 
 void Worker::discover_actor(int worker_pid, Actor *actor) {
 	this->known_actors[worker_pid].push_back(actor);
+}
+
+void Worker::forget_actor(int actor_id) {
+    for( auto& worker : this->known_actors ) {
+		for (int i = 0; i < worker.second.size(); ++i)
+		{
+			if(worker.second[i]->get_id() == actor_id)
+				worker.second.erase(worker.second.begin() + i);
+		}
+	}
+}
+
+void Worker::update_actor(Actor *actor) {
+    for( const auto& worker : this->known_actors ) {
+        for( const auto& tmp_actor : worker.second ) {
+			actor->discover_actor(worker.first, tmp_actor);
+        }
+    }
 }
 
 Actor* Worker::find_actor(int actor_id) {

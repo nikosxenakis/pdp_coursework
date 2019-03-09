@@ -10,6 +10,8 @@ using namespace std;
 #define SPAWN_ACTOR_COMMAND 0
 #define KILL_ACTOR_COMMAND 1
 #define DISCOVER_ACTOR_COMMAND 2
+#define FORGET_ACTOR_COMMAND 3
+
 #define KILL_WORKER_COMMAND 10
 #define START_WORKER_COMMAND 11
 
@@ -32,7 +34,7 @@ public:
 	Message(int command, int actor_id, int actor_type);
 	Message(int command, int actor_id, int actor_type, int worker_pid);
 	void print();
-	string get_string_command(int command);
+	string get_string_command();
 };
 
 #endif

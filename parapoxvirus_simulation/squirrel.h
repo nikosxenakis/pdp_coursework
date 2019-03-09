@@ -6,15 +6,13 @@
 
 using namespace std;
 
-class Squirrel: public Actor
-{
+class Squirrel: public Actor {
 
 public:
 	Squirrel(int id, int master_pid, int worker_pid);
 
 	void visited(int actor_id);
-
-	// void init_func();
+	void visit(int actor_id);
 };
 
 #endif

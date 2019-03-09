@@ -1,11 +1,12 @@
 #include "input_data.h"
 
 Input_Data::Input_Data(int argc, char* argv[]) {
-	this->cells = atoi(argv[1]);
-	this->squirells = atoi(argv[2]);
-	this->infection_level = atoi(argv[3]);
-	this->max_months = atoi(argv[4]);
-	this->workers_num = atoi(argv[5]) - 1;
+	this->clocks = atoi(argv[1]);
+	this->cells = atoi(argv[2]);
+	this->squirells = atoi(argv[3]);
+	this->init_actors_num = this->cells + this->squirells + this->clocks;
+	this->infection_level = atoi(argv[4]);
+	this->max_months = atoi(argv[5]);
 	this->max_actors_num = atoi(argv[6]);
 }
 
@@ -18,6 +19,5 @@ void Input_Data::print() {
 	cout << "SQUIRRELS: " << this->squirells << endl;
 	cout << "INFECTION_LEVEL: " << this->infection_level << endl;
 	cout << "MAX_MONTHS: " << this->max_months << endl;
-	cout << "WORKERS_NUM: " << this->workers_num << endl;
 	cout << "MAX_ACTORS_NUM: " << this->max_actors_num << endl;
 }

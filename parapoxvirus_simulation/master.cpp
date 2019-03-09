@@ -9,7 +9,7 @@ vector<Worker*> Master::workers;
 
 void Master::init_workers() {
     for (int i = 0; i < Master::workers_num; ++i) {
-    	Worker *worker = new Worker(startWorkerProcess(), Master::pid);
+    	Worker *worker = new Worker(startWorkerProcess(), Master::pid, 0);
 		Master::workers.push_back(worker);
 		cout << "Master started worker on MPI process " << worker->get_pid() << endl;
     }
@@ -49,6 +49,10 @@ void Master::kill_actor(int actor_id) {
 			return;
 		}
 	}
+	Message forget_message = Message(FORGET_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+    for (auto worker : Master::workers) {
+		Messenger::send_message(worker->get_pid(), forget_message);
+    }
 }
 
 Worker * Master::find_available_worker() {
@@ -84,6 +88,7 @@ void Master::start_simulation() {
     for (auto worker : Master::workers) {
     	Messenger::send_blocking_message(worker->get_pid(), Message(START_WORKER_COMMAND));
 	}
+	cout << "Master start_simulation\n";
 }
 
 void Master::run() {
@@ -106,7 +111,7 @@ void Master::run() {
 }
 
 int Master::compute() {
-	// cout << Master::active_actors << endl;
+	cout << Master::active_actors << endl;
 
 	if(Master::active_actors == 0 || Master::active_actors == Master::max_actors_num)
 		return 1;
@@ -114,6 +119,8 @@ int Master::compute() {
 }
 
 void Master::parse_message(int source_pid, Message message) {
+	// cout << "Master received " << message.get_string_command() << " command\n";
+
 	if(message.command == KILL_ACTOR_COMMAND) {
 		// cout << "KILL_ACTOR_COMMAND\n";
 		Master::kill_actor(message.actor_id);

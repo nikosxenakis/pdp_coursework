@@ -5,45 +5,29 @@
 #define SQUIRREL_STATE_DIE 2
 #define SQUIRREL_STATE_FINISH 3
 
-		// visit
-		// int actor_id = 1;
-		// Actor *actor = this->get_actor(actor_id);
-		// actor->print();
-
-
-
-		// state = SQUIRREL_STATE_COMPUTE;
-
-
-		// ping
-		// int actor_id = 1;
-		// Message ping_message = Message(PING_ACTOR_COMMAND, this->get_id(), actor_id);
-		// this->send_msg(actor_id, ping_message);
-
-
 static void squirrel_compute_func_init(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	// squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
+	squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
 	squirrel->set_state(SQUIRREL_STATE_COMPUTE);
 }
 
 static void squirrel_compute_func_compute(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	// visit
-	Actor *rand_actor = squirrel->get_actor(1);
-	if(rand_actor) {
-		squirrel->print();
-		rand_actor->print();
-		Message visit_message = Message(VISIT_ACTOR_COMMAND, squirrel->get_id(), rand_actor->get_id());
-		squirrel->send_msg(rand_actor->get_id(), visit_message);	
-	}
+	squirrel->visit(1);
+	squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
+
+			// ping
+		// int actor_id = 1;
+		// Message ping_message = Message(PING_ACTOR_COMMAND, this->get_id(), actor_id);
+		// this->send_msg(actor_id, ping_message);
 
 	squirrel->set_state(SQUIRREL_STATE_DIE);
 }
 
 static void squirrel_compute_func_die(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	// squirrel->die();
+	squirrel->die();
+		squirrel->visit(2);
 	squirrel->set_state(SQUIRREL_STATE_FINISH);
 }
 
@@ -55,11 +39,11 @@ static void squirrel_parse_message_func_init(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 
 	if(message.command == VISIT_ACTOR_COMMAND) {
-		cout << "VISIT_ACTOR_COMMAND\n";
+		// cout << "VISIT_ACTOR_COMMAND\n";
 		squirrel->visited(message.actor_id);
 	}
 	else if(message.command == PING_ACTOR_COMMAND) {
-		cout << "PING_ACTOR_COMMAND\n";
+		// cout << "PING_ACTOR_COMMAND\n";
 		// squirrel->visited(message.actor_id);
 	}
 }
@@ -67,36 +51,69 @@ static void squirrel_parse_message_func_compute(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 
 	if(message.command == VISIT_ACTOR_COMMAND) {
-		cout << "VISIT_ACTOR_COMMAND\n";
+		// cout << "VISIT_ACTOR_COMMAND\n";
 		squirrel->visited(message.actor_id);
 	}
 	else if(message.command == PING_ACTOR_COMMAND) {
-		cout << "PING_ACTOR_COMMAND\n";
+		// cout << "PING_ACTOR_COMMAND\n";
 		// squirrel->visited(message.actor_id);
 	}
 }
 static void squirrel_parse_message_func_die(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
+
+	if(message.command == VISIT_ACTOR_COMMAND) {
+		// cout << "VISIT_ACTOR_COMMAND\n";
+		squirrel->visited(message.actor_id);
+	}
+	else if(message.command == PING_ACTOR_COMMAND) {
+		// cout << "PING_ACTOR_COMMAND\n";
+		// squirrel->visited(message.actor_id);
+	}
 }
 static void squirrel_parse_message_func_finish(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
+
+	if(message.command == VISIT_ACTOR_COMMAND) {
+		// cout << "VISIT_ACTOR_COMMAND\n";
+		squirrel->visited(message.actor_id);
+	}
+	else if(message.command == PING_ACTOR_COMMAND) {
+		// cout << "PING_ACTOR_COMMAND\n";
+		// squirrel->visited(message.actor_id);
+	}
 }
 
 Squirrel::Squirrel(int id, int master_pid, int worker_pid): Actor(id, master_pid, worker_pid) {
 	this->type = ACTOR_TYPE_SQUIRREL;
+
+	this->register_state(COMPUTE, SQUIRREL_STATE_INIT, squirrel_compute_func_init);
+	this->register_state(COMPUTE, SQUIRREL_STATE_COMPUTE, squirrel_compute_func_compute);
+	this->register_state(COMPUTE, SQUIRREL_STATE_DIE, squirrel_compute_func_die);
+	this->register_state(COMPUTE, SQUIRREL_STATE_FINISH, squirrel_compute_func_finish);
+
+	this->register_state(PARSE_MESSAGE, SQUIRREL_STATE_INIT, squirrel_parse_message_func_init);
+	this->register_state(PARSE_MESSAGE, SQUIRREL_STATE_COMPUTE, squirrel_parse_message_func_compute);
+	this->register_state(PARSE_MESSAGE, SQUIRREL_STATE_DIE, squirrel_parse_message_func_die);
+	this->register_state(PARSE_MESSAGE, SQUIRREL_STATE_FINISH, squirrel_parse_message_func_finish);
+
 	this->set_state(SQUIRREL_STATE_INIT);
+}
 
-	this->compute_map[SQUIRREL_STATE_INIT] = squirrel_compute_func_init;
-	this->compute_map[SQUIRREL_STATE_COMPUTE] = squirrel_compute_func_compute;
-	this->compute_map[SQUIRREL_STATE_DIE] = squirrel_compute_func_die;
-	this->compute_map[SQUIRREL_STATE_FINISH] = squirrel_compute_func_finish;
+void Squirrel::visit(int actor_id) {
+	// cout << "Actor " << this->get_id() << ": wants to visit Actor " << actor_id << "\n";
 
-	this->parse_message_map[SQUIRREL_STATE_INIT] = squirrel_parse_message_func_init;
-	this->parse_message_map[SQUIRREL_STATE_COMPUTE] = squirrel_parse_message_func_compute;
-	this->parse_message_map[SQUIRREL_STATE_DIE] = squirrel_parse_message_func_die;
-	this->parse_message_map[SQUIRREL_STATE_FINISH] = squirrel_parse_message_func_finish;
+	Actor *dst_actor = this->get_actor(actor_id);
+	if(dst_actor) {
+		// cout << "Actor " << this->get_id() << ": found Actor " << actor_id << "\n";
+		Message visit_message = Message(VISIT_ACTOR_COMMAND, this->get_id(), dst_actor->get_id());
+		this->send_msg(dst_actor->get_id(), visit_message);	
+	}
+	else {
+		// cout << "Actor " << this->get_id() << ": Actor " << actor_id << " is not cached" << "\n";
+	}
 }
 
 void Squirrel::visited(int actor_id) {
-	cout << "Actor " << this->get_id() << " visited by " << actor_id << endl;
+	// cout << "Actor " << this->get_id() << ": visited by " << actor_id << endl;
 }

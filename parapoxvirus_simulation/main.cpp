@@ -11,15 +11,18 @@
 
 #define UPPER_BOUND_BUFFER_SIZE 10000
 
-static void worker_code(int pid) {
+static void worker_code(int pid, Input_Data *input_data) {
 	int master_pid = getCommandData();
-	Worker *worker = new Worker(pid, master_pid);
+	Worker *worker = new Worker(pid, master_pid, input_data->init_actors_num);
 	worker->run();
 	worker->finalize();
 }
 
 static void master_code(int pid, Input_Data *input_data) {
-	Master::initialize_master(pid, input_data->workers_num, input_data->max_actors_num);
+	int world_size, workers_num;
+	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+	workers_num = world_size - 1;
+	Master::initialize_master(pid, workers_num, input_data->max_actors_num);
 	//parse the data
 	// then spawn
 	for (int i = 0; i < input_data->squirells; ++i)
@@ -52,7 +55,7 @@ int main(int argc, char* argv[]) {
 
 	int statusCode = processPoolInit();
 	if (statusCode == 1) {
-		worker_code(pid);
+		worker_code(pid, input_data);
 	} else if (statusCode == 2) {
 		master_code(pid, input_data);
 	}

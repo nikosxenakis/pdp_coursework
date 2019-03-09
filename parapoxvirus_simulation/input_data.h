@@ -10,11 +10,12 @@ using namespace std;
 class Input_Data
 {
 public:
+	int clocks;
 	int cells;
 	int squirells;
 	int infection_level;
+	int init_actors_num;
 	int max_months;
-	int workers_num;
 	int max_actors_num;
 
 	Input_Data(int argc, char* argv[]);

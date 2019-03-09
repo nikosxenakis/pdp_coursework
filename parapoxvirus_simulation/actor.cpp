@@ -40,59 +40,63 @@ void Actor::die() {
 }
 
 Actor* Actor::get_actor(int actor_id) {
-	
-	cout << "Search " << actor_id << endl;
-	cout << this->known_actors[0][0];
-	cout << this->known_actors[1][0];
-	cout << this->known_actors[2][0];
-
-    for( const auto worker : this->known_actors )
+    for( const auto& worker : this->known_actors )
     {
-		// cout << "Saw worker " << worker->first << endl;
-        for( const auto actor : worker.second )
+        for( const auto& actor : worker.second )
         {
-			// cout << "Saw actor " << actor->get_id() << endl;
 			if(actor->get_id() == actor_id) {
-				cout << "FOUND";
 				return actor;
 			}  
         }
     }
-
-	// for (map<int, vector<Actor*>>::iterator it = (this->known_actors).begin(); it != (this->known_actors.end()); ++it) {
-	// 				// cout << "Saw worker " << it->first << endl;
-
-	// 	for (auto actor : it->second) {
-	// 		// cout << "Saw actor " << actor->get_id() << endl;
-
-	// 		if(actor->get_id() == actor_id) {
-	// 			// cout << "FOUND";
-	// 			return actor;
-	// 		}
-	// 	}
-	// }
 	return nullptr;
 }
 
 void Actor::discover_actor(int worker_pid, Actor *actor) {
-	cout << "Actor " << this->get_id() << " discoved in worker " << worker_pid << " the Actor " << actor->get_id() << endl;
+	// cout << "Actor " << this->get_id() << ": discoved Actor " << actor->get_id() << " in worker " << worker_pid << endl;
 	this->known_actors[worker_pid].push_back(actor);
 }
 
-int Actor::find_worker(int actor_id) {
-  	for (map<int, vector<Actor*>>::iterator it = (this->known_actors).begin(); it != (this->known_actors.end()); ++it) {
-		for (auto actor : it->second) {
-			if(actor->get_id() == actor_id)
-				return it->first;
+void Actor::forget_actor(int actor_id) {
+    for( auto& worker : this->known_actors ) {
+		for (int i = 0; i < worker.second.size(); ++i)
+		{
+			if(worker.second[i]->get_id() == actor_id)
+				worker.second.erase(worker.second.begin() + i);
 		}
-  	}
+	}
+}
+
+int Actor::find_worker(int actor_id) {
+    for( const auto& worker : this->known_actors )
+    {
+        for( const auto& actor : worker.second )
+        {
+			if(actor->get_id() == actor_id)
+				return worker.first;
+        }
+    }
+    return -1;
 }
 
 void Actor::send_msg(int actor_id, Message message) {
 	int worker_pid = this->find_worker(actor_id);
-	Messenger::send_message(worker_pid, message);
+	if(worker_pid != -1)
+		Messenger::send_message(worker_pid, message);
+	else
+		cout << "ERROR\n";
 }
 
 void Actor::set_state(int state) {
 	this->state = state;
+}
+
+void Actor::register_state(int type, int state, void (f)(Actor*)) {
+	if(type == COMPUTE)
+		this->compute_map[state] = f;
+}
+
+void Actor::register_state(int type, int state, void (f)(Actor*, Message)) {
+	if(type == PARSE_MESSAGE)
+		this->parse_message_map[state] = f;
 }
