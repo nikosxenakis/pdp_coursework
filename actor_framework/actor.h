@@ -37,7 +37,7 @@ public:
 	void discover_actor(int worker_pid, Actor *actor);
 	void forget_actor(int actor_id);
 	int find_worker(int actor_id);
-
+	void set_worker(int worker_pid);
 	// Interface
 	Actor(int id, int master_pid, int worker_pid);
 	virtual ~Actor() = default;

@@ -16,7 +16,7 @@ public:
 	int healthy;
 	int steps;
 
-	Squirrel(int id, int master_pid, int worker_pid);
+	Squirrel(int id, int master_pid, int worker_pid, int x, int y);
 
 	void visited(int actor_id);
 	void visit(int actor_id);

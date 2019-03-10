@@ -26,7 +26,11 @@ public:
 	static int active_actors;
 	static int next_actor_id;
 	static vector<Worker*> workers;
+	static void* input_data;
 
+	static Actor* (*create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, void* data);
+
+	static void register_create_actor(Actor* (*)(int actor_id, int actor_type, int master_pid, int worker_pid, void* data), void *data);
 	static void initialize_master(int pid, int workers_num, int max_actors_num);
 	static void spawn_actor(int actor_type);
 	static Worker* find_available_worker();

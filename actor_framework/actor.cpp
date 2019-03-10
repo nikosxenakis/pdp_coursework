@@ -20,6 +20,10 @@ int Actor::get_type() {
 	return this->type;
 }
 
+void Actor::set_worker(int worker_pid) {
+	this->worker_pid = worker_pid;
+}
+
 void Actor::compute() {
 	this->compute_map[this->state](this);
 }

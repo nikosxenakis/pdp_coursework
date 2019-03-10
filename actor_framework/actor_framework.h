@@ -19,7 +19,10 @@ public:
 	static void worker_code(int pid, int init_actors_num);
 	static void master_code(int pid, void *input_data, int max_actors_num);
 	static void spawn_actor(int actor_type);
+
 	static void register_init_actors(void (*)(void *input_data));
+	static void register_create_actor(Actor* (create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, void *data), void *data);
+
 	static void actor_framework(void *input_data, int max_actors_num, int init_actors_num);
 };
 

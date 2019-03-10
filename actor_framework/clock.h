@@ -15,7 +15,7 @@ public:
 	int squirrels_finished_timestep;
 	int births;
 
-	Clock(int id, int master_pid, int worker_pid);
+	Clock(int id, int master_pid, int worker_pid, int max_months);
 };
 
 #endif

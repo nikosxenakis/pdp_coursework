@@ -6,6 +6,14 @@ int Master::max_actors_num = 0;
 int Master::active_actors = 0;
 int Master::next_actor_id = 0;
 vector<Worker*> Master::workers;
+Actor* (*Master::create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, void *data);
+
+void *Master::input_data = nullptr;
+
+void Master::register_create_actor(Actor* (create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, void* data), void *data) {
+	Master::create_actor = create_actor;
+	Master::input_data = data;
+}
 
 void Master::init_workers() {
     for (int i = 0; i < Master::workers_num; ++i) {
@@ -24,7 +32,10 @@ void Master::initialize_master(int pid, int workers_num, int max_actors_num) {
 
 void Master::spawn_actor(int actor_type) {
 	Worker *worker = Master::find_available_worker();
-	Actor *actor = Actor_factory::create(Master::next_actor_id, actor_type, Master::pid, worker->get_pid());
+
+	Actor *actor = Master::create_actor(Master::next_actor_id, actor_type, Master::pid, worker->get_pid(), Master::input_data);
+	// Actor *actor = Actor_factory::create(Master::next_actor_id, actor_type, Master::pid, worker->get_pid());
+
 	worker->add_actor(actor);
 	Master::active_actors++;
 	Master::next_actor_id++;
@@ -113,8 +124,10 @@ void Master::run() {
 int Master::compute() {
 	// cout << Master::active_actors << endl;
 
-	if(Master::active_actors == 0 || Master::active_actors == Master::max_actors_num)
+	if(Master::active_actors == 0 || Master::active_actors == Master::max_actors_num) {
+		cout << "Master terminates simulation, there are " << Master::active_actors << " active_actors\n";
 		return 1;
+	}
 	return 0;
 }
 

@@ -1,5 +1,14 @@
 #include "worker.h"
 
+Actor* (*Worker::create_actor_f)(int actor_id, int actor_type, int master_pid, int worker_pid, void *data);
+
+void *Worker::input_data = nullptr;
+
+void Worker::register_create_actor(Actor* (create_actor_f)(int actor_id, int actor_type, int master_pid, int worker_pid, void* data), void *data) {
+	Worker::create_actor_f = create_actor_f;
+	Worker::input_data = data;
+}
+
 Worker::Worker(int pid, int master_pid, int init_actors_num) {
 	this->pid = pid;
 	this->master_pid = master_pid;
@@ -60,7 +69,8 @@ int Worker::parse_message(Message message) {
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
 		// cout << "SPAWN_ACTOR_COMMAND\n";
-		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
+		// Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
+		Actor *actor = Worker::create_actor_f(message.actor_id, message.actor_type, this->master_pid, this->get_pid(), Worker::input_data);
 
 		this->add_actor(actor);
 		this->update_actor(actor);
@@ -71,7 +81,8 @@ int Worker::parse_message(Message message) {
 	}
 	else if(message.command == DISCOVER_ACTOR_COMMAND) {
 		// cout << "DISCOVER_ACTOR_COMMAND\n";
-		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, message.worker_pid);
+		// Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, message.worker_pid);
+		Actor *actor = Worker::create_actor_f(message.actor_id, message.actor_type, this->master_pid, message.worker_pid, Worker::input_data);
 		this->discover_actor(message.worker_pid, actor);
 
 		for (auto tmp_actor : this->actors) {

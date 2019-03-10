@@ -18,7 +18,7 @@ public:
 	int population_influx; //for past 3 months
 	int infection_level; //for past 2 months
 
-	Cell(int id, int master_pid, int worker_pid);
+	Cell(int id, int master_pid, int worker_pid, int cell_number);
 };
 
 #endif

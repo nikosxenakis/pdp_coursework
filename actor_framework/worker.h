@@ -9,7 +9,6 @@
 #include "actor.h"
 #include "message.h"
 #include "messenger.h"
-#include "actor_factory.h"
 
 using namespace std;
 
@@ -26,7 +25,11 @@ public:
 	map<int, vector<Actor*>> known_actors;
 	int start_simulation;
 
+	static void* input_data;
+	static Actor* (*create_actor_f)(int actor_id, int actor_type, int master_pid, int worker_pid, void* data);
+
 	Worker(int pid, int master_pid, int init_actors_num);
+	static void register_create_actor(Actor* (*)(int actor_id, int actor_type, int master_pid, int worker_pid, void* data), void *data);
 	int get_load();
 	int get_pid();
 	void print();

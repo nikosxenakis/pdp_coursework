@@ -6,5 +6,6 @@
 
 #include "actor_framework.h"
 #include "input_data.h"
+#include "actor_factory.h"
 
 #endif

@@ -10,9 +10,9 @@ static void parse_message_init(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 }
 
-Cell::Cell(int id, int master_pid, int worker_pid): Actor(id, master_pid, worker_pid) {
+Cell::Cell(int id, int master_pid, int worker_pid, int cell_number): Actor(id, master_pid, worker_pid) {
 	this->type = ACTOR_TYPE_CELL;
-	this->cell_number = 0;
+	this->cell_number = cell_number;
 	this->healthy = 1;
 	this->virus_age = 0;
 	this->population_influx = 0;

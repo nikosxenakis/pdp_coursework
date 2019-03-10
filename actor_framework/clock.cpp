@@ -79,9 +79,9 @@ static void parse_message_wait(Actor *actor, Message message) {
 static void parse_message_finish(Actor *actor, Message message) {
 }
 
-Clock::Clock(int id, int master_pid, int worker_pid): Actor(id, master_pid, worker_pid) {
+Clock::Clock(int id, int master_pid, int worker_pid, int max_months): Actor(id, master_pid, worker_pid) {
 	this->type = ACTOR_TYPE_CLOCK;
-	this->max_months = 5;
+	this->max_months = max_months;
 	this->timestep = 1;
 	this->squirrels_finished_timestep = 0;
 	this->births = 0;

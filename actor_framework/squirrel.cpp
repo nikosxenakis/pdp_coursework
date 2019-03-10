@@ -119,12 +119,12 @@ static void parse_message_finish(Actor *actor, Message message) {
 	// }
 }
 
-Squirrel::Squirrel(int id, int master_pid, int worker_pid): Actor(id, master_pid, worker_pid) {
+Squirrel::Squirrel(int id, int master_pid, int worker_pid, int x, int y): Actor(id, master_pid, worker_pid) {
 	this->type = ACTOR_TYPE_SQUIRREL;
 	this->clock = nullptr;
 	this->timestep = 1;
-	this->x = 0;
-	this->y = 0;
+	this->x = x;
+	this->y = y;
 	this->healthy = 1;
 	this->steps = 0;
 
