@@ -1,6 +1,6 @@
 #include "input_data.h"
 
-Input_Data::Input_Data(int argc, char* argv[]) {
+Input_data::Input_data(int argc, char* argv[]) {
 	this->clocks = atoi(argv[1]);
 	this->cells = atoi(argv[2]);
 	this->squirells = atoi(argv[3]);
@@ -10,11 +10,11 @@ Input_Data::Input_Data(int argc, char* argv[]) {
 	this->max_actors_num = atoi(argv[6]);
 }
 
-Input_Data::~Input_Data() {
+Input_data::~Input_data() {
 
 }
 
-void Input_Data::print() {
+void Input_data::print() {
 	cout << "CELLS: " << this->cells << endl;
 	cout << "SQUIRRELS: " << this->squirells << endl;
 	cout << "INFECTION_LEVEL: " << this->infection_level << endl;

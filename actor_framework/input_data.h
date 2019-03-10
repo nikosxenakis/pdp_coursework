@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class Input_Data {
+class Input_data {
 public:
 	int clocks;
 	int cells;
@@ -17,8 +17,8 @@ public:
 	int max_months;
 	int max_actors_num;
 
-	Input_Data(int argc, char* argv[]);
-	~Input_Data();
+	Input_data(int argc, char* argv[]);
+	~Input_data();
 	void print();
 
 };

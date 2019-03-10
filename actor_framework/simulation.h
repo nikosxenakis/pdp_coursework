@@ -5,7 +5,6 @@
 #define SIMULATION_H
 
 #include "actor_framework.h"
-
-// static void init_actors(Input_data *input_data);
+#include "input_data.h"
 
 #endif

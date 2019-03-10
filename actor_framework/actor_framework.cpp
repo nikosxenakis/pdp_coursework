@@ -4,30 +4,22 @@
 
 #include "actor_framework.h"
 
-void (*Actor_framework::init_actors)(Input_Data *input_Data);
+void (*Actor_framework::init_actors)(void *input_data);
 
-void Actor_framework::worker_code(int pid, Input_Data *input_data) {
+void Actor_framework::worker_code(int pid, int init_actors_num) {
 	int master_pid = getCommandData();
-	Worker *worker = new Worker(pid, master_pid, input_data->init_actors_num);
+	Worker *worker = new Worker(pid, master_pid, init_actors_num);
 	worker->run();
 	worker->finalize();
 }
 
-void Actor_framework::master_code(int pid, Input_Data *input_data) {
+void Actor_framework::master_code(int pid, void *input_data, int max_actors_num) {
 	int world_size, workers_num;
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	workers_num = world_size - 1;
-	Master::initialize_master(pid, workers_num, input_data->max_actors_num);
+	Master::initialize_master(pid, workers_num, max_actors_num);
 
-	input_data->print();
-
-	// Actor_framework::init_actors(input_data);
-	for (int i = 0; i < input_data->clocks; ++i)
-		Actor_framework::spawn_actor(ACTOR_TYPE_CLOCK);
-	for (int i = 0; i < input_data->squirells; ++i)
-		Actor_framework::spawn_actor(ACTOR_TYPE_SQUIRREL);
-	for (int i = 0; i < input_data->cells; ++i)
-		Actor_framework::spawn_actor(ACTOR_TYPE_CELL);
+	Actor_framework::init_actors(input_data);
 
 	Master::run();
 
@@ -38,18 +30,16 @@ void Actor_framework::spawn_actor(int actor_type) {
 	Master::spawn_actor(actor_type);
 }
 
-void Actor_framework::register_init_actors(void (init_actors)(Input_Data *input_data)) {
+void Actor_framework::register_init_actors(void (init_actors)(void *input_data)) {
 	Actor_framework::init_actors = init_actors;
 }
 
-void Actor_framework::actor_framework(int argc, char* argv[]) {
+void Actor_framework::actor_framework(void *input_data, int max_actors_num, int init_actors_num) {
 	int pid;
 	int bsize;
 	char *buffer, *bbuffer;
 
-	MPI_Init(&argc, &argv);
-
-	Input_Data *input_data = new Input_Data(argc, argv);
+	MPI_Init(NULL, NULL);
 
 	Messenger::init_types();
 
@@ -61,9 +51,9 @@ void Actor_framework::actor_framework(int argc, char* argv[]) {
 
 	int statusCode = processPoolInit();
 	if (statusCode == 1) {
-		Actor_framework::worker_code(pid, input_data);
+		Actor_framework::worker_code(pid, init_actors_num);
 	} else if (statusCode == 2) {
-		Actor_framework::master_code(pid, input_data);
+		Actor_framework::master_code(pid, input_data, max_actors_num);
 	}
 
 	MPI_Buffer_detach( &bbuffer, &bsize );
