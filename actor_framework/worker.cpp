@@ -61,6 +61,7 @@ int Worker::parse_message(Message message) {
 	else if(message.command == SPAWN_ACTOR_COMMAND) {
 		// cout << "SPAWN_ACTOR_COMMAND\n";
 		Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
+
 		this->add_actor(actor);
 		this->update_actor(actor);
 	}
@@ -145,6 +146,7 @@ void Worker::forget_actor(int actor_id) {
 }
 
 void Worker::update_actor(Actor *actor) {
+	actor->print();
     for( const auto& worker : this->known_actors ) {
         for( const auto& tmp_actor : worker.second ) {
 			actor->discover_actor(worker.first, tmp_actor);

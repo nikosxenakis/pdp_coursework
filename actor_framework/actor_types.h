@@ -3,7 +3,7 @@
 
 	#define ACTOR_TYPE_NONE 0
 	#define ACTOR_TYPE_CLOCK 1
-	#define ACTOR_TYPE_CELL 2
-	#define ACTOR_TYPE_SQUIRREL 3
+	#define ACTOR_TYPE_SQUIRREL 2
+	#define ACTOR_TYPE_CELL 3
 
 #endif

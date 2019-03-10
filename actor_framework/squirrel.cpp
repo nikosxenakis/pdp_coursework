@@ -27,14 +27,14 @@ static void compute_simulate(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	cout << "Squirrel " << squirrel->get_id() << " computes timestep " << squirrel->timestep << endl;
 
-	if(squirrel->timestep == 2 && squirrel->get_id() == 1) {
-		give_birth = 1;
-	}
-	if(squirrel->timestep == 1 && squirrel->get_id() == 2) {
-		squirrel->set_state(FINISH);
-		squirrel->die();
-		return;
-	}
+	// if(squirrel->timestep == 2 && squirrel->get_id() == 1) {
+	// 	give_birth = 1;
+	// }
+	// if(squirrel->timestep == 1 && squirrel->get_id() == 2) {
+	// 	squirrel->set_state(FINISH);
+	// 	squirrel->die();
+	// 	return;
+	// }
 
 
 	squirrel->set_state(WAIT);
@@ -123,6 +123,10 @@ Squirrel::Squirrel(int id, int master_pid, int worker_pid): Actor(id, master_pid
 	this->type = ACTOR_TYPE_SQUIRREL;
 	this->clock = nullptr;
 	this->timestep = 1;
+	this->x = 0;
+	this->y = 0;
+	this->healthy = 1;
+	this->steps = 0;
 
 	this->set_state(INIT);
 

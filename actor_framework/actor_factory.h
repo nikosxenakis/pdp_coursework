@@ -8,6 +8,7 @@
 #include "actor.h"
 #include "squirrel.h"
 #include "clock.h"
+#include "cell.h"
 
 using namespace std;
 

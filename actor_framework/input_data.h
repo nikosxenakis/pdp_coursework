@@ -7,8 +7,7 @@
 
 using namespace std;
 
-class Input_Data
-{
+class Input_Data {
 public:
 	int clocks;
 	int cells;

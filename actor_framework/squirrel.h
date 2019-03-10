@@ -11,6 +11,10 @@ class Squirrel: public Actor {
 public:
 	Actor *clock;
 	int timestep = 0;
+	int x;
+	int y;
+	int healthy;
+	int steps;
 
 	Squirrel(int id, int master_pid, int worker_pid);
 

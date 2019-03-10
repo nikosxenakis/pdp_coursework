@@ -4,6 +4,8 @@
 
 #include "actor_framework.h"
 
+void (*Actor_framework::init_actors)(Input_Data *input_Data);
+
 void Actor_framework::worker_code(int pid, Input_Data *input_data) {
 	int master_pid = getCommandData();
 	Worker *worker = new Worker(pid, master_pid, input_data->init_actors_num);
@@ -17,14 +19,27 @@ void Actor_framework::master_code(int pid, Input_Data *input_data) {
 	workers_num = world_size - 1;
 	Master::initialize_master(pid, workers_num, input_data->max_actors_num);
 
+	input_data->print();
+
+	// Actor_framework::init_actors(input_data);
 	for (int i = 0; i < input_data->clocks; ++i)
-		Master::spawn_actor(ACTOR_TYPE_CLOCK);
+		Actor_framework::spawn_actor(ACTOR_TYPE_CLOCK);
 	for (int i = 0; i < input_data->squirells; ++i)
-		Master::spawn_actor(ACTOR_TYPE_SQUIRREL);
-	
+		Actor_framework::spawn_actor(ACTOR_TYPE_SQUIRREL);
+	for (int i = 0; i < input_data->cells; ++i)
+		Actor_framework::spawn_actor(ACTOR_TYPE_CELL);
+
 	Master::run();
 
 	Master::finalize();
+}
+
+void Actor_framework::spawn_actor(int actor_type) {
+	Master::spawn_actor(actor_type);
+}
+
+void Actor_framework::register_init_actors(void (init_actors)(Input_Data *input_data)) {
+	Actor_framework::init_actors = init_actors;
 }
 
 void Actor_framework::actor_framework(int argc, char* argv[]) {
