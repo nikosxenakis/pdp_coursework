@@ -18,13 +18,13 @@ int main(int argc, char* argv[]) {
 
 	Input_data *input_data = new Input_data(argc, argv);
 
-
-
-	Actor_framework::register_init_actors(init_actors);
-
 	// Actor_data actor_data = {
 	// 	24
 	// };
+
+	Actor_framework::register_initialiseRNG(initialiseRNG);
+
+	Actor_framework::register_init_actors(init_actors);
 
 	Actor_framework::register_create_actor(Actor_factory::create, input_data);
 

@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include "actor.h"
+#include "squirrel-functions.h"
+#include "actor_framework.h"
 
 using namespace std;
 
@@ -11,13 +13,14 @@ class Squirrel: public Actor {
 public:
 	Actor *clock;
 	int timestep = 0;
-	int x;
-	int y;
+	float x;
+	float y;
 	int healthy;
 	int steps;
+	long seed;
 
-	Squirrel(int id, int master_pid, int worker_pid, int x, int y);
-
+	Squirrel(int id, int master_pid, int worker_pid, float x, float y);
+	void print();
 	void visited(int actor_id);
 	void visit(int actor_id);
 };

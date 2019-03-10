@@ -26,6 +26,11 @@ static void compute_simulate(Actor *actor) {
 
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	cout << "Squirrel " << squirrel->get_id() << " computes timestep " << squirrel->timestep << endl;
+	squirrel->print();
+
+	// move
+	
+	int cell_num = getCellFromPosition(squirrel->x, squirrel->y);
 
 	// if(squirrel->timestep == 2 && squirrel->get_id() == 1) {
 	// 	give_birth = 1;
@@ -119,7 +124,7 @@ static void parse_message_finish(Actor *actor, Message message) {
 	// }
 }
 
-Squirrel::Squirrel(int id, int master_pid, int worker_pid, int x, int y): Actor(id, master_pid, worker_pid) {
+Squirrel::Squirrel(int id, int master_pid, int worker_pid, float x, float y): Actor(id, master_pid, worker_pid) {
 	this->type = ACTOR_TYPE_SQUIRREL;
 	this->clock = nullptr;
 	this->timestep = 1;
@@ -127,6 +132,7 @@ Squirrel::Squirrel(int id, int master_pid, int worker_pid, int x, int y): Actor(
 	this->y = y;
 	this->healthy = 1;
 	this->steps = 0;
+	this->seed = Actor_framework::get_seed();
 
 	this->set_state(INIT);
 
@@ -139,6 +145,10 @@ Squirrel::Squirrel(int id, int master_pid, int worker_pid, int x, int y): Actor(
 	this->register_state(PARSE_MESSAGE, SIMULATE, parse_message_simulate);
 	this->register_state(PARSE_MESSAGE, WAIT, parse_message_wait);
 	this->register_state(PARSE_MESSAGE, FINISH, parse_message_finish);
+}
+
+void Squirrel::print() {
+	cout << "Squirrel " << this->get_id() << " in cell number " << getCellFromPosition(this->x, this->y) << endl;
 }
 
 void Squirrel::visit(int actor_id) {

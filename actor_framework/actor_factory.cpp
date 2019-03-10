@@ -4,9 +4,9 @@ Actor* Actor_factory::create(int id, int type, int master_pid, int worker_pid, v
 	Actor *actor = nullptr;
 	Input_data *data = (Input_data *) v_data;
 
-	int x = 0;
-	int y = 0;
-	static int cell_number = 1;
+	float x = 0;
+	float y = 0;
+	static int cell_number = 0;
 
 	if(type == ACTOR_TYPE_CLOCK)
 		actor = new Clock(id, master_pid, worker_pid, data->max_months);

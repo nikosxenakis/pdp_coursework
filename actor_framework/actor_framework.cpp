@@ -4,7 +4,15 @@
 
 #include "actor_framework.h"
 
+long Actor_framework::seed;
+
+void (*Actor_framework::initialiseRNG)(long *seed);
+
 void (*Actor_framework::init_actors)(void *input_data);
+
+long Actor_framework::get_seed() {
+	return Actor_framework::seed;
+}
 
 void Actor_framework::worker_code(int pid, int init_actors_num) {
 	int master_pid = getCommandData();
@@ -30,6 +38,10 @@ void Actor_framework::spawn_actor(int actor_type) {
 	Master::spawn_actor(actor_type);
 }
 
+void Actor_framework::register_initialiseRNG(void (initialiseRNG)(long *seed)) {
+	Actor_framework::initialiseRNG = initialiseRNG;
+}
+
 void Actor_framework::register_init_actors(void (init_actors)(void *input_data)) {
 	Actor_framework::init_actors = init_actors;
 }
@@ -46,7 +58,6 @@ void Actor_framework::actor_framework(void *input_data, int max_actors_num, int 
 
 	MPI_Init(NULL, NULL);
 
-
 	Messenger::init_types();
 
 	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
@@ -54,6 +65,9 @@ void Actor_framework::actor_framework(void *input_data, int max_actors_num, int 
     MPI_Pack_size( UPPER_BOUND_BUFFER_SIZE, MPI_BYTE, MPI_COMM_WORLD, &bsize );
 	buffer = (char *)malloc( bsize );
 	MPI_Buffer_attach( buffer, bsize );
+
+	Actor_framework::seed = -pid-1;
+	Actor_framework::initialiseRNG(&Actor_framework::seed);
 
 	int statusCode = processPoolInit();
 	if (statusCode == 1) {
