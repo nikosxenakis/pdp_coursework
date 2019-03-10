@@ -9,6 +9,9 @@ using namespace std;
 class Squirrel: public Actor {
 
 public:
+	Actor *clock;
+	int timestep = 0;
+
 	Squirrel(int id, int master_pid, int worker_pid);
 
 	void visited(int actor_id);

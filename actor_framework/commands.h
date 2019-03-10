@@ -14,6 +14,7 @@
 
 	#define TIMESTEP_START 30
 	#define TIMESTEP_END 31
+	#define TIMESTEP_END_GAVE_BIRTH 32
 
 
 #endif

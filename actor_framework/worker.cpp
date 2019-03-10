@@ -45,8 +45,8 @@ int Worker::parse_message(Message message) {
 	if(message.command == START_WORKER_COMMAND) {
 		while(this->get_total_actors_num() < this->init_actors_num);
 		this->start_simulation = 1;
-		cout << "Worker " << this->get_pid() << " start_simulation\n";
-		cout << "Worker " << this->get_pid() << " knows Actors ";
+		// cout << "Worker " << this->get_pid() << " start_simulation\n";
+		// cout << "Worker " << this->get_pid() << " knows Actors ";
 	    for( const auto& worker : this->known_actors ) {
         	for( const auto& actor : worker.second ) {
 				cout << actor->get_id() << " ";
@@ -79,11 +79,8 @@ int Worker::parse_message(Message message) {
 	}
 	else if(message.command == FORGET_ACTOR_COMMAND) {
 		// cout << "FORGET_ACTOR_COMMAND\n";
+		// cout << "Worker: FORGET " << message.actor_id << endl;
 		this->forget_actor(message.actor_id);
-
-		for (auto tmp_actor : this->actors) {
-			tmp_actor->forget_actor(message.actor_id);
-		}
 	}
 	else {
 		Actor *actor = this->find_actor(message.actor_id_dest);
@@ -137,9 +134,13 @@ void Worker::forget_actor(int actor_id) {
     for( auto& worker : this->known_actors ) {
 		for (int i = 0; i < worker.second.size(); ++i)
 		{
-			if(worker.second[i]->get_id() == actor_id)
+			if(worker.second[i]->get_id() == actor_id){
 				worker.second.erase(worker.second.begin() + i);
+			}
 		}
+	}
+	for (auto tmp_actor : this->actors) {
+		tmp_actor->forget_actor(actor_id);
 	}
 }
 

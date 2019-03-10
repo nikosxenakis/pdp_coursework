@@ -1,7 +1,7 @@
 module load mpt;
 module load intel-compilers-17;
 
-make clean;
+# make clean;
 # make actor_framework;
 make parapoxvirus_simulation;
 
@@ -20,7 +20,7 @@ MAX_MONTHS=5
 MAX_ACTORS_NUM=10
 
 
-PROC_NUM=4
+PROC_NUM=5
 
 mpirun -n $PROC_NUM ./actor_framework/parapoxvirus_simulation $CLOCKS $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_ACTORS_NUM
 

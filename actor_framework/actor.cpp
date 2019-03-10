@@ -39,6 +39,21 @@ void Actor::die() {
 	Messenger::send_message(this->master_pid, message);
 }
 
+void Actor::kill_actor(Actor *actor) {
+	Message message = Message(KILL_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+	Messenger::send_message(actor->master_pid, message);
+}
+
+void Actor::kill_all_actors(){
+   	for( const auto& worker : this->known_actors )
+    {
+        for( const auto& actor : worker.second )
+        {
+			this->kill_actor(actor);
+        }
+    }
+}
+
 Actor* Actor::get_actor(int actor_id) {
     for( const auto& worker : this->known_actors )
     {
@@ -73,8 +88,10 @@ void Actor::forget_actor(int actor_id) {
     for( auto& worker : this->known_actors ) {
 		for (int i = 0; i < worker.second.size(); ++i)
 		{
-			if(worker.second[i]->get_id() == actor_id)
+			if(worker.second[i]->get_id() == actor_id){
+				// cout << "Actor " << this->get_id() << " forgot Actor " << actor_id << "\n";
 				worker.second.erase(worker.second.begin() + i);
+			}
 		}
 	}
 }
@@ -97,8 +114,10 @@ void Actor::send_msg(int actor_id, Message message) {
 		message.actor_id_dest = actor_id;
 		Messenger::send_message(worker_pid, message);
 	}
-	else
-		cout << "ERROR\n";
+	else {
+		// cout << "Error from Actor " << this->get_id() << " in ";
+		message.print();
+	}
 }
 
 void Actor::set_state(int state) {

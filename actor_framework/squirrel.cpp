@@ -5,9 +5,6 @@
 #define WAIT 2
 #define FINISH 3
 
-	// squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
-	// squirrel->set_state(SQUIRREL_STATE_COMPUTE);
-
 	// squirrel->visit(1);
 	// squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
 	// ping
@@ -18,94 +15,126 @@
 	// squirrel->die();
 	// squirrel->visit(2);
 
-static void squirrel_compute_func_init(Actor *actor) {
+static void compute_init(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
+	squirrel->clock = squirrel->get_actors_by_type(ACTOR_TYPE_CLOCK)[0];
+	squirrel->set_state(WAIT);
 }
 
-static void squirrel_compute_func_compute(Actor *actor) {
-	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-}
+static void compute_simulate(Actor *actor) {
+	int give_birth = 0;
 
-static void squirrel_compute_func_die(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
+	cout << "Squirrel " << squirrel->get_id() << " computes timestep " << squirrel->timestep << endl;
 
-}
-
-static void squirrel_compute_func_finish(Actor *actor) {
-	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-}
-
-static void squirrel_parse_message_func_init(Actor *actor, Message message) {
-	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	if(message.command == VISIT_ACTOR_COMMAND) {
-		// cout << "VISIT_ACTOR_COMMAND\n";
-		squirrel->visited(message.actor_id);
+	if(squirrel->timestep == 2 && squirrel->get_id() == 1) {
+		give_birth = 1;
 	}
-	else if(message.command == PING_ACTOR_COMMAND) {
-		// cout << "PING_ACTOR_COMMAND\n";
-		// squirrel->visited(message.actor_id);
+	if(squirrel->timestep == 1 && squirrel->get_id() == 2) {
+		squirrel->set_state(FINISH);
+		squirrel->die();
+		return;
 	}
-	else if(message.command == TIMESTEP_START) {
+
+
+	squirrel->set_state(WAIT);
+	Message message;
+
+	if(give_birth == 1) {
+		cout << "Squirrel " << squirrel->get_id() << " gave birth in timestep "<< squirrel->timestep <<"\n";
+		squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
+		message = Message(TIMESTEP_END_GAVE_BIRTH);
+	}
+	else {
+		message = Message(TIMESTEP_END);
+	}
+
+	squirrel->timestep++;
+	squirrel->send_msg(squirrel->clock->get_id(), message);
+}
+
+static void compute_wait(Actor *actor) {
+	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
+}
+
+static void compute_finish(Actor *actor) {
+	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
+}
+
+static void parse_message_init(Actor *actor, Message message) {
+	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
+	// if(message.command == VISIT_ACTOR_COMMAND) {
+	// 	// cout << "VISIT_ACTOR_COMMAND\n";
+	// 	squirrel->visited(message.actor_id);
+	// }
+	// else if(message.command == PING_ACTOR_COMMAND) {
+	// 	// cout << "PING_ACTOR_COMMAND\n";
+	// 	// squirrel->visited(message.actor_id);
+	// }
+	
+	if(message.command == TIMESTEP_START) {
 		squirrel->set_state(SIMULATE);
 	}
 }
-static void squirrel_parse_message_func_compute(Actor *actor, Message message) {
+static void parse_message_simulate(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 
-	if(message.command == VISIT_ACTOR_COMMAND) {
-		// cout << "VISIT_ACTOR_COMMAND\n";
-		squirrel->visited(message.actor_id);
-	}
-	else if(message.command == PING_ACTOR_COMMAND) {
-		// cout << "PING_ACTOR_COMMAND\n";
-		// squirrel->visited(message.actor_id);
-	}
-	else if(message.command == TIMESTEP_END) {
-		squirrel->set_state(WAIT);
-	}
+	// if(message.command == VISIT_ACTOR_COMMAND) {
+	// 	// cout << "VISIT_ACTOR_COMMAND\n";
+	// 	squirrel->visited(message.actor_id);
+	// }
+	// else if(message.command == PING_ACTOR_COMMAND) {
+	// 	// cout << "PING_ACTOR_COMMAND\n";
+	// 	// squirrel->visited(message.actor_id);
+	// }
+	
+	// if(message.command == TIMESTEP_END) {
+	// 	squirrel->set_state(WAIT);
+	// }
 }
-static void squirrel_parse_message_func_die(Actor *actor, Message message) {
+static void parse_message_wait(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 
-	if(message.command == VISIT_ACTOR_COMMAND) {
-		// cout << "VISIT_ACTOR_COMMAND\n";
-		squirrel->visited(message.actor_id);
-	}
-	else if(message.command == PING_ACTOR_COMMAND) {
-		// cout << "PING_ACTOR_COMMAND\n";
-		// squirrel->visited(message.actor_id);
-	}
-	else if(message.command == TIMESTEP_START) {
+	// if(message.command == VISIT_ACTOR_COMMAND) {
+	// 	// cout << "VISIT_ACTOR_COMMAND\n";
+	// 	squirrel->visited(message.actor_id);
+	// }
+	// else if(message.command == PING_ACTOR_COMMAND) {
+	// 	// cout << "PING_ACTOR_COMMAND\n";
+	// 	// squirrel->visited(message.actor_id);
+	// }
+	if(message.command == TIMESTEP_START) {
 		squirrel->set_state(SIMULATE);
 	}
 }
-static void squirrel_parse_message_func_finish(Actor *actor, Message message) {
+static void parse_message_finish(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-
-	if(message.command == VISIT_ACTOR_COMMAND) {
-		// cout << "VISIT_ACTOR_COMMAND\n";
-		squirrel->visited(message.actor_id);
-	}
-	else if(message.command == PING_ACTOR_COMMAND) {
-		// cout << "PING_ACTOR_COMMAND\n";
-		// squirrel->visited(message.actor_id);
-	}
+	// if(message.command == VISIT_ACTOR_COMMAND) {
+	// 	// cout << "VISIT_ACTOR_COMMAND\n";
+	// 	squirrel->visited(message.actor_id);
+	// }
+	// else if(message.command == PING_ACTOR_COMMAND) {
+	// 	// cout << "PING_ACTOR_COMMAND\n";
+	// 	// squirrel->visited(message.actor_id);
+	// }
 }
 
 Squirrel::Squirrel(int id, int master_pid, int worker_pid): Actor(id, master_pid, worker_pid) {
 	this->type = ACTOR_TYPE_SQUIRREL;
-
-	this->register_state(COMPUTE, INIT, squirrel_compute_func_init);
-	this->register_state(COMPUTE, SIMULATE, squirrel_compute_func_compute);
-	this->register_state(COMPUTE, WAIT, squirrel_compute_func_die);
-	this->register_state(COMPUTE, FINISH, squirrel_compute_func_finish);
-
-	this->register_state(PARSE_MESSAGE, INIT, squirrel_parse_message_func_init);
-	this->register_state(PARSE_MESSAGE, SIMULATE, squirrel_parse_message_func_compute);
-	this->register_state(PARSE_MESSAGE, WAIT, squirrel_parse_message_func_die);
-	this->register_state(PARSE_MESSAGE, FINISH, squirrel_parse_message_func_finish);
+	this->clock = nullptr;
+	this->timestep = 1;
 
 	this->set_state(INIT);
+
+	this->register_state(COMPUTE, INIT, compute_init);
+	this->register_state(COMPUTE, SIMULATE, compute_simulate);
+	this->register_state(COMPUTE, WAIT, compute_wait);
+	this->register_state(COMPUTE, FINISH, compute_finish);
+
+	this->register_state(PARSE_MESSAGE, INIT, parse_message_init);
+	this->register_state(PARSE_MESSAGE, SIMULATE, parse_message_simulate);
+	this->register_state(PARSE_MESSAGE, WAIT, parse_message_wait);
+	this->register_state(PARSE_MESSAGE, FINISH, parse_message_finish);
 }
 
 void Squirrel::visit(int actor_id) {

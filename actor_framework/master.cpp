@@ -43,14 +43,14 @@ void Master::kill_actor(int actor_id) {
     	actor = worker->find_actor(actor_id);
 		if(actor != nullptr) {
 			worker->remove_actor(actor->get_id());
-			Message message = Message(KILL_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+			Message message = Message(KILL_ACTOR_COMMAND, actor_id);
 			Messenger::send_message(worker->get_pid(), message);
 			Master::active_actors--;
-			return;
+			break;
 		}
 	}
-	Message forget_message = Message(FORGET_ACTOR_COMMAND, actor->get_id(), actor->get_type());
     for (auto worker : Master::workers) {
+    	Message forget_message = Message(FORGET_ACTOR_COMMAND, actor_id, -1);
 		Messenger::send_message(worker->get_pid(), forget_message);
     }
 }
@@ -122,7 +122,7 @@ void Master::parse_message(int source_pid, Message message) {
 	// cout << "Master received " << message.get_string_command() << " command\n";
 
 	if(message.command == KILL_ACTOR_COMMAND) {
-		// cout << "KILL_ACTOR_COMMAND\n";
+		// cout << "KILL_ACTOR_COMMAND " << message.actor_id << "\n";
 		Master::kill_actor(message.actor_id);
 	}
 	else if(message.command == SPAWN_ACTOR_COMMAND) {

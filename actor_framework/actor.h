@@ -20,9 +20,9 @@ private:
 	int master_pid;
 	int worker_pid;
 	int state;
-	map<int, vector<Actor*>> known_actors;
 	map<int, void (*)(Actor*)> compute_map;
 	map<int, void (*)(Actor*, Message)> parse_message_map;
+	map<int, vector<Actor*>> known_actors;
 
 protected:
 
@@ -44,6 +44,8 @@ public:
 	int get_id();
 	void create_actor(int actor_type);
 	void die();
+	void kill_actor(Actor *actor);
+	void kill_all_actors();
 	Actor* get_actor(int actor_id);
 	vector<Actor*> get_actors_by_type(int actor_type);
 	void send_msg(int actor_id, Message message);
