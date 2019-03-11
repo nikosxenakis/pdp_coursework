@@ -27,14 +27,14 @@ static void compute_simulate(Actor *actor) {
 	// move
 	squirrel->move();
 
-	// if(squirrel->timestep == 2 && squirrel->get_id() == 1) {
-	// 	give_birth = 1;
-	// }
-	// if(squirrel->timestep == 1 && squirrel->get_id() == 2) {
-	// 	squirrel->set_state(FINISH);
-	// 	squirrel->die();
-	// 	return;
-	// }
+	if(squirrel->timestep == 2 && squirrel->get_id() == 17) {
+		give_birth = 1;
+	}
+	if(squirrel->timestep == 1 && squirrel->get_id() == 19) {
+		squirrel->set_state(FINISH);
+		squirrel->die();
+		return;
+	}
 
 	Message message;
 
