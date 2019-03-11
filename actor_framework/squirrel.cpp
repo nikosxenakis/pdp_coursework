@@ -5,15 +5,10 @@
 #define WAIT 2
 #define FINISH 3
 
-	// squirrel->visit(1);
-	// squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
 	// ping
 	// int actor_id = 1;
 	// Message ping_message = Message(PING_ACTOR_COMMAND, this->get_id(), actor_id);
 	// this->send_msg(actor_id, ping_message);
-
-	// squirrel->die();
-	// squirrel->visit(2);
 
 static void compute_init(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
@@ -25,12 +20,11 @@ static void compute_simulate(Actor *actor) {
 	int give_birth = 0;
 
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	cout << "Squirrel " << squirrel->get_id() << " computes timestep " << squirrel->timestep << endl;
-	squirrel->print();
+	// cout << "Squirrel " << squirrel->get_id() << " computes timestep " << squirrel->timestep << endl;
+	// squirrel->print();
 
 	// move
-	
-	int cell_num = getCellFromPosition(squirrel->x, squirrel->y);
+	squirrel->move();
 
 	// if(squirrel->timestep == 2 && squirrel->get_id() == 1) {
 	// 	give_birth = 1;
@@ -151,20 +145,30 @@ void Squirrel::print() {
 	cout << "Squirrel " << this->get_id() << " in cell number " << getCellFromPosition(this->x, this->y) << endl;
 }
 
+	
+
+
+void Squirrel::move() {
+	float x_new, y_new;
+
+	squirrelStep(this->x, this->y, &x_new, &y_new, &this->seed);
+	this->x = x_new;
+	this->y = y_new;
+	int cell_num = getCellFromPosition(this->x, this->y);
+	// cout << "new cell num is " << cell_num << endl;
+	this->visit(cell_num);
+}
+
 void Squirrel::visit(int actor_id) {
 	// cout << "Actor " << this->get_id() << ": wants to visit Actor " << actor_id << "\n";
 
 	Actor *dst_actor = this->get_actor(actor_id);
 	if(dst_actor) {
 		// cout << "Actor " << this->get_id() << ": found Actor " << actor_id << "\n";
-		Message visit_message = Message(VISIT_ACTOR_COMMAND, this->get_id(), dst_actor->get_id());
+		Message visit_message = Message(VISIT_ACTOR_COMMAND, this->get_id(), dst_actor->get_id(), this->healthy);
 		this->send_msg(dst_actor->get_id(), visit_message);	
 	}
 	else {
-		// cout << "Actor " << this->get_id() << ": Actor " << actor_id << " is not cached" << "\n";
+		cout << "Actor " << this->get_id() << ": Actor " << actor_id << " is not cached" << "\n";
 	}
-}
-
-void Squirrel::visited(int actor_id) {
-	// cout << "Actor " << this->get_id() << ": visited by " << actor_id << endl;
 }

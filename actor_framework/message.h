@@ -17,6 +17,7 @@ public:
 	int actor_id_dest;
 	int actor_type;
 	int worker_pid;
+	int healthy;
 
 	Message();
 	Message(int command);

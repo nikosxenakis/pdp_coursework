@@ -13,6 +13,8 @@ using namespace std;
 class Actor_factory {
 
 public:
+	static int cell_number;
+
 	static Actor* create(int id, int type, int master_pid, int worker_pid, void* v_data);
 };
 

@@ -21,7 +21,7 @@ public:
 
 	Squirrel(int id, int master_pid, int worker_pid, float x, float y);
 	void print();
-	void visited(int actor_id);
+	void move();
 	void visit(int actor_id);
 };
 

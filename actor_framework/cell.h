@@ -19,6 +19,9 @@ public:
 	int infection_level; //for past 2 months
 
 	Cell(int id, int master_pid, int worker_pid, int cell_number);
+
+	void visited(Message message);
+
 };
 
 #endif

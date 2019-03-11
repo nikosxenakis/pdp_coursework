@@ -6,12 +6,12 @@
 void init_actors(void *v_input_data) {
 	Input_data *input_data = (Input_data *)v_input_data;
 
+	for (int i = 0; i < input_data->cells; ++i)
+		Actor_framework::spawn_actor(ACTOR_TYPE_CELL);
 	for (int i = 0; i < input_data->clocks; ++i)
 		Actor_framework::spawn_actor(ACTOR_TYPE_CLOCK);
 	for (int i = 0; i < input_data->squirells; ++i)
 		Actor_framework::spawn_actor(ACTOR_TYPE_SQUIRREL);
-	for (int i = 0; i < input_data->cells; ++i)
-		Actor_framework::spawn_actor(ACTOR_TYPE_CELL);
 }
 
 int main(int argc, char* argv[]) {

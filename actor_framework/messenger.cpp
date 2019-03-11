@@ -4,17 +4,18 @@ MPI_Datatype Messenger::Message_type;
 
 void Messenger::init_types() {
 
-    MPI_Datatype type[5] = { MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT };
-    int blocklen[5] = { 1, 1, 1, 1, 1 };
-    MPI_Aint disp[5];
+    MPI_Datatype type[6] = { MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT };
+    int blocklen[6] = { 1, 1, 1, 1, 1, 1 };
+    MPI_Aint disp[6];
 
     disp[0] = 0;
     disp[1] = sizeof(int);
     disp[2] = 2*sizeof(int);
     disp[3] = 3*sizeof(int);
     disp[4] = 4*sizeof(int);
+    disp[5] = 5*sizeof(int);
 
-    MPI_Type_create_struct(5, blocklen, disp, type, &Messenger::Message_type);
+    MPI_Type_create_struct(6, blocklen, disp, type, &Messenger::Message_type);
     MPI_Type_commit(&Messenger::Message_type);
 }
 

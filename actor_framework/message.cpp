@@ -15,12 +15,7 @@ Message::Message(int command, int actor_type) {
 Message::Message(int command, int actor_id, int data2) {
 	this->command = command;
 	this->actor_id = actor_id;
-	if(command == VISIT_ACTOR_COMMAND) {
-		this->actor_id_dest = data2;
-	}
-	else {
-		this->actor_type = data2;
-	}
+	this->actor_type = data2;
 }
 
 Message::Message(int command, int actor_id, int actor_type, int worker_pid) {
@@ -28,11 +23,16 @@ Message::Message(int command, int actor_id, int actor_type, int worker_pid) {
 	this->actor_id = actor_id;
 	this->actor_type = actor_type;
 	this->worker_pid = worker_pid;
+
+	if(command == VISIT_ACTOR_COMMAND) {
+		this->actor_id_dest = actor_type;
+		this->healthy = worker_pid;
+	}
 }
 
 void Message::print() {
 	cout << "Message: command = " << this->get_string_command() << ", actor_id = " << this->actor_id << ", actor_type = " << this->actor_type \
-	<< ", worker_pid = " << this->worker_pid << endl;
+	<< ", worker_pid = " << this->worker_pid << ", actor_id_dest = " << this->actor_id_dest << ", healthy = " << this->healthy << endl;
 }
 
 string Message::get_string_command() {
