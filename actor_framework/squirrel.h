@@ -18,12 +18,14 @@ public:
 	int healthy;
 	int steps;
 	long seed;
+	int infected_steps;
 
 	Squirrel(int id, int master_pid, int worker_pid, float x, float y);
 	void print();
 	void move();
 	void visit(int actor_id);
 	int birth();
+	int will_die();
 };
 
 #endif

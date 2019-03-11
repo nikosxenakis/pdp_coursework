@@ -16,7 +16,7 @@ static void compute_init(Actor *actor) {
 }
 
 static void compute_simulate(Actor *actor) {
-	int give_birth = 0;
+	int give_birth = 0, will_die = 0;
 
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	squirrel->set_state(WAIT);
@@ -25,11 +25,10 @@ static void compute_simulate(Actor *actor) {
 	// squirrel->print();
 
 	squirrel->move();
-	give_birth = squirrel->birth();
+	// give_birth = squirrel->birth();
+	// will_die = squirrel->will_die();
 
-	if(squirrel->timestep == 1 && squirrel->get_id() == 19) {
-		squirrel->set_state(FINISH);
-		squirrel->die();
+	if(will_die) {
 		return;
 	}
 
@@ -63,6 +62,7 @@ Squirrel::Squirrel(int id, int master_pid, int worker_pid, float x, float y): Ac
 	this->y = y;
 	this->healthy = 1;
 	this->steps = 0;
+	this->infected_steps = 0;
 	this->seed = Actor_framework::get_seed();
 
 	this->set_state(INIT);
@@ -103,21 +103,44 @@ void Squirrel::move() {
 	this->x = x_new;
 	this->y = y_new;
 	int cell_num = getCellFromPosition(this->x, this->y);
+
+	this->steps++;
+	if(this->healthy == 0)
+		this->infected_steps++;
+
 	// cout << "new cell num is " << cell_num << endl;
 	this->visit(cell_num);
 }
 
 int Squirrel::birth() {
 	int give_birth;
-	float avg_pop;
+	float avg_pop = 100;
 
-	if(this->timestep == 1 && this->get_id() == 17) {
-		give_birth = 1;
-	}
+//	if(this->timestep == 1 && this->get_id() == 17) {
+//		give_birth = 1;
+//	}
 
 	give_birth = willGiveBirth(avg_pop, &this->seed);
 
 	return give_birth;
+}
+
+int Squirrel::will_die() {
+	int will_die = 0;
+
+	if(this->infected_steps >= 50) {
+
+		if(this->timestep == 1 && this->get_id() == 19) {
+			this->set_state(FINISH);
+			this->die();
+			will_die = 1;
+		}
+
+		will_die = willDie(&this->seed);
+
+	}
+
+	return will_die;
 }
 
 
