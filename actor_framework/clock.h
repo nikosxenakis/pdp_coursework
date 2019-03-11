@@ -10,10 +10,14 @@ class Clock: public Actor {
 
 public:
 	vector<Actor*> squirrels;
+	vector<Actor*> cells;
+
 	int max_months;
 	int timestep;
-	int squirrels_finished_timestep;
 	int births;
+
+	int cells_ready;
+	int squirrels_ready;
 
 	Clock(int id, int master_pid, int worker_pid, int max_months);
 };
