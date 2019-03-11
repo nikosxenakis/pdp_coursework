@@ -29,15 +29,17 @@ static void compute_simulate(Actor *actor) {
 
 	// cout << "Squirrel " << squirrel->get_id() << " computes timestep " << squirrel->timestep << endl;
 	// squirrel->print();
-	int times = 0;
 
-	while(times < 100) {
-		will_die = squirrel->move();
-		if(will_die) {
-			return;
-		}
+	squirrel->move();
+
+	if(squirrel->step_no%50 == 0)
+		give_birth = squirrel->birth();
+	
+	will_die = squirrel->will_die();
+
+	if(will_die) {
+		return;
 	}
-	times = 0;
 
 	Message message;
 	message.message_data.actor_type = squirrel->get_type();
@@ -111,7 +113,7 @@ void Squirrel::visit(int actor_id) {
 	}
 }
 
-int Squirrel::move() {
+void Squirrel::move() {
 	float x_new, y_new;
 
 	squirrelStep(this->x, this->y, &x_new, &y_new, &this->seed);
@@ -127,13 +129,6 @@ int Squirrel::move() {
 
 	// cout << "new cell num is " << cell_num << endl;
 	this->visit(cell_num);
-
-
-	if(this->step_no%50 == 0)
-		give_birth = this->birth();
-	
-	return this->will_die();
-
 }
 
 int Squirrel::birth() {
