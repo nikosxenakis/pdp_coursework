@@ -23,6 +23,7 @@ public:
 	void print();
 	void move();
 	void visit(int actor_id);
+	int birth();
 };
 
 #endif

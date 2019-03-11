@@ -8,6 +8,8 @@ Input_data::Input_data(int argc, char* argv[]) {
 	this->infection_level = atoi(argv[4]);
 	this->max_months = atoi(argv[5]);
 	this->max_actors_num = atoi(argv[6]);
+	this->x = 0;
+	this->y = 0;
 }
 
 Input_data::~Input_data() {

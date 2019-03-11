@@ -24,12 +24,9 @@ static void compute_simulate(Actor *actor) {
 	// cout << "Squirrel " << squirrel->get_id() << " computes timestep " << squirrel->timestep << endl;
 	// squirrel->print();
 
-	// move
 	squirrel->move();
+	give_birth = squirrel->birth();
 
-	if(squirrel->timestep == 2 && squirrel->get_id() == 17) {
-		give_birth = 1;
-	}
 	if(squirrel->timestep == 1 && squirrel->get_id() == 19) {
 		squirrel->set_state(FINISH);
 		squirrel->die();
@@ -41,7 +38,7 @@ static void compute_simulate(Actor *actor) {
 	if(give_birth == 1) {
 		cout << "Squirrel " << squirrel->get_id() << " gave birth in timestep "<< squirrel->timestep <<"\n";
 		squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
-		message = Message(TIMESTEP_END_GAVE_BIRTH);
+		message = Message(TIMESTEP_END_GAVE_BIRTH, squirrel->get_type());
 	}
 	else {
 		message = Message(TIMESTEP_END, squirrel->get_id(), squirrel->get_type());
@@ -85,20 +82,6 @@ void Squirrel::print() {
 	cout << "Squirrel " << this->get_id() << " in cell number " << getCellFromPosition(this->x, this->y) << endl;
 }
 
-	
-
-
-void Squirrel::move() {
-	float x_new, y_new;
-
-	squirrelStep(this->x, this->y, &x_new, &y_new, &this->seed);
-	this->x = x_new;
-	this->y = y_new;
-	int cell_num = getCellFromPosition(this->x, this->y);
-	// cout << "new cell num is " << cell_num << endl;
-	this->visit(cell_num);
-}
-
 void Squirrel::visit(int actor_id) {
 	cout << "Actor " << this->get_id() << ": wants to visit Cell " << actor_id << "\n";
 
@@ -112,3 +95,31 @@ void Squirrel::visit(int actor_id) {
 		cout << "Actor " << this->get_id() << ": Actor " << actor_id << " is not cached" << "\n";
 	}
 }
+
+void Squirrel::move() {
+	float x_new, y_new;
+
+	squirrelStep(this->x, this->y, &x_new, &y_new, &this->seed);
+	this->x = x_new;
+	this->y = y_new;
+	int cell_num = getCellFromPosition(this->x, this->y);
+	// cout << "new cell num is " << cell_num << endl;
+	this->visit(cell_num);
+}
+
+int Squirrel::birth() {
+	int give_birth;
+	float avg_pop;
+
+	if(this->timestep == 1 && this->get_id() == 17) {
+		give_birth = 1;
+	}
+
+	give_birth = willGiveBirth(avg_pop, &this->seed);
+
+	return give_birth;
+}
+
+
+
+

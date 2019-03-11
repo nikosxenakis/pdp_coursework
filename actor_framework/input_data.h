@@ -16,6 +16,8 @@ public:
 	int init_actors_num;
 	int max_months;
 	int max_actors_num;
+	float x;
+	float y;
 
 	Input_data(int argc, char* argv[]);
 	~Input_data();
