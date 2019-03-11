@@ -33,18 +33,26 @@ void Actor::parse_message(Message message) {
 }
 
 void Actor::create_actor(int actor_type) {
-	int command = SPAWN_ACTOR_COMMAND;
-	Message message = Message(command, actor_type);
+	Message message;
+	message.message_data.command = SPAWN_ACTOR_COMMAND;
+	message.message_data.actor_type = actor_type;
+
 	Messenger::send_message(this->master_pid, message);
 }
 
 void Actor::die() {
-	Message message = Message(KILL_ACTOR_COMMAND, this->get_id(), this->get_type());
+	Message message;
+	message.message_data.command = KILL_ACTOR_COMMAND;
+	message.message_data.actor_id = this->get_id();
+	message.message_data.actor_type = this->get_type();
 	Messenger::send_message(this->master_pid, message);
 }
 
 void Actor::kill_actor(Actor *actor) {
-	Message message = Message(KILL_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+	Message message;
+	message.message_data.command = KILL_ACTOR_COMMAND;
+	message.message_data.actor_id = actor->get_id();
+	message.message_data.actor_type = actor->get_type();
 	Messenger::send_message(actor->master_pid, message);
 }
 
@@ -115,12 +123,12 @@ int Actor::find_worker(int actor_id) {
 void Actor::send_msg(int actor_id, Message message) {
 	int worker_pid = this->find_worker(actor_id);
 	if(worker_pid != -1) {
-		message.actor_id_dest = actor_id;
+		message.message_data.actor_id_dest = actor_id;
 		Messenger::send_message(worker_pid, message);
 	}
 	else {
 		// cout << "Error from Actor " << this->get_id() << " in ";
-		message.print();
+		// message.print();
 	}
 }
 

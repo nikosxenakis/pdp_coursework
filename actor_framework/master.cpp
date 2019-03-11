@@ -32,17 +32,25 @@ void Master::initialize_master(int pid, int workers_num, int max_actors_num) {
 
 void Master::spawn_actor(int actor_type) {
 	Worker *worker = Master::find_available_worker();
-
 	Actor *actor = Master::create_actor(Master::next_actor_id, actor_type, Master::pid, worker->get_pid(), Master::input_data);
 	// Actor *actor = Actor_factory::create(Master::next_actor_id, actor_type, Master::pid, worker->get_pid());
 
 	worker->add_actor(actor);
 	Master::active_actors++;
 	Master::next_actor_id++;
-	Message spawn_message = Message(SPAWN_ACTOR_COMMAND, actor->get_id(), actor->get_type());
+	Message spawn_message;
+	spawn_message.message_data.command = SPAWN_ACTOR_COMMAND;
+	spawn_message.message_data.actor_id = actor->get_id();		
+	spawn_message.message_data.actor_type = actor->get_type();		
+
 	Messenger::send_message(worker->get_pid(), spawn_message);
 
-	Message discover_message = Message(DISCOVER_ACTOR_COMMAND, actor->get_id(), actor->get_type(), worker->get_pid());
+	Message discover_message;
+	discover_message.message_data.command = DISCOVER_ACTOR_COMMAND;
+	discover_message.message_data.actor_id = actor->get_id();		
+	discover_message.message_data.actor_type = actor->get_type();	
+	discover_message.message_data.worker_pid = worker->get_pid();	
+
     for (auto worker : Master::workers) {
 		Messenger::send_message(worker->get_pid(), discover_message);
     }
@@ -54,14 +62,18 @@ void Master::kill_actor(int actor_id) {
     	actor = worker->find_actor(actor_id);
 		if(actor != nullptr) {
 			worker->remove_actor(actor->get_id());
-			Message message = Message(KILL_ACTOR_COMMAND, actor_id);
+	    	Message message;
+    		message.message_data.command = KILL_ACTOR_COMMAND;
+    		message.message_data.actor_id = actor_id;			
 			Messenger::send_message(worker->get_pid(), message);
 			Master::active_actors--;
 			break;
 		}
 	}
     for (auto worker : Master::workers) {
-    	Message forget_message = Message(FORGET_ACTOR_COMMAND, actor_id, -1);
+    	Message forget_message;
+    	forget_message.message_data.command = FORGET_ACTOR_COMMAND;
+    	forget_message.message_data.actor_id = actor_id;
 		Messenger::send_message(worker->get_pid(), forget_message);
     }
 }
@@ -96,8 +108,10 @@ Actor* Master::find_actor(int id) {
 }
 
 void Master::start_simulation() {
+	Message message;
+	message.message_data.command = START_WORKER_COMMAND;
     for (auto worker : Master::workers) {
-    	Messenger::send_blocking_message(worker->get_pid(), Message(START_WORKER_COMMAND));
+    	Messenger::send_blocking_message(worker->get_pid(), message);
 	}
 	cout << "Master start_simulation\n";
 }
@@ -134,26 +148,28 @@ int Master::compute() {
 void Master::parse_message(int source_pid, Message message) {
 	// cout << "Master received " << message.get_string_command() << " command\n";
 
-	if(message.command == KILL_ACTOR_COMMAND) {
+	if(message.message_data.command == KILL_ACTOR_COMMAND) {
 		// cout << "KILL_ACTOR_COMMAND " << message.actor_id << "\n";
-		Master::kill_actor(message.actor_id);
+		Master::kill_actor(message.message_data.actor_id);
 	}
-	else if(message.command == SPAWN_ACTOR_COMMAND) {
+	else if(message.message_data.command == SPAWN_ACTOR_COMMAND) {
 		// cout << "SPAWN_ACTOR_COMMAND\n";
-		Master::spawn_actor(message.actor_type);
+		Master::spawn_actor(message.message_data.actor_type);
 	}
 }
 
 void Master::finalize() {
     for (auto worker : Master::workers) {
-    	Messenger::send_message(worker->get_pid(), Message(KILL_WORKER_COMMAND));
+    	Message message;
+    	message.message_data.command = KILL_WORKER_COMMAND;
+    	Messenger::send_message(worker->get_pid(), message);
 	}
     for (auto worker : Master::workers) {
     	Message message;
     	do {
     		//discard messages
     		message = Messenger::receive_message(worker->get_pid());
-    	} while (message.command != KILL_WORKER_COMMAND);
+    	} while (message.message_data.command != KILL_WORKER_COMMAND);
 
 	}
 

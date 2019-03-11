@@ -15,6 +15,7 @@ public:
 	int max_months;
 	int timestep;
 	int births;
+	int births_came;
 
 	int cells_ready;
 	int squirrels_ready;

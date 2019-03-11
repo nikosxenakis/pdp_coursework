@@ -2,6 +2,7 @@
 #define CELL_H
 
 #include <iostream>
+#include <vector>
 #include "actor.h"
 
 #define VIRUS_LIFETIME 2
@@ -13,14 +14,15 @@ class Cell: public Actor {
 public:
 	// vector<Actor*> squirrels;
 	int cell_number;
-	int healthy;
-	int virus_age;
+	int max_months;
 	int timestep;
-	int population_influx; //for past 3 months
-	int infection_level; //for past 2 months
+	int population_influx;
+	vector<int> population_in_steps;
+	int infection_level;
+	vector<int> inflection_in_steps;
 	Actor *clock;
 
-	Cell(int id, int master_pid, int worker_pid, int cell_number);
+	Cell(int id, int master_pid, int worker_pid, int cell_number, int max_months);
 
 	void visited(Message message);
 

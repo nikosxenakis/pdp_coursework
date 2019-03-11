@@ -7,7 +7,7 @@ Actor* Actor_factory::create(int id, int type, int master_pid, int worker_pid, v
 	Input_data *data = (Input_data *) v_data;
 
 	if(type == ACTOR_TYPE_CELL){
-		actor = new Cell(id, master_pid, worker_pid, Actor_factory::cell_number);
+		actor = new Cell(id, master_pid, worker_pid, Actor_factory::cell_number, data->max_months);
 		Actor_factory::cell_number++;
 	}
 	if(type == ACTOR_TYPE_CLOCK)

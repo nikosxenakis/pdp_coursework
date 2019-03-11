@@ -12,21 +12,40 @@ static void compute_init(Actor *actor) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 	cell->set_state(WAIT);
 	cell->clock = cell->get_actors_by_type(ACTOR_TYPE_CLOCK)[0];
-	cell->send_msg(cell->clock->get_id(), Message(TIMESTEP_START, cell->get_id(), cell->get_type()));
+
+	Message message;
+	message.message_data.command = TIMESTEP_START;
+	message.message_data.actor_id = cell->get_id();
+	message.message_data.actor_type = cell->get_type();
+
+	cell->send_msg(cell->clock->get_id(), message);
 }
 
 static void compute_simulate(Actor *actor) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 	cell->set_state(WAIT);
-	// calculate
 
-	cell->send_msg(cell->clock->get_id(), Message(TIMESTEP_END, cell->get_id(), cell->get_type()));
+	// calculate
+	if(cell->timestep > 3) {
+		cell->population_influx -= cell->population_in_steps[cell->timestep-3];
+	}
+	
+	if(cell->timestep > 2) {
+		cell->infection_level -= cell->inflection_in_steps[cell->timestep-2];
+	}
+
+	Message message;
+	message.message_data.command = TIMESTEP_END;
+	message.message_data.actor_id = cell->get_id();
+	message.message_data.actor_type = cell->get_type();
+
+	cell->send_msg(cell->clock->get_id(), message);
 
 }
 
 static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
-	if(message.command == VISIT_ACTOR_COMMAND) {
+	if(message.message_data.command == VISIT_ACTOR_COMMAND) {
 		cell->visited(message);
 	}
 
@@ -35,11 +54,11 @@ static void parse_message_simulate(Actor *actor, Message message) {
 static void parse_message_wait(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 	// receive message to increase timestep
-	if(message.command == TIMESTEP_START) {
+	if(message.message_data.command == TIMESTEP_START) {
 		cell->set_state(SIMULATE);
 		// cell->timestep++;
 	}
-	else if(message.command == VISIT_ACTOR_COMMAND) {
+	else if(message.message_data.command == VISIT_ACTOR_COMMAND) {
 		// cout << "VISIT_ACTOR_COMMAND\n";
 		cell->visited(message);
 	}
@@ -49,14 +68,23 @@ static void parse_message_wait(Actor *actor, Message message) {
 	// receive message to finish
 }
 
-Cell::Cell(int id, int master_pid, int worker_pid, int cell_number): Actor(id, master_pid, worker_pid) {
+Cell::Cell(int id, int master_pid, int worker_pid, int cell_number, int max_months): Actor(id, master_pid, worker_pid) {
 	this->type = ACTOR_TYPE_CELL;
 	this->cell_number = id;
+	this->max_months = max_months;
 	this->timestep = 1;
-	this->healthy = 1;
-	this->virus_age = 0;
 	this->population_influx = 0;
 	this->infection_level = 0;
+	this->population_in_steps = vector<int>(this->max_months);
+	this->inflection_in_steps = vector<int>(this->max_months);
+
+	for (int i = 1; i <= this->max_months; ++i) {
+		this->population_in_steps[i] = 0;
+	}
+
+	for (int i = 1; i <= this->max_months; ++i) {
+		this->inflection_in_steps[i] = 0;
+	}
 
 	if(this->cell_number != this->get_id()) {
 		cout << "Wrong cell number " << cell_number << " and id " << id << "\n";
@@ -76,6 +104,15 @@ Cell::Cell(int id, int master_pid, int worker_pid, int cell_number): Actor(id, m
 	this->register_state(PARSE_MESSAGE, FINISH, parse_message_dummy);
 }
 
-void Cell::visited(Message message) {
-	cout << "Visit from Actor " << message.actor_id << " with health status " << message.healthy << " to Cell " << message.actor_id_dest << endl;
+void
+
+
+ Cell::visited(Message message) {
+ 	this->population_in_steps[timestep]++;
+ 	this->population_influx++;
+ 	if(message.message_data.healthy == 0) {
+ 		this->inflection_in_steps[timestep]++;
+ 		this->infection_level++;
+ 	}
+	// cout << "Visit from Actor " << message.message_data.actor_id << " with health status " << message.message_data.healthy << " to Cell " << message.message_data.actor_id_dest << endl;
 }

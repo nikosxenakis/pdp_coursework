@@ -8,22 +8,25 @@
 
 using namespace std;
 
-class Message
-{
-
-public:
+typedef struct Message_data {
 	int command;
 	int actor_id;
 	int actor_id_dest;
 	int actor_type;
 	int worker_pid;
 	int healthy;
+} Message_data;
+
+class Message {
+
+public:
+	Message_data message_data;
 
 	Message();
-	Message(int command);
-	Message(int command, int actor_type);
-	Message(int command, int actor_id, int actor_type);
-	Message(int command, int actor_id, int actor_type, int worker_pid);
+	Message(Message_data message_data);
+	// Message(int command, int actor_type);
+	// Message(int command, int actor_id, int actor_type);
+	// Message(int command, int actor_id, int actor_type, int worker_pid);
 	void print();
 	string get_string_command();
 };

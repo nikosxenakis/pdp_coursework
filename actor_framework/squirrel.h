@@ -2,6 +2,7 @@
 #define SQUIRREL_H
 
 #include <iostream>
+#include <vector>
 #include "actor.h"
 #include "squirrel-functions.h"
 #include "actor_framework.h"
@@ -16,7 +17,8 @@ public:
 	float x;
 	float y;
 	int healthy;
-	int steps;
+	int step_no;
+	vector<int> steps;
 	long seed;
 	int infected_steps;
 

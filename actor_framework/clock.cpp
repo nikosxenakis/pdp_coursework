@@ -26,11 +26,14 @@ static void compute_simulate_cells(Actor *actor) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	clock->set_state(WAIT_CELLS);
 	cout << "Clock starts simulation for timestep " << clock->timestep << "\n";
-
+	cout << "\tSquirrels: " << clock->squirrels.size() << " Cells: " << clock->cells.size() << "\n";
 	clock->cells = clock->get_actors_by_type(ACTOR_TYPE_CELL);
 
+	Message message;
+	message.message_data.command = TIMESTEP_START;
+	
     for(auto cell : clock->cells) {
-		clock->send_msg(cell->get_id(), Message(TIMESTEP_START));	
+		clock->send_msg(cell->get_id(), message);	
     }
 }
 
@@ -51,8 +54,10 @@ static void compute_simulate_squirrels(Actor *actor) {
 	// cout << "Clock starts simulation for timestep " << clock->timestep << "\n";
 	clock->squirrels = clock->get_actors_by_type(ACTOR_TYPE_SQUIRREL);
 
+	Message message;
+	message.message_data.command = TIMESTEP_START;
     for(auto squirrel : clock->squirrels) {
-		clock->send_msg(squirrel->get_id(), Message(TIMESTEP_START));	
+		clock->send_msg(squirrel->get_id(), message);	
     }
 }
 
@@ -61,8 +66,9 @@ static void compute_simulate_wait_squirrels(Actor *actor) {
 	clock->squirrels = clock->get_actors_by_type(ACTOR_TYPE_SQUIRREL);
 	// cout << "clock waits " << clock->births << " " << clock->squirrels_finished_timestep << " " << clock->squirrels.size() << "\n";
 
-	if(clock->squirrels.size() == clock->squirrels_ready + clock->births) {
+	if(clock->squirrels.size() == clock->squirrels_ready + clock->births && clock->births == clock->births_came) {
 		clock->births = 0;
+		clock->births_came = 0;
 		clock->squirrels_ready = 0;
 		clock->timestep++;
 
@@ -89,10 +95,10 @@ static void compute_finish(Actor *actor) {
 
 static void parse_message_init(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
-	if(message.command == TIMESTEP_START && message.actor_type == ACTOR_TYPE_CELL) {
+	if(message.message_data.command == TIMESTEP_START && message.message_data.actor_type == ACTOR_TYPE_CELL) {
 		clock->cells_ready++;
 	}
-	else if(message.command == TIMESTEP_START && message.actor_type == ACTOR_TYPE_SQUIRREL) {
+	else if(message.message_data.command == TIMESTEP_START && message.message_data.actor_type == ACTOR_TYPE_SQUIRREL) {
 		clock->squirrels_ready++;
 	}
 	else {
@@ -102,30 +108,34 @@ static void parse_message_init(Actor *actor, Message message) {
 
 static void parse_message_wait_cells(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
-	if(message.command == TIMESTEP_END && message.actor_type == ACTOR_TYPE_CELL) {
+	if(message.message_data.command == TIMESTEP_END && message.message_data.actor_type == ACTOR_TYPE_CELL) {
 		clock->cells_ready++;
 	}
 	else {
+			message.print();
 		cout << "Wrong message in parse_message_wait_cells\n";
 	}
 }
 
 static void parse_message_wait_squirrels(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
-	if(message.actor_type == ACTOR_TYPE_SQUIRREL) {
-		if(message.command == TIMESTEP_END) {
+	if(message.message_data.actor_type == ACTOR_TYPE_SQUIRREL) {
+		if(message.message_data.command == TIMESTEP_END) {
 			clock->squirrels_ready++;
 		}	
-		else if(message.command == TIMESTEP_END_GAVE_BIRTH) {
+		else if(message.message_data.command == TIMESTEP_END_GAVE_BIRTH) {
 			clock->squirrels_ready++;
 			clock->births++;
+		}
+		else if(message.message_data.command == TIMESTEP_START) {
+			clock->births_came++;
 		}
 		else {
 			cout << "Wrong message in parse_message_wait_squirrels\n";
 		}
 	}
 	else {
-		cout << "Wrong message in parse_message_wait_squirrels\n";
+		cout << "Wrong message in parse_message_wait_squirrels-\n";
 	}
 }
 
@@ -135,6 +145,7 @@ Clock::Clock(int id, int master_pid, int worker_pid, int max_months): Actor(id, 
 	this->timestep = 1;
 	this->squirrels_ready = 0;
 	this->births = 0;
+	this->births_came = 0;
 	this->cells_ready = 0;
 
 	this->set_state(INIT);

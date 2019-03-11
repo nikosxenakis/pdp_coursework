@@ -12,7 +12,13 @@ static void compute_init(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	squirrel->set_state(WAIT);
 	squirrel->clock = squirrel->get_actors_by_type(ACTOR_TYPE_CLOCK)[0];
-	squirrel->send_msg(squirrel->clock->get_id(), Message(TIMESTEP_START, squirrel->get_id(), squirrel->get_type()));
+
+	Message message;
+	message.message_data.command = TIMESTEP_START;
+	message.message_data.actor_id = squirrel->get_id();
+	message.message_data.actor_type = squirrel->get_type();
+
+	squirrel->send_msg(squirrel->clock->get_id(), message);
 }
 
 static void compute_simulate(Actor *actor) {
@@ -25,22 +31,27 @@ static void compute_simulate(Actor *actor) {
 	// squirrel->print();
 
 	squirrel->move();
-	// give_birth = squirrel->birth();
-	// will_die = squirrel->will_die();
+
+	if(squirrel->step_no%50 == 0)
+		give_birth = squirrel->birth();
+	
+	will_die = squirrel->will_die();
 
 	if(will_die) {
 		return;
 	}
 
 	Message message;
+	message.message_data.actor_type = squirrel->get_type();
 
 	if(give_birth == 1) {
 		cout << "Squirrel " << squirrel->get_id() << " gave birth in timestep "<< squirrel->timestep <<"\n";
 		squirrel->create_actor(ACTOR_TYPE_SQUIRREL);
-		message = Message(TIMESTEP_END_GAVE_BIRTH, squirrel->get_type());
+		message.message_data.command = TIMESTEP_END_GAVE_BIRTH;
 	}
 	else {
-		message = Message(TIMESTEP_END, squirrel->get_id(), squirrel->get_type());
+		message.message_data.command = TIMESTEP_END;
+		message.message_data.actor_id = squirrel->get_id();
 	}
 
 	squirrel->timestep++;
@@ -49,7 +60,7 @@ static void compute_simulate(Actor *actor) {
 
 static void parse_message_wait(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	if(message.command == TIMESTEP_START) {
+	if(message.message_data.command == TIMESTEP_START) {
 		squirrel->set_state(SIMULATE);
 	}
 }
@@ -61,9 +72,13 @@ Squirrel::Squirrel(int id, int master_pid, int worker_pid, float x, float y): Ac
 	this->x = x;
 	this->y = y;
 	this->healthy = 1;
-	this->steps = 0;
+	this->step_no = 0;
 	this->infected_steps = 0;
 	this->seed = Actor_framework::get_seed();
+	this->steps = vector<int>(50);
+
+	for (int i = 0; i < 50; ++i)
+		this->steps[i] = 0;
 
 	this->set_state(INIT);
 
@@ -83,12 +98,14 @@ void Squirrel::print() {
 }
 
 void Squirrel::visit(int actor_id) {
-	cout << "Actor " << this->get_id() << ": wants to visit Cell " << actor_id << "\n";
+	// cout << "Actor " << this->get_id() << ": wants to visit Cell " << actor_id << "\n";
 
 	Actor *dst_actor = this->get_actor(actor_id);
 	if(dst_actor) {
 		// cout << "Actor " << this->get_id() << ": found Actor " << actor_id << "\n";
-		Message visit_message = Message(VISIT_ACTOR_COMMAND, this->get_id(), dst_actor->get_id(), this->healthy);
+
+		Message_data message_data = {VISIT_ACTOR_COMMAND, this->get_id(), dst_actor->get_id(), -1, -1, this->healthy};
+		Message visit_message = Message(message_data);
 		this->send_msg(dst_actor->get_id(), visit_message);	
 	}
 	else {
@@ -104,7 +121,9 @@ void Squirrel::move() {
 	this->y = y_new;
 	int cell_num = getCellFromPosition(this->x, this->y);
 
-	this->steps++;
+	this->steps[this->step_no%50] = cell_num;
+
+	this->step_no++;
 	if(this->healthy == 0)
 		this->infected_steps++;
 
@@ -114,11 +133,26 @@ void Squirrel::move() {
 
 int Squirrel::birth() {
 	int give_birth;
-	float avg_pop = 100;
+	float avg_pop = 3;
 
 //	if(this->timestep == 1 && this->get_id() == 17) {
 //		give_birth = 1;
 //	}
+
+	// for (int i = 0; i < 50; ++i) {
+
+	// 	this->steps[i];
+
+	// }
+
+	// this->steps
+
+	// if(this->step_no%50)
+
+	// int populationInflux = 10;
+	// int infectionLevel = 10;
+
+
 
 	give_birth = willGiveBirth(avg_pop, &this->seed);
 
@@ -130,13 +164,11 @@ int Squirrel::will_die() {
 
 	if(this->infected_steps >= 50) {
 
-		if(this->timestep == 1 && this->get_id() == 19) {
+		will_die = willDie(&this->seed);
+		if(will_die) {
 			this->set_state(FINISH);
 			this->die();
-			will_die = 1;
 		}
-
-		will_die = willDie(&this->seed);
 
 	}
 
