@@ -37,13 +37,14 @@ static void compute_end_of_month(Actor *actor) {
     	for(auto infection_level: clock->infection_level) {
     		cout << infection_level << " ";
     	}
-    	cout << endl;
+    	cout << "\nalive_squirrels = " << clock->alive_squirrels << "\t" << "infected_squirrels = " << clock->infected_squirrels << endl;
 
 		clock->cells_ready = 0;
 		clock->begin_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 
 		if(clock->timestep > clock->max_months) {
 			clock->set_state(FINISH);
+			clock->kill_all();
 		}
 		else {
 			clock->set_state(IN_MONTH);
@@ -51,18 +52,16 @@ static void compute_end_of_month(Actor *actor) {
 	}
 }
 
-static void compute_finish(Actor *actor) {
-	// end simulation
-	Clock *clock = dynamic_cast<Clock*>(actor);
-	// clock->die();
-}
-
+static void compute_finish(Actor *actor) {}
 
 static void parse_message_end_of_month(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	if(message.message_data.command == TIMESTEP_END) {
 		clock->population_influx[clock->cells_ready] = message.message_data.population_influx;
 		clock->infection_level[clock->cells_ready] = message.message_data.infection_level;
+		clock->alive_squirrels = message.message_data.alive_squirrels;
+		clock->infected_squirrels = message.message_data.infected_squirrels;
+
 		// cout << "clock: " << clock->timestep << " population_influx " << clock->population_influx[clock->cells_ready] << " infection_level " << clock->infection_level[clock->cells_ready] << endl;
 		clock->cells_ready++;
 	}
@@ -73,6 +72,8 @@ Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_mo
 	this->max_months = max_months;
 	this->timestep = 1;
 	this->cells_ready = 0;
+	this->alive_squirrels = 0;
+	this->infected_squirrels = 0;
 	this->population_influx = vector<int>(16);
 	this->infection_level = vector<int>(16);
 	this->begin_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());

@@ -17,6 +17,8 @@ typedef struct Message_data {
 	int healthy;
 	int population_influx;
 	int infection_level;
+	int alive_squirrels;
+	int infected_squirrels;
 	float x;
 	float y;
 } Message_data;

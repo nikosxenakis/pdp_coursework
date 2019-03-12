@@ -26,24 +26,20 @@ public:
 	static int max_actors_num;
 	static int active_actors;
 	static int next_actor_id;
-	static vector<Worker*> workers;
+	static vector<int> workers_pid;
 	static void* input_data;
 	static int dead_workers;
 	
 	static Actor* (*create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data);
-	static void register_initialiseRNG(void (initialiseRNG)(long *seed));
 
 	static void register_create_actor(Actor* (*)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data), void *data);
 	static void initialize_master(int pid, int workers_num, int max_actors_num);
 	static int get_next_worker();
 	static void spawn_actor(Message message);
-	// static Worker* find_available_worker();
-	static Actor* find_actor(int id);
 	static void start_simulation();
 	static void run();
 	static int compute();
 	static int parse_message(int source_pid, Message message);
-	static void kill_actor(int actor_id);
 	static void finalize();
 	static void print();
 };

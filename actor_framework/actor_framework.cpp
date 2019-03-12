@@ -33,10 +33,6 @@ void Actor_framework::spawn_actor(Message message) {
 	Master::spawn_actor(message);
 }
 
-void Actor_framework::register_initialiseRNG(void (initialiseRNG)(long *seed)) {
-	Master::register_initialiseRNG(initialiseRNG);
-}
-
 void Actor_framework::register_init_actors(void (init_actors)(void *input_data)) {
 	Actor_framework::init_actors = init_actors;
 }

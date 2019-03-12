@@ -1,11 +1,5 @@
 #include "actor.h"
 
-void (*Actor::initialiseRNG)(long *seed);
-
-void Actor::register_initialiseRNG(void (initialiseRNG)(long *seed)) {
-	Actor::initialiseRNG = initialiseRNG;
-}
-
 Actor::Actor(int id, int master_pid, int worker_pid, int workers_num) {
 	this->id = id;
 	this->master_pid = master_pid;
@@ -13,9 +7,6 @@ Actor::Actor(int id, int master_pid, int worker_pid, int workers_num) {
 	this->workers_num = workers_num;
 	this->type = ACTOR_TYPE_NONE;
 	this->state = 0;
-	this->seed = -id-1;
-	Actor::initialiseRNG(&this->seed);
-	// cout << "Seed: " << this->seed << endl;
 }
 
 int Actor::get_id() {
@@ -55,14 +46,10 @@ void Actor::die() {
 	Messenger::send_message(this->worker_pid, message);
 }
 
-void Actor::kill_actor(Actor *actor) {
-	cout << "Actor::kill_actor\n";
-	exit(1);
+void Actor::kill_all() {
 	Message message;
-	message.message_data.command = KILL_ACTOR_COMMAND;
-	message.message_data.actor_id = actor->get_id();
-	message.message_data.actor_type = actor->get_type();
-	Messenger::send_message(actor->master_pid, message);
+	message.message_data.command = KILL_ALL_ACTORS_COMMAND;
+	Messenger::send_message(this->master_pid, message);
 }
 
 void Actor::send_msg(int actor_id, Message message) {

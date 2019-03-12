@@ -60,25 +60,17 @@ int Worker::parse_message(Message message) {
 	if(message.message_data.command == START_WORKER_COMMAND) {
 		// while(this->get_total_actors_num() < this->init_actors_num);
 		this->start_simulation = 1;
-		// cout << "Worker " << this->get_pid() << " start_simulation\n";
-		// cout << "Worker " << this->get_pid() << " knows Actors ";
-		cout << "Worker " << this->get_pid() << " start_simulation with actors: ";
-    	for( const auto& actor : this->actors ) {
-			cout << actor->get_id() << " ";
-    	}
-    	cout << endl;
+		cout << "Started: ";
+		this->print();
 	}
 	else if(message.message_data.command == KILL_WORKER_COMMAND) {
-		cout << "FINITO\n";
 		Message message;
 		message.message_data.command = KILL_WORKER_COMMAND;
-    	Messenger::send_blocking_message(this->master_pid, message);
+    	Messenger::send_message(this->master_pid, message);
     	ret_val = 1;
 	}
 	else if(message.message_data.command == SPAWN_ACTOR_COMMAND) {
 		// cout << "Worker SPAWN_ACTOR_COMMAND " << message.message_data.actor_type << "\n";
-		// Actor *actor = Actor_factory::create(message.actor_id, message.actor_type, this->master_pid, this->get_pid());
-
 		Input_data* tmp = (Input_data*)Worker::input_data;
 		tmp->x = message.message_data.x;
 		tmp->y = message.message_data.y;
@@ -87,7 +79,6 @@ int Worker::parse_message(Message message) {
 		// cout << "WORKER: " << message.message_data.actor_id << " " << tmp->x << " " << tmp->y << endl;
 
 		Actor *actor = Worker::create_actor_f(message.message_data.actor_id, message.message_data.actor_type, this->master_pid, this->get_pid(), this->workers_num, tmp);
-
 		this->add_actor(actor);
 	}
 	else if(message.message_data.command == KILL_ACTOR_COMMAND) {
@@ -98,10 +89,6 @@ int Worker::parse_message(Message message) {
 		Actor *actor = this->find_actor(message.message_data.actor_id_dest);
 		if(actor){
 			actor->parse_message(message);
-		}
-		else {
-			// cout << "Actor " << message.message_data.actor_id_dest << " is dead\n";
-			// message.print();
 		}
 	}
 
@@ -127,17 +114,14 @@ void Worker::add_actor(Actor *actor) {
 
 void Worker::remove_actor(int actor_id) {
 	for (int i = 0; i < this->actors.size(); ++i)
-	{
 		if(this->actors[i]->get_id() == actor_id)
 			this->actors.erase(this->actors.begin() + i);
-	}
 }
 
 Actor* Worker::find_actor(int actor_id) {
-    for (auto actor : this->actors) {
+    for (auto actor : this->actors)
     	if(actor->get_id() == actor_id)
     		return actor;
-    }
     return nullptr;
 }
 

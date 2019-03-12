@@ -17,7 +17,8 @@ public:
 	int max_months;
 	int timestep;
 	int cells_ready;
-
+	int alive_squirrels;
+	int infected_squirrels;
 	Clock(int id, int master_pid, int worker_pid, int workers_num, int max_months);
 };
 

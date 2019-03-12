@@ -36,8 +36,6 @@ int main(int argc, char* argv[]) {
 	// 	24
 	// };
 
-	Actor_framework::register_initialiseRNG(initialiseRNG);
-
 	Actor_framework::register_init_actors(init_actors);
 
 	Actor_framework::register_create_actor(Actor_factory::create, input_data);

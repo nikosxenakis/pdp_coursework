@@ -3,22 +3,23 @@
 
 #include <iostream>
 #include <vector>
+#include <assert.h>
 #include "actor.h"
 #include "squirrel-functions.h"
 
 using namespace std;
 
 class Squirrel: public Actor {
+private:
+	long seed;
 
 public:
 	float x;
 	float y;
 	int healthy;
 	int step_no;
-	vector<int> steps;
 	int infected_steps;
 	int counter;
-
 	vector<int> population_influx;
 	vector<int> infection_level;
 
@@ -28,7 +29,6 @@ public:
 
 	void print();
 	void move();
-	void visit(int actor_id);
 	void birth();
 	void will_die();
 };

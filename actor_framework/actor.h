@@ -4,10 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <assert.h>
 #include "actor_types.h"
 #include "message.h"
 #include "messenger.h"
-// #include "actor_framework.h"
 
 using namespace std;
 
@@ -28,12 +28,8 @@ private:
 protected:
 
 	int type;
-	long seed;
 
 public:
-
-	static void (*initialiseRNG)(long *seed);
-	static void register_initialiseRNG(void (initialiseRNG)(long *seed));
 
 	void print();
 	int get_type();
@@ -49,7 +45,7 @@ public:
 	int get_id();
 	void create_actor(Message message);
 	void die();
-	void kill_actor(Actor *actor);
+	void kill_all();
 	// void kill_all_actors();
 	// Actor* get_actor(int actor_id);
 	// vector<Actor*> get_actors_by_type(int actor_type);

@@ -2,22 +2,32 @@
 
 #define SIMULATE 0
 
+#define CLOCK_ID 16
+
 static void compute_simulate(Actor *actor) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 }
 
 static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
+
 	if(message.message_data.command == VISIT_ACTOR_COMMAND) {
-		cell->visited(message);
 		Message message_new;
-		message_new.message_data.actor_id_dest = message.message_data.actor_id;
+		int squirrel_id = message.message_data.actor_id;
+
+		message_new.message_data.actor_id_dest = squirrel_id;
 		message_new.message_data.command = VISIT_ACTOR_COMMAND;
-		message_new.message_data.actor_type == ACTOR_TYPE_CELL;
 		message_new.message_data.population_influx = cell->population_influx;
 		message_new.message_data.infection_level = cell->infection_level;
 		
+		if (find(cell->alive_squirrels.begin(), cell->alive_squirrels.end(), squirrel_id) == cell->alive_squirrels.end())
+			cell->alive_squirrels.push_back(squirrel_id);
+
+		if (message.message_data.healthy == 0 && find(cell->alive_squirrels.begin(), cell->alive_squirrels.end(), squirrel_id) == cell->alive_squirrels.end())
+			cell->infected_squirrels.push_back(squirrel_id);
+
 		cell->send_msg(message.message_data.actor_id, message_new);
+		cell->visited(message);
 	}
 	else if(message.message_data.command == TIMESTEP_END) {
 
@@ -33,10 +43,15 @@ static void parse_message_simulate(Actor *actor, Message message) {
 
 		Message message_end;
 		message_end.message_data.command = TIMESTEP_END;
-		message_end.message_data.actor_type == ACTOR_TYPE_CELL;
 		message_end.message_data.population_influx = cell->population_influx;
 		message_end.message_data.infection_level = cell->infection_level;
-		cell->send_msg(16, message_end);
+		message_end.message_data.alive_squirrels = cell->alive_squirrels.size();
+		message_end.message_data.infected_squirrels = cell->infected_squirrels.size();
+
+		cell->alive_squirrels.clear();
+		cell->infected_squirrels.clear();
+
+		cell->send_msg(CLOCK_ID, message_end);
 	}
 
 }
@@ -47,12 +62,14 @@ Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int cell_num
 	this->timestep = 1;
 	this->population_influx = 0;
 	this->infection_level = 0;
-	this->population_in_steps = vector<int>(this->max_months);
-	this->inflection_in_steps = vector<int>(this->max_months);
+	this->population_in_steps = vector<int>();
+	this->inflection_in_steps = vector<int>();
+	this->alive_squirrels = vector<int>();
+	this->infected_squirrels = vector<int>();
 
 	for (int i = 0; i <= this->max_months; ++i) {
-		this->population_in_steps[i] = 0;
-		this->inflection_in_steps[i] = 0;
+		this->population_in_steps.push_back(0);
+		this->inflection_in_steps.push_back(0);
 	}
 
 	this->set_state(SIMULATE);

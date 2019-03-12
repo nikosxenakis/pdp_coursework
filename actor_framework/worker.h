@@ -41,7 +41,6 @@ public:
 	void add_actor(Actor *actor);
 	void remove_actor(int actor_id);
 	Actor* find_actor(int actor_id);
-	// int get_total_actors_num();
 	void compute();
 	void kill_all_actors();
 	void create_actor(int actor_type);

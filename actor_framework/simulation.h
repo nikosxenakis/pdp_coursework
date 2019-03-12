@@ -7,6 +7,5 @@
 #include "actor_framework.h"
 #include "input_data.h"
 #include "actor_factory.h"
-#include "squirrel-functions.h"
 
 #endif

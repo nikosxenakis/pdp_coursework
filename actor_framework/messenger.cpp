@@ -1,13 +1,13 @@
 #include "messenger.h"
 
-#define MESSAGE_SIZE 10
+#define MESSAGE_SIZE 12
 
 MPI_Datatype Messenger::Message_type;
 
 void Messenger::init_types() {
 
-    MPI_Datatype type[MESSAGE_SIZE] = { MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_FLOAT, MPI_FLOAT };
-    int blocklen[MESSAGE_SIZE] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    MPI_Datatype type[MESSAGE_SIZE] = { MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_FLOAT, MPI_FLOAT };
+    int blocklen[MESSAGE_SIZE] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     MPI_Aint disp[MESSAGE_SIZE];
 
     for (int i = 0; i < MESSAGE_SIZE-2; ++i) {
