@@ -6,7 +6,7 @@ Actor* Actor_factory::create(int id, int type, int master_pid, int worker_pid, i
 	Actor *actor = nullptr;
 	Input_data *data = (Input_data *) v_data;
 
-	// cout << id << " " << type << " " << master_pid << " " << worker_pid << " ";
+	// cout << id << " " << type << " " << master_pid << " " << worker_pid << " \n";
 	// data->print();
 
 	if(type == ACTOR_TYPE_CELL){
@@ -18,7 +18,6 @@ Actor* Actor_factory::create(int id, int type, int master_pid, int worker_pid, i
 	}
 	else if(type == ACTOR_TYPE_SQUIRREL){
 		actor = new Squirrel(id, master_pid, worker_pid, workers_num, data->x, data->y, data->healthy);
-		cout << actor->get_type() << endl;
 	}
 
 	if(actor == nullptr || actor->get_type() == ACTOR_TYPE_NONE){

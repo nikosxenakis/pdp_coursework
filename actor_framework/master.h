@@ -31,6 +31,7 @@ public:
 	static int dead_workers;
 	
 	static Actor* (*create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data);
+	static void register_initialiseRNG(void (initialiseRNG)(long *seed));
 
 	static void register_create_actor(Actor* (*)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data), void *data);
 	static void initialize_master(int pid, int workers_num, int max_actors_num);

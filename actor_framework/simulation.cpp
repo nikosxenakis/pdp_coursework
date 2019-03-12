@@ -6,14 +6,8 @@
 void init_actors(void *v_input_data) {
 	Input_data *input_data = (Input_data *)v_input_data;
 	Message message;
-	message.message_data.x = 0.5;
-	message.message_data.y = 0.5;
-	message.message_data.healthy = 1;
-
-	if(input_data->infection_level > 0 ) {
-		message.message_data.healthy = 0;
-		input_data->infection_level--;
-	}
+	message.message_data.x = 0;
+	message.message_data.y = 0;
 
 	for (int i = 0; i < input_data->cells; ++i){
 		message.message_data.actor_type = ACTOR_TYPE_CELL;
@@ -24,6 +18,11 @@ void init_actors(void *v_input_data) {
 		Actor_framework::spawn_actor(message);
 	}
 	for (int i = 0; i < input_data->squirells; ++i){
+		message.message_data.healthy = 1;
+		if(input_data->infection_level > 0 ) {
+			message.message_data.healthy = 0;
+			input_data->infection_level--;
+		}
 		message.message_data.actor_type = ACTOR_TYPE_SQUIRREL;
 		Actor_framework::spawn_actor(message);
 	}

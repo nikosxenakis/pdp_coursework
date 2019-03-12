@@ -3,7 +3,7 @@
 #define LIVE 0
 #define INTERACT 1
 
-const static long delay = 1;
+const static long delay = 20000;
 
 static void compute_dummy(Actor *actor) {}
 static void parse_message_dummy(Actor *actor, Message message) {}
@@ -12,14 +12,14 @@ static void compute_live(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	int will_die = 0;
 	
-	squirrel->set_state(INTERACT);
-
 	if(squirrel->counter % delay == 0) {
+		squirrel->set_state(INTERACT);
 		squirrel->move();
 		squirrel->birth();
 		squirrel->will_die();
 	}
-	squirrel->counter++;	
+
+	squirrel->counter++;
 }
 
 static void compute_interact(Actor *actor) {
@@ -29,6 +29,9 @@ static void compute_interact(Actor *actor) {
 static void parse_message_interact(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	if(message.message_data.command == VISIT_ACTOR_COMMAND) {
+
+		// cout << "Squirrel parse_message_interact: " << squirrel->get_id() << "\n";
+
 		squirrel->set_state(LIVE);
 		squirrel->population_influx[squirrel->step_no] = message.message_data.population_influx;
 		squirrel->infection_level[squirrel->step_no] = message.message_data.infection_level;
@@ -45,25 +48,18 @@ void Squirrel::print() {
 }
 
 void Squirrel::visit(int actor_id) {
-	// cout << "Actor " << this->get_id() << ": wants to visit Cell " << actor_id << " in worker " << this->get_worker(actor_id) << "\n";
-
+	// cout << "Squirrel " << this->get_id() << ": wants to visit Cell " << actor_id << " in worker " << this->get_worker(actor_id) << "\n";
 	Message message;
 	message.message_data.command = VISIT_ACTOR_COMMAND;
 	message.message_data.healthy = this->healthy;
-
 	this->send_msg(actor_id, message);
 }
 
 void Squirrel::move() {
-	float x_new, y_new;
-
-	squirrelStep(this->x, this->y, &x_new, &y_new, &this->seed);
-	this->x = x_new;
-	this->y = y_new;
+	squirrelStep(this->x, this->y, &this->x, &this->y, &this->seed);
 	int cell_num = getCellFromPosition(this->x, this->y);
 	this->steps[this->step_no] = cell_num;
 
-	// cout << "new cell num is " << cell_num << endl;
 	this->visit(cell_num);
 }
 
@@ -75,7 +71,7 @@ void Squirrel::birth() {
 	avg_pop /= 50;
 
 	if(this->step_no%50 == 0 && willGiveBirth(avg_pop, &this->seed)) {
-		cout << "Squirrel " << this->get_id() << " will give birth\n";
+		// cout << "Squirrel " << this->get_id() << " will give birth\n";
 		Message message;
 		message.message_data.x = this->x;
 		message.message_data.y = this->y;
@@ -91,8 +87,10 @@ void Squirrel::will_die() {
 		avg_inf_level += this->infection_level[i];
 	avg_inf_level /= 50;
 
-	if(this->healthy == 1)
+	if(this->healthy == 1){
+		cout << "catch\n";
 		this->healthy = willCatchDisease(avg_inf_level, &this->seed);
+	}
 
 	if(this->infected_steps >= 50 && willDie(&this->seed)) {
 		this->die();
@@ -106,7 +104,6 @@ void Squirrel::init(float x, float y, int healthy){
 	this->healthy = healthy;
 	this->step_no = 0;
 	this->infected_steps = 0;
-	this->seed = Actor_framework::get_seed();
 	this->steps = vector<int>();
 	this->counter = 0;
 	this->population_influx = vector<int>();

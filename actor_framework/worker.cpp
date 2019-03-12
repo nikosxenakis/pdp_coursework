@@ -67,12 +67,6 @@ int Worker::parse_message(Message message) {
 			cout << actor->get_id() << " ";
     	}
     	cout << endl;
-	   //  for( const auto& worker : this->known_actors ) {
-    //     	for( const auto& actor : worker.second ) {
-				// cout << actor->get_id() << " ";
-    //     	}
-    // 	}
-    // 	cout << endl;
 	}
 	else if(message.message_data.command == KILL_WORKER_COMMAND) {
 		cout << "FINITO\n";
@@ -95,7 +89,6 @@ int Worker::parse_message(Message message) {
 		Actor *actor = Worker::create_actor_f(message.message_data.actor_id, message.message_data.actor_type, this->master_pid, this->get_pid(), this->workers_num, tmp);
 
 		this->add_actor(actor);
-		// this->update_actor(actor);
 	}
 	else if(message.message_data.command == KILL_ACTOR_COMMAND) {
 		// cout << "KILL_ACTOR_COMMAND\n";
@@ -107,23 +100,13 @@ int Worker::parse_message(Message message) {
 			actor->parse_message(message);
 		}
 		else {
-			cout << "Error in Worker::parse_message ";
-			message.print();
+			// cout << "Actor " << message.message_data.actor_id_dest << " is dead\n";
+			// message.print();
 		}
 	}
 
 	return ret_val;
 }
-
-// int Worker::get_total_actors_num() {
-// 	int count = 0;
-//     for( const auto& worker : this->known_actors ) {
-//         for( const auto& actor : worker.second ) {
-// 			count++;
-//         }
-//     }
-//   	return count;
-// }
 
 void Worker::compute() {
 	if(this->start_simulation == 0)

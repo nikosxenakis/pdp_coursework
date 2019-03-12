@@ -7,6 +7,7 @@
 #include "actor_types.h"
 #include "message.h"
 #include "messenger.h"
+// #include "actor_framework.h"
 
 using namespace std;
 
@@ -23,13 +24,16 @@ private:
 	int state;
 	map<int, void (*)(Actor*)> compute_map;
 	map<int, void (*)(Actor*, Message)> parse_message_map;
-	// map<int, vector<Actor*>> known_actors;
 
 protected:
 
 	int type;
+	long seed;
 
 public:
+
+	static void (*initialiseRNG)(long *seed);
+	static void register_initialiseRNG(void (initialiseRNG)(long *seed));
 
 	void print();
 	int get_type();

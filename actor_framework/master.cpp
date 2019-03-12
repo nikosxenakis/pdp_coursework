@@ -12,6 +12,10 @@ Actor* (*Master::create_actor)(int actor_id, int actor_type, int master_pid, int
 
 void *Master::input_data = nullptr;
 
+void Master::register_initialiseRNG(void (initialiseRNG)(long *seed)) {
+	Actor::register_initialiseRNG(initialiseRNG);
+}
+
 void Master::register_create_actor(Actor* (create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data), void *data) {
 	Master::create_actor = create_actor;
 	Master::input_data = data;
@@ -37,18 +41,6 @@ int Master::get_next_worker() {
 }
 
 void Master::spawn_actor(Message message) {
-
-	// Message message;
-	// message.message_data.command = SPAWN_ACTOR_COMMAND;
-
-	// Messenger::send_blocking_message(this->master_pid, message);
-	// message = Messenger::receive_message(this->master_pid);
-
-	// return message.message_data.actor_id%this->workers_num + 1;
-
-
-	// Worker *worker = Master::find_available_worker();
-
 	message.message_data.command = SPAWN_ACTOR_COMMAND;
 	message.message_data.actor_id = Master::next_actor_id;		
 	message.message_data.worker_pid = Master::get_next_worker();
@@ -59,22 +51,10 @@ void Master::spawn_actor(Message message) {
 
 	// cout << "MASTER spawn actor: id = " << Master::next_actor_id << " worker = " << message.message_data.worker_pid << " type = " << message.message_data.actor_type << " x = " << tmp->x << " y = " << tmp->y << endl;
 	
-
-	// Actor *actor = Master::create_actor(message.message_data.actor_id, message.message_data.actor_type, Master::pid, message.message_data.worker_pid, worker->workers_num, tmp);
-	// worker->add_actor(actor);
-	
-
 	Master::active_actors++;
 	Master::next_actor_id++;
 
-
 	Messenger::send_message(message.message_data.worker_pid, message);
-
-	// message.message_data.command = DISCOVER_ACTOR_COMMAND;
-
-  //   for (auto worker : Master::workers) {
-		// Messenger::send_message(worker->get_pid(), message);
-  //   }
 }
 
 void Master::kill_actor(int actor_id) {
@@ -91,33 +71,7 @@ void Master::kill_actor(int actor_id) {
 			break;
 		}
 	}
-  //   for (auto worker : Master::workers) {
-  //   	Message forget_message;
-  //   	forget_message.message_data.command = FORGET_ACTOR_COMMAND;
-  //   	forget_message.message_data.actor_id = actor_id;
-		// Messenger::send_message(worker->get_pid(), forget_message);
-  //   }
 }
-
-// Worker * Master::find_available_worker() {
-// 	Worker *worker_min = nullptr;
-// 	int worker_load;
-
-//     for (auto worker : Master::workers) {
-//     	if(worker_min != nullptr) {
-// 	    	if(worker->get_load() < worker_load) {
-// 	    		worker_min = worker;
-// 	    		worker_load = worker->get_load();
-//     		}
-//     	}
-//     	else {
-//     		worker_min = worker;
-//     		worker_load = worker->get_load();
-//     	}
-// 	}
-
-//     return worker_min;
-// }
 
 Actor* Master::find_actor(int id) {
     for (auto worker : Master::workers) {

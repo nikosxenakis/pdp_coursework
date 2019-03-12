@@ -5,7 +5,6 @@
 #include <vector>
 #include "actor.h"
 #include "squirrel-functions.h"
-#include "actor_framework.h"
 
 using namespace std;
 
@@ -17,7 +16,6 @@ public:
 	int healthy;
 	int step_no;
 	vector<int> steps;
-	long seed;
 	int infected_steps;
 	int counter;
 
