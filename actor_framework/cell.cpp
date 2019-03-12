@@ -1,45 +1,20 @@
 #include "cell.h"
 
-#define INIT 0
-#define SIMULATE 1
-#define WAIT 2
-#define FINISH 3
-
-static void compute_dummy(Actor *actor) {}
-static void parse_message_dummy(Actor *actor, Message message) {}
-
-static void compute_init(Actor *actor) {
-	Cell *cell = dynamic_cast<Cell*>(actor);
-	cell->set_state(WAIT);
-	cell->clock = cell->get_actors_by_type(ACTOR_TYPE_CLOCK)[0];
-
-	Message message;
-	message.message_data.command = TIMESTEP_START;
-	message.message_data.actor_id = cell->get_id();
-	message.message_data.actor_type = cell->get_type();
-
-	cell->send_msg(cell->clock->get_id(), message);
-}
+#define SIMULATE 0
 
 static void compute_simulate(Actor *actor) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
-	cell->set_state(WAIT);
+	// cell->set_state(WAIT);
+	// cell->clock = cell->get_actors_by_type(ACTOR_TYPE_CLOCK)[0];
 
-	// calculate
-	if(cell->timestep > 3) {
-		cell->population_influx -= cell->population_in_steps[cell->timestep-3];
-	}
-	
-	if(cell->timestep > 2) {
-		cell->infection_level -= cell->inflection_in_steps[cell->timestep-2];
-	}
+	// Message message;
+	// message.message_data.command = TIMESTEP_START;
+	// message.message_data.actor_id = cell->get_id();
+	// message.message_data.actor_type = cell->get_type();
 
-	Message message;
-	message.message_data.command = TIMESTEP_END;
-	message.message_data.actor_id = cell->get_id();
-	message.message_data.actor_type = cell->get_type();
+	// cell->send_msg(cell->clock->get_id(), message);
 
-	cell->send_msg(cell->clock->get_id(), message);
+
 
 }
 
@@ -47,28 +22,84 @@ static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 	if(message.message_data.command == VISIT_ACTOR_COMMAND) {
 		cell->visited(message);
+		
+		Message message_new;
+		message_new.message_data.command = VISIT_ACTOR_COMMAND;
+		message_new.message_data.actor_type == ACTOR_TYPE_CELL;
+		message_new.message_data.population_influx = cell->population_influx;
+		message_new.message_data.infection_level = cell->infection_level;
+		
+		cell->send_msg(16, message_new);
+	}
+	else if(message.message_data.command == TIMESTEP_END) {
+
+		if(cell->timestep > 3) {
+			cell->population_influx -= cell->population_in_steps[cell->timestep-3];
+		}
+		if(cell->timestep > 2) {
+			cell->infection_level -= cell->inflection_in_steps[cell->timestep-2];
+		}
+
+		// cout << "Cell: " << cell->timestep << " population_influx " << cell->population_influx << " infection_level " << cell->infection_level << endl;
+		cell->timestep++;
+		Message message_end;
+		message_end.message_data.command = TIMESTEP_END;
+		message_end.message_data.actor_type == ACTOR_TYPE_CELL;
+		message_end.message_data.population_influx = cell->population_influx;
+		message_end.message_data.infection_level = cell->infection_level;
+		cell->send_msg(16, message_end);
 	}
 
 }
 
-static void parse_message_wait(Actor *actor, Message message) {
-	Cell *cell = dynamic_cast<Cell*>(actor);
-	// receive message to increase timestep
-	if(message.message_data.command == TIMESTEP_START) {
-		cell->set_state(SIMULATE);
-		// cell->timestep++;
-	}
-	else if(message.message_data.command == VISIT_ACTOR_COMMAND) {
-		// cout << "VISIT_ACTOR_COMMAND\n";
-		cell->visited(message);
-	}
-	else {
-		cout << "Error in parse_message_wait\n";
-	}
-	// receive message to finish
-}
+// static void compute_simulate(Actor *actor) {
+// 	Cell *cell = dynamic_cast<Cell*>(actor);
+// 	cell->set_state(WAIT);
 
-Cell::Cell(int id, int master_pid, int worker_pid, int cell_number, int max_months): Actor(id, master_pid, worker_pid) {
+// 	// calculate
+// 	if(cell->timestep > 3) {
+// 		cell->population_influx -= cell->population_in_steps[cell->timestep-3];
+// 	}
+	
+// 	if(cell->timestep > 2) {
+// 		cell->infection_level -= cell->inflection_in_steps[cell->timestep-2];
+// 	}
+
+// 	Message message;
+// 	message.message_data.command = TIMESTEP_END;
+// 	message.message_data.actor_id = cell->get_id();
+// 	message.message_data.actor_type = cell->get_type();
+
+// 	cell->send_msg(cell->clock->get_id(), message);
+
+// }
+
+// static void parse_message_simulate(Actor *actor, Message message) {
+// 	Cell *cell = dynamic_cast<Cell*>(actor);
+// 	if(message.message_data.command == VISIT_ACTOR_COMMAND) {
+// 		cell->visited(message);
+// 	}
+
+// }
+
+// static void parse_message_wait(Actor *actor, Message message) {
+// 	Cell *cell = dynamic_cast<Cell*>(actor);
+// 	// receive message to increase timestep
+// 	if(message.message_data.command == TIMESTEP_START) {
+// 		cell->set_state(SIMULATE);
+// 		// cell->timestep++;
+// 	}
+// 	else if(message.message_data.command == VISIT_ACTOR_COMMAND) {
+// 		// cout << "VISIT_ACTOR_COMMAND\n";
+// 		cell->visited(message);
+// 	}
+// 	else {
+// 		cout << "Error in parse_message_wait\n";
+// 	}
+// 	// receive message to finish
+// }
+
+Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int cell_number, int max_months): Actor(id, master_pid, worker_pid, workers_num) {
 	this->type = ACTOR_TYPE_CELL;
 	this->cell_number = id;
 	this->max_months = max_months;
@@ -91,17 +122,10 @@ Cell::Cell(int id, int master_pid, int worker_pid, int cell_number, int max_mont
 		exit(1);
 	}
 
-	this->set_state(INIT);
+	this->set_state(SIMULATE);
 
-	this->register_state(COMPUTE, INIT, compute_init);
 	this->register_state(COMPUTE, SIMULATE, compute_simulate);
-	this->register_state(COMPUTE, WAIT, compute_dummy);
-	this->register_state(COMPUTE, FINISH, compute_dummy);
-
-	this->register_state(PARSE_MESSAGE, INIT, parse_message_dummy);
 	this->register_state(PARSE_MESSAGE, SIMULATE, parse_message_simulate);
-	this->register_state(PARSE_MESSAGE, WAIT, parse_message_wait);
-	this->register_state(PARSE_MESSAGE, FINISH, parse_message_dummy);
 }
 
 void

@@ -1,18 +1,20 @@
 #include "messenger.h"
 
-#define MESSAGE_SIZE 6
+#define MESSAGE_SIZE 10
 
 MPI_Datatype Messenger::Message_type;
 
 void Messenger::init_types() {
 
-    MPI_Datatype type[MESSAGE_SIZE] = { MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT };
-    int blocklen[MESSAGE_SIZE] = { 1, 1, 1, 1, 1, 1 };
+    MPI_Datatype type[MESSAGE_SIZE] = { MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_INT, MPI_FLOAT, MPI_FLOAT };
+    int blocklen[MESSAGE_SIZE] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     MPI_Aint disp[MESSAGE_SIZE];
 
-    for (int i = 0; i < MESSAGE_SIZE; ++i)
-    {
+    for (int i = 0; i < MESSAGE_SIZE-2; ++i) {
         disp[i] = i*sizeof(int);
+    }
+    for (int i = MESSAGE_SIZE-2; i < MESSAGE_SIZE; ++i) {
+        disp[i] = i*sizeof(float);
     }
 
     MPI_Type_create_struct(MESSAGE_SIZE, blocklen, disp, type, &Messenger::Message_type);

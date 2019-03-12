@@ -22,7 +22,7 @@ public:
 	vector<int> inflection_in_steps;
 	Actor *clock;
 
-	Cell(int id, int master_pid, int worker_pid, int cell_number, int max_months);
+	Cell(int id, int master_pid, int worker_pid, int workers_num, int cell_number, int max_months);
 
 	void visited(Message message);
 

@@ -12,17 +12,9 @@ INFECTION_LEVEL=4
 MAX_MONTHS=24
 MAX_ACTORS_NUM=200
 
-# TEST
-CLOCKS=1
-CELLS=16
-SQUIRRELS=3
-MAX_MONTHS=24
-MAX_ACTORS_NUM=200
-
-
 PROC_NUM=5
 
-mpirun -n $PROC_NUM ./actor_framework/parapoxvirus_simulation $CLOCKS $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_ACTORS_NUM
+mpirun -n $PROC_NUM ./actor_framework/parapoxvirus_simulation $CLOCKS $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_ACTORS_NUM $PROC_NUM
 
 
 # mpicxx -o ./parapoxvirus_simulation/parapoxvirus_simulation ./parapoxvirus_simulation/worker.o ./parapoxvirus_simulation/master.o ./parapoxvirus_simulation/actor.o ./parapoxvirus_simulation/input_data.o

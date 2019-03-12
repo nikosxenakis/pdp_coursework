@@ -15,6 +15,10 @@ typedef struct Message_data {
 	int actor_type;
 	int worker_pid;
 	int healthy;
+	int population_influx;
+	int infection_level;
+	float x;
+	float y;
 } Message_data;
 
 class Message {

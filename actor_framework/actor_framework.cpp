@@ -15,8 +15,11 @@ long Actor_framework::get_seed() {
 }
 
 void Actor_framework::worker_code(int pid, int init_actors_num) {
+	int world_size, workers_num;
 	int master_pid = getCommandData();
-	Worker *worker = new Worker(pid, master_pid, init_actors_num);
+	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+	workers_num = world_size - 1;
+	Worker *worker = new Worker(pid, master_pid, init_actors_num, workers_num);
 	worker->run();
 	worker->finalize();
 }
@@ -34,8 +37,8 @@ void Actor_framework::master_code(int pid, void *input_data, int max_actors_num)
 	Master::finalize();
 }
 
-void Actor_framework::spawn_actor(int actor_type) {
-	Master::spawn_actor(actor_type);
+void Actor_framework::spawn_actor(Message message) {
+	Master::spawn_actor(message);
 }
 
 void Actor_framework::register_initialiseRNG(void (initialiseRNG)(long *seed)) {
@@ -46,7 +49,7 @@ void Actor_framework::register_init_actors(void (init_actors)(void *input_data))
 	Actor_framework::init_actors = init_actors;
 }
 
-void Actor_framework::register_create_actor(Actor* (create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, void *data), void *data) {
+void Actor_framework::register_create_actor(Actor* (create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void *data), void *data) {
 	Master::register_create_actor(create_actor, data);
 	Worker::register_create_actor(create_actor, data);
 }

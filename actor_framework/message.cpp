@@ -7,7 +7,11 @@ Message::Message() {
 		-1,
 		-1,
 		-1,
-		-1
+		-1,
+		-1,
+		-1,
+		-1.0,
+		-1.0
 	};
 }
 
@@ -57,7 +61,8 @@ Message::Message(Message_data message_data) {
 
 void Message::print() {
 	cout << "Message: command = " << this->get_string_command() << ", actor_id = " << this->message_data.actor_id << ", actor_type = " << this->message_data.actor_type \
-	<< ", worker_pid = " << this->message_data.worker_pid << ", actor_id_dest = " << this->message_data.actor_id_dest << ", healthy = " << this->message_data.healthy << endl;
+	<< ", worker_pid = " << this->message_data.worker_pid << ", actor_id_dest = " << this->message_data.actor_id_dest << ", healthy = " << this->message_data.healthy \
+	<< ", population_influx = " << this->message_data.population_influx << ", infection_level = " << this->message_data.infection_level << ", x = " << this->message_data.x << ", y = " << this->message_data.y << endl;
 }
 
 string Message::get_string_command() {
