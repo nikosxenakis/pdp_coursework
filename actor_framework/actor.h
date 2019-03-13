@@ -44,7 +44,7 @@ public:
 	virtual ~Actor() = default;
 	int get_id();
 	void create_actor(Message message);
-	void die();
+	void kill_actor();
 	void kill_all();
 	// void kill_all_actors();
 	// Actor* get_actor(int actor_id);

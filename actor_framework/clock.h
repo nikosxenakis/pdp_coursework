@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <chrono>
+#include <sstream>
+#include <fstream>
 #include "actor.h"
 
 using namespace std;
@@ -19,6 +21,12 @@ public:
 	int cells_ready;
 	int alive_squirrels;
 	int infected_squirrels;
+	static stringstream population_influx_stream;
+	static stringstream infection_level_stream;
+
+	void write_output_stream();
+	void write_output_files();
+
 	Clock(int id, int master_pid, int worker_pid, int workers_num, int max_months);
 };
 

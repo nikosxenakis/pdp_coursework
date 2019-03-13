@@ -3,7 +3,7 @@
 #define LIVE 0
 #define INTERACT 1
 
-const static long delay = 1; //20000;
+const static long delay = 5000;
 
 static void compute_dummy(Actor *actor) {
 }
@@ -11,20 +11,16 @@ static void parse_message_dummy(Actor *actor, Message message) {}
 
 static void compute_live(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-		squirrel->set_state(INTERACT);
-		squirrel->move();
-		squirrel->birth();
-		squirrel->will_die();
-
-		/*
+		
 	if(squirrel->counter % delay == 0) {
 		squirrel->set_state(INTERACT);
-		squirrel->move();
 		squirrel->birth();
-		squirrel->will_die();
+		squirrel->catch_disease();
+		squirrel->die();
+		squirrel->move();
 	}
 
-	squirrel->counter++;*/
+	squirrel->counter++;
 }
 
 static void parse_message_interact(Actor *actor, Message message) {
@@ -74,20 +70,23 @@ void Squirrel::birth() {
 
 }
 
-void Squirrel::will_die() {
+void Squirrel::catch_disease() {
 	float avg_inf_level = 0;
 
 	for (int i = 0; i < 50; ++i)
 		avg_inf_level += this->infection_level[i];
 	avg_inf_level /= 50;
-
+	// avg_inf_level = 0;
+	// cout << "inf = " << avg_inf_level << endl;
 	if(this->healthy == 1){
-		this->healthy = willCatchDisease(avg_inf_level, &this->seed);
+		this->healthy = willCatchDisease(avg_inf_level, &this->seed) == 1 ? 0 : 1;
 	}
+	// cout << "res = " << this->healthy;
+}
 
-	if(this->infected_steps >= 50 && willDie(&this->seed)) {
-		this->die();
-	}
+void Squirrel::die() {
+	if(this->infected_steps >= 50 && willDie(&this->seed))
+		this->kill_actor();
 }
 
 void Squirrel::init(float x, float y, int healthy){

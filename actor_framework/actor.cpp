@@ -39,7 +39,7 @@ void Actor::create_actor(Message message) {
 	Messenger::send_message(this->master_pid, message);
 }
 
-void Actor::die() {
+void Actor::kill_actor() {
 	Message message;
 	message.message_data.command = KILL_ACTOR_COMMAND;
 	message.message_data.actor_id = this->get_id();

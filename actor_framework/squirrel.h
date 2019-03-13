@@ -30,7 +30,8 @@ public:
 	void print();
 	void move();
 	void birth();
-	void will_die();
+	void catch_disease();
+	void die();
 };
 
 #endif
