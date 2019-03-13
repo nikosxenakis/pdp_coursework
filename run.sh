@@ -14,6 +14,7 @@ MAX_ACTORS_NUM=200
 
 PROC_NUM=5
 
+
 mpirun -n $PROC_NUM ./actor_framework/parapoxvirus_simulation $CLOCKS $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_ACTORS_NUM $PROC_NUM
 
 

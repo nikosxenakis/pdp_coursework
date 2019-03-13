@@ -4,10 +4,6 @@
 
 #define CLOCK_ID 16
 
-static void compute_simulate(Actor *actor) {
-	Cell *cell = dynamic_cast<Cell*>(actor);
-}
-
 static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 
@@ -23,7 +19,7 @@ static void parse_message_simulate(Actor *actor, Message message) {
 		if (find(cell->alive_squirrels.begin(), cell->alive_squirrels.end(), squirrel_id) == cell->alive_squirrels.end())
 			cell->alive_squirrels.push_back(squirrel_id);
 
-		if (message.message_data.healthy == 0 && find(cell->alive_squirrels.begin(), cell->alive_squirrels.end(), squirrel_id) == cell->alive_squirrels.end())
+		if (message.message_data.healthy == 0 && find(cell->infected_squirrels.begin(), cell->infected_squirrels.end(), squirrel_id) == cell->infected_squirrels.end())
 			cell->infected_squirrels.push_back(squirrel_id);
 
 		cell->send_msg(message.message_data.actor_id, message_new);
@@ -41,15 +37,23 @@ static void parse_message_simulate(Actor *actor, Message message) {
 		}
 		cell->timestep++;
 
+
+		// Message message_ping;
+		// message_ping.message_data.command = PING_ACTOR;
+
+		// for(auto actor_id : cell->alive_squirrels) {
+
+		// }
+		// message_end.message_data.alive_squirrels = cell->alive_squirrels.size();
+		// message_end.message_data.infected_squirrels = cell->infected_squirrels.size();
+
+		cell->alive_squirrels.clear();
+		cell->infected_squirrels.clear();
+
 		Message message_end;
 		message_end.message_data.command = TIMESTEP_END;
 		message_end.message_data.population_influx = cell->population_influx;
 		message_end.message_data.infection_level = cell->infection_level;
-		message_end.message_data.alive_squirrels = cell->alive_squirrels.size();
-		message_end.message_data.infected_squirrels = cell->infected_squirrels.size();
-
-		cell->alive_squirrels.clear();
-		cell->infected_squirrels.clear();
 
 		cell->send_msg(CLOCK_ID, message_end);
 	}
@@ -74,7 +78,6 @@ Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int cell_num
 
 	this->set_state(SIMULATE);
 
-	this->register_state(COMPUTE, SIMULATE, compute_simulate);
 	this->register_state(PARSE_MESSAGE, SIMULATE, parse_message_simulate);
 }
 

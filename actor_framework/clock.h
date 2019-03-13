@@ -19,8 +19,8 @@ public:
 	int max_months;
 	int timestep;
 	int cells_ready;
-	int alive_squirrels;
-	int infected_squirrels;
+	// int alive_squirrels;
+	// int infected_squirrels;
 	static stringstream population_influx_stream;
 	static stringstream infection_level_stream;
 

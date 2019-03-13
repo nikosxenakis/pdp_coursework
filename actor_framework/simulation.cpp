@@ -1,6 +1,3 @@
-/*
- * Example code to run and test the process pool. To compile use something like mpicc -o test test.c pool.c
- */
 #include "simulation.h"
 
 static int cell_number = 0;
@@ -64,7 +61,7 @@ int main(int argc, char* argv[]) {
 
 	Actor_framework::register_create_actor(spawn_actor, input_data);
 
-	Actor_framework::actor_framework(input_data, input_data->max_actors_num, input_data->init_actors_num);
+	Actor_framework::actor_framework(input_data, input_data->init_actors_num);
 
 	return 0;
 }

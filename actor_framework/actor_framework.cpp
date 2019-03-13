@@ -1,7 +1,3 @@
-/*
- * Example code to run and test the process pool. To compile use something like mpicc -o test test.c pool.c
- */
-
 #include "actor_framework.h"
 
 void (*Actor_framework::init_actors)(void *input_data);
@@ -16,11 +12,21 @@ void Actor_framework::worker_code(int pid, int init_actors_num) {
 	worker->finalize();
 }
 
-void Actor_framework::master_code(int pid, void *input_data, int max_actors_num) {
+void Actor_framework::master_code(int pid, void *input_data) {
 	int world_size, workers_num;
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	workers_num = world_size - 1;
-	Master::initialize_master(pid, workers_num, max_actors_num);
+	Master::initialize_master(pid, workers_num);
+
+	vector<int> workers_pid;
+
+    for (int i = 0; i < workers_num; ++i) {
+    	int worker_pid = startWorkerProcess();
+		workers_pid.push_back(worker_pid);
+		cout << "Worker started on MPI process " << worker_pid << endl;
+	}
+
+	Master::init_workers(workers_pid);
 
 	Actor_framework::init_actors(input_data);
 
@@ -42,7 +48,7 @@ void Actor_framework::register_create_actor(Actor* (create_actor)(int actor_id, 
 	Worker::register_create_actor(create_actor, data);
 }
 
-void Actor_framework::actor_framework(void *input_data, int max_actors_num, int init_actors_num) {
+void Actor_framework::actor_framework(void *input_data, int init_actors_num) {
 	int pid;
 	int bsize;
 	char *buffer, *bbuffer;
@@ -61,7 +67,7 @@ void Actor_framework::actor_framework(void *input_data, int max_actors_num, int 
 	if (statusCode == 1) {
 		Actor_framework::worker_code(pid, init_actors_num);
 	} else if (statusCode == 2) {
-		Actor_framework::master_code(pid, input_data, max_actors_num);
+		Actor_framework::master_code(pid, input_data);
 	}
 
 	MPI_Buffer_detach( &bbuffer, &bsize );

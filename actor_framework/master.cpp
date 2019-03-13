@@ -2,8 +2,6 @@
 
 int Master::pid = 0;
 int Master::workers_num = 0;
-int Master::max_actors_num = 0;
-int Master::active_actors = 0;
 int Master::next_actor_id = 0;
 int Master::dead_workers = 0;
 
@@ -17,19 +15,13 @@ void Master::register_create_actor(Actor* (create_actor)(int actor_id, int actor
 	Master::input_data = data;
 }
 
-void Master::init_workers() {
-    for (int i = 0; i < Master::workers_num; ++i) {
-    	Worker *worker = new Worker(startWorkerProcess(), Master::pid, 0, Master::workers_num);
-		workers_pid.push_back(worker->get_pid());
-		cout << "Master started worker on MPI process " << worker->get_pid() << endl;
-    }
+void Master::init_workers(vector<int> workers_pid) {
+    Master::workers_pid = workers_pid;
 }
 
-void Master::initialize_master(int pid, int workers_num, int max_actors_num) {
+void Master::initialize_master(int pid, int workers_num) {
 	Master::pid = pid;
 	Master::workers_num = workers_num;
-	Master::max_actors_num = max_actors_num;
-	Master::init_workers();
 }
 
 int Master::get_next_worker() {
@@ -45,7 +37,6 @@ void Master::spawn_actor(Message message) {
 	// cout << "MASTER spawn actor: id = " << Master::next_actor_id << " worker = " << message.message_data.worker_pid << " type = " << \
 	message.message_data.actor_type << " x = " << message.message_data.x << " y = " << message.message_data.y << " healthy = " << message.message_data.healthy << endl;
 	
-	Master::active_actors++;
 	Master::next_actor_id++;
 }
 
@@ -73,17 +64,7 @@ void Master::run() {
 			Message message = Messenger::receive_message(source_pid);
 			if(Master::parse_message(source_pid, message)) break;
 		}
-		if(Master::compute()) break;
 	} while(1);
-}
-
-int Master::compute() {
-	// cout << Master::active_actors << endl;
-	if(Master::active_actors <= 0 || Master::active_actors > Master::max_actors_num) {
-		cout << "Master terminates simulation, there are " << Master::active_actors << " active_actors\n";
-		return 1;
-	}
-	return 0;
 }
 
 int Master::parse_message(int source_pid, Message message) {

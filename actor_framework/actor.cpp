@@ -26,11 +26,13 @@ void Actor::set_worker(int worker_pid) {
 }
 
 void Actor::compute() {
-	this->compute_map[this->state](this);
+	if(this->compute_map[this->state])
+		this->compute_map[this->state](this);
 }
 
 void Actor::parse_message(Message message) {
-	this->parse_message_map[this->state](this, message);
+	if(this->parse_message_map[this->state])
+		this->parse_message_map[this->state](this, message);
 }
 
 void Actor::create_actor(Message message) {
@@ -44,6 +46,7 @@ void Actor::kill_actor() {
 	message.message_data.command = KILL_ACTOR_COMMAND;
 	message.message_data.actor_id = this->get_id();
 	Messenger::send_message(this->worker_pid, message);
+	Messenger::send_message(this->master_pid, message);
 }
 
 void Actor::kill_all() {

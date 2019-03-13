@@ -71,6 +71,7 @@ int Worker::parse_message(Message message) {
 	}
 	else if(message.message_data.command == SPAWN_ACTOR_COMMAND) {
 		// cout << "Worker SPAWN_ACTOR_COMMAND " << message.message_data.actor_type << "\n";
+		
 		Input_data* tmp = (Input_data*)Worker::input_data;
 		tmp->x = message.message_data.x;
 		tmp->y = message.message_data.y;

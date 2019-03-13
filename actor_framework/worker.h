@@ -1,11 +1,8 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#include <mpi.h>
 #include <iostream>
-#include <string>
 #include <vector>
-#include <map>
 #include "actor.h"
 #include "message.h"
 #include "messenger.h"

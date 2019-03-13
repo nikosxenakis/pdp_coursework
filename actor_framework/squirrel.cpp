@@ -3,16 +3,12 @@
 #define LIVE 0
 #define INTERACT 1
 
-const static long delay = 5000;
-
-static void compute_dummy(Actor *actor) {
-}
-static void parse_message_dummy(Actor *actor, Message message) {}
+#define DELAY 1000
 
 static void compute_live(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 		
-	if(squirrel->counter % delay == 0) {
+	if(squirrel->counter % DELAY == 0) {
 		squirrel->set_state(INTERACT);
 		squirrel->birth();
 		squirrel->catch_disease();
@@ -115,9 +111,7 @@ void Squirrel::init(float x, float y, int healthy){
 	this->set_state(LIVE);
 
 	this->register_state(COMPUTE, LIVE, compute_live);
-	this->register_state(COMPUTE, INTERACT, compute_dummy);
 
-	this->register_state(PARSE_MESSAGE, LIVE, parse_message_dummy);
 	this->register_state(PARSE_MESSAGE, INTERACT, parse_message_interact);
 }
 
