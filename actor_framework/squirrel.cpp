@@ -63,6 +63,7 @@ void Squirrel::birth() {
 	if(this->step_no%50 == 0 && willGiveBirth(avg_pop, &this->seed)) {
 		// cout << "Squirrel " << this->get_id() << " will give birth\n";
 		Message message;
+		message.message_data.healthy = 1;
 		message.message_data.x = this->x;
 		message.message_data.y = this->y;
 		this->create_actor(message);
@@ -90,6 +91,7 @@ void Squirrel::die() {
 }
 
 void Squirrel::init(float x, float y, int healthy){
+	assert(healthy == 0 || healthy == 1);
 	this->type = ACTOR_TYPE_SQUIRREL;
 	this->x = x;
 	this->y = y;
@@ -120,7 +122,7 @@ void Squirrel::init(float x, float y, int healthy){
 }
 
 Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y, int healthy): Actor(id, master_pid, worker_pid, workers_num) {
-	if(healthy == -1)	healthy = 1;
+	// if(healthy == -1)	healthy = 1;
 	this->init(x, y, healthy);
 }
 

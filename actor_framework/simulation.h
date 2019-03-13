@@ -6,6 +6,9 @@
 
 #include "actor_framework.h"
 #include "input_data.h"
-#include "actor_factory.h"
+#include "actor.h"
+#include "clock.h"
+#include "cell.h"
+#include "squirrel.h"
 
 #endif

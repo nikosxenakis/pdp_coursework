@@ -5,6 +5,7 @@
 #define FINISH 3
 
 #define CELL_NUM 16
+#define TIMESTEP_DURATION 100
 
 stringstream Clock::population_influx_stream;
 stringstream Clock::infection_level_stream;
@@ -14,9 +15,8 @@ static void parse_message_dummy(Actor *actor, Message message) {}
 static void compute_in_month(Actor *actor) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	milliseconds curr_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
-	static long duration = 300;
 
-	if((curr_time - clock->begin_time).count() > duration) {
+	if((curr_time - clock->begin_time).count() > TIMESTEP_DURATION) {
 		clock->begin_time = curr_time;
 		cout << "Clock starts simulation for timestep " << clock->timestep << "\n";
 
@@ -69,8 +69,8 @@ void Clock::write_output_stream() {
   		Clock::population_influx_stream << "timestep\t";
   		Clock::infection_level_stream << "timestep\t";
   		for (int i = 0; i < CELL_NUM; ++i) {
-  			Clock::population_influx_stream << "\t" << i;
-  			Clock::infection_level_stream << "\t" << i;
+  			Clock::population_influx_stream << "\tCell " << i;
+  			Clock::infection_level_stream << "\tCell " << i;
   		}
   		Clock::population_influx_stream << "\n";
   		Clock::infection_level_stream << "\n";
