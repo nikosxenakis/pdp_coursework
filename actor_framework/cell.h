@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "actor_types.h"
 #include "message_types.h"
+#include "simulation_commands.h"
 
 #define VIRUS_LIFETIME 2
 

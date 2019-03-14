@@ -8,6 +8,7 @@
 #include "squirrel-functions.h"
 #include "actor_types.h"
 #include "message_types.h"
+#include "simulation_commands.h"
 
 using namespace std;
 

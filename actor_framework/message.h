@@ -4,7 +4,7 @@
 #include <mpi.h>
 #include <iostream>
 #include <string>
-#include "commands.h"
+#include "framework_commands.h"
 
 #define MESSAGE_SIZE 17
 
