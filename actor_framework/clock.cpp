@@ -21,7 +21,7 @@ static void compute_in_month(Actor *actor) {
 
 		clock->set_state(END_OF_MONTH);
 		Message message;
-		message.message_data.command = TIMESTEP_END;
+		message.set(COMMAND, TIMESTEP_END);
 		for (int cell_id = 0; cell_id < CELL_NUM; ++cell_id) {
 			clock->send_msg(cell_id, message);
 		}
@@ -53,9 +53,9 @@ static void compute_end_of_month(Actor *actor) {
 
 static void parse_message_end_of_month(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
-	if(message.message_data.command == TIMESTEP_END) {
-		clock->population_influx[clock->cells_ready] = message.message_data.population_influx;
-		clock->infection_level[clock->cells_ready] = message.message_data.infection_level;
+	if(message.get(COMMAND) == TIMESTEP_END) {
+		clock->population_influx[clock->cells_ready] = message.get(POPULATION_INFLUX);
+		clock->infection_level[clock->cells_ready] = message.get(INFECTION_LEVEL);
 
 		// clock->alive_squirrels[clock->cells_ready] = message.message_data.alive_squirrels;
 		// clock->infected_squirrels[clock->cells_ready] = message.message_data.infected_squirrels;

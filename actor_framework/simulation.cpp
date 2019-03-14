@@ -1,67 +1,85 @@
 #include "simulation.h"
 
-static int cell_number = 0;
+#define MASTER_PID 0
 
-Actor* spawn_actor(int id, int type, int master_pid, int worker_pid, int workers_num, void* v_data) {
+Actor* spawn_actor(Message message) {
+
+	int id = message.get(ACTOR_ID);
+	int max_months = message.get(MAX_MONTHS);
+	int x = message.get(X);
+	int y = message.get(Y);
+	int healthy = message.get(HEALTHY);
+	int worker_pid = message.get(WORKER_PID);
+	int workers_num = message.get(WORKERS_NUM);
+
 	Actor *actor = nullptr;
-	Input_data *data = (Input_data *) v_data;
 
-	// cout << id << " " << type << " " << master_pid << " " << worker_pid << " \n";
-	// data->print();
-
-	if(type == ACTOR_TYPE_CELL){
-		actor = new Cell(id, master_pid, worker_pid, workers_num, cell_number, data->max_months);
-		cell_number++;
+	if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CELL){
+		actor = new Cell(id, MASTER_PID, worker_pid, workers_num, max_months);
 	}
-	else if(type == ACTOR_TYPE_CLOCK){
-		actor = new Clock(id, master_pid, worker_pid, workers_num, data->max_months);
+	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CLOCK){
+		actor = new Clock(id, MASTER_PID, worker_pid, workers_num, max_months);
 	}
-	else if(type == ACTOR_TYPE_SQUIRREL){
-		actor = new Squirrel(id, master_pid, worker_pid, workers_num, data->x, data->y, data->healthy);
+	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_SQUIRREL){
+		actor = new Squirrel(id, MASTER_PID, worker_pid, workers_num, x, y, healthy);
 	}
 
-	if(actor == nullptr || actor->get_type() == ACTOR_TYPE_NONE){
-		cout << "Error in Actor_factory for type = " << type << "\n";
-		exit(1);
-	}
+	assert(actor != nullptr);
 
 	return actor;
 }
 
-void init_actors(void *v_input_data) {
-	Input_data *input_data = (Input_data *)v_input_data;
-	Message message;
-
-	for (int i = 0; i < input_data->cells; ++i){
-		message.message_data.actor_type = ACTOR_TYPE_CELL;
+void init_actors(Message message) {
+	for (int i = 0; i < message.get(CELLS); ++i){
+		message.set(ACTOR_TYPE, ACTOR_TYPE_CELL);
 		Actor_framework::spawn_actor(message);
 	}
-	for (int i = 0; i < input_data->clocks; ++i){
-		message.message_data.actor_type = ACTOR_TYPE_CLOCK;
+	for (int i = 0; i < message.get(CLOCKS); ++i){
+		message.set(ACTOR_TYPE, ACTOR_TYPE_CLOCK);
 		Actor_framework::spawn_actor(message);
 	}
-	for (int i = 0; i < input_data->squirells; ++i){
-		message.message_data.healthy = 1;
-		message.message_data.x = 0;
-		message.message_data.y = 0;
-		if(input_data->infection_level > 0 ) {
-			message.message_data.healthy = 0;
-			input_data->infection_level--;
+	for (int i = 0; i < message.get(SQUIRRELS); ++i){
+		message.set(ACTOR_TYPE, ACTOR_TYPE_SQUIRREL);
+		message.set(X, 0.0);
+		message.set(Y, 0.0);
+		if(message.get(INFECTION_LEVEL) > 0 ) {
+			message.set(HEALTHY, 0);
+			message.set(INFECTION_LEVEL, message.get(INFECTION_LEVEL) - 1);
 		}
-		message.message_data.actor_type = ACTOR_TYPE_SQUIRREL;
+		else {
+			message.set(HEALTHY, 1);
+		}
 		Actor_framework::spawn_actor(message);
 	}
 }
 
+Message parse_args(Message *message, int argc, char* argv[]) {
+	int clocks = atoi(argv[1]);
+	int cells = atoi(argv[2]);
+	int squirrels = atoi(argv[3]);
+
+	message->set(CLOCKS, clocks);
+	message->set(CELLS, cells);
+	message->set(SQUIRRELS, squirrels);
+	message->set(INFECTION_LEVEL, atoi(argv[4]));
+	message->set(INIT_ACTORS_NUM, clocks + cells + squirrels);
+	message->set(MAX_MONTHS, atoi(argv[5]));
+	message->set(MAX_ACTORS_NUM, atoi(argv[6]));
+	message->set(HEALTHY, 1);
+	message->set(X, 0);
+	message->set(Y, 0);
+}
+
 int main(int argc, char* argv[]) {
 
-	Input_data *input_data = new Input_data(argc, argv);
+	Message message;
+	parse_args(&message, argc, argv);
 
 	Actor_framework::register_init_actors(init_actors);
 
-	Actor_framework::register_create_actor(spawn_actor, input_data);
+	Actor_framework::register_spawn_actor(spawn_actor, message);
 
-	Actor_framework::actor_framework(input_data, input_data->init_actors_num);
+	Actor_framework::actor_framework(message);
 
 	return 0;
 }

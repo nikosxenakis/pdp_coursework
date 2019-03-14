@@ -1,18 +1,18 @@
 #include "actor_framework.h"
 
-void (*Actor_framework::init_actors)(void *input_data);
+void (*Actor_framework::init_actors)(Message message);
 
-void Actor_framework::worker_code(int pid, int init_actors_num) {
+void Actor_framework::worker_code(int pid, Message message) {
 	int world_size, workers_num;
 	int master_pid = getCommandData();
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	workers_num = world_size - 1;
-	Worker *worker = new Worker(pid, master_pid, init_actors_num, workers_num);
+	Worker *worker = new Worker(pid, master_pid, message.get(INIT_ACTORS_NUM), workers_num);
 	worker->run();
 	worker->finalize();
 }
 
-void Actor_framework::master_code(int pid, void *input_data) {
+void Actor_framework::master_code(int pid, Message message) {
 	int world_size, workers_num;
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	workers_num = world_size - 1;
@@ -28,7 +28,8 @@ void Actor_framework::master_code(int pid, void *input_data) {
 
 	Master::init_workers(workers_pid);
 
-	Actor_framework::init_actors(input_data);
+	message.set(WORKERS_NUM, workers_num);
+	Actor_framework::init_actors(message);
 
 	Master::run();
 
@@ -39,16 +40,15 @@ void Actor_framework::spawn_actor(Message message) {
 	Master::spawn_actor(message);
 }
 
-void Actor_framework::register_init_actors(void (init_actors)(void *input_data)) {
+void Actor_framework::register_init_actors(void (init_actors)(Message message)) {
 	Actor_framework::init_actors = init_actors;
 }
 
-void Actor_framework::register_create_actor(Actor* (create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void *data), void *data) {
-	Master::register_create_actor(create_actor, data);
-	Worker::register_create_actor(create_actor, data);
+void Actor_framework::register_spawn_actor(Actor* (spawn_actor)(Message message), Message message) {
+	Worker::register_spawn_actor(spawn_actor, message);
 }
 
-void Actor_framework::actor_framework(void *input_data, int init_actors_num) {
+void Actor_framework::actor_framework(Message message) {
 	int pid;
 	int bsize;
 	char *buffer, *bbuffer;
@@ -65,9 +65,9 @@ void Actor_framework::actor_framework(void *input_data, int init_actors_num) {
 
 	int statusCode = processPoolInit();
 	if (statusCode == 1) {
-		Actor_framework::worker_code(pid, init_actors_num);
+		Actor_framework::worker_code(pid, message);
 	} else if (statusCode == 2) {
-		Actor_framework::master_code(pid, input_data);
+		Actor_framework::master_code(pid, message);
 	}
 
 	MPI_Buffer_detach( &bbuffer, &bsize );

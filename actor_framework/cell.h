@@ -5,6 +5,8 @@
 #include <vector>
 #include <algorithm>
 #include "actor.h"
+#include "actor_types.h"
+#include "message_types.h"
 
 #define VIRUS_LIFETIME 2
 
@@ -22,7 +24,7 @@ public:
 	vector<int> alive_squirrels;
 	vector<int> infected_squirrels;
 
-	Cell(int id, int master_pid, int worker_pid, int workers_num, int cell_number, int max_months);
+	Cell(int id, int master_pid, int worker_pid, int workers_num, int max_months);
 
 	void visited(Message message);
 

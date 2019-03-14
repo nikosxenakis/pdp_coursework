@@ -1,12 +1,12 @@
 #include "worker.h"
 
-Actor* (*Worker::create_actor_f)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void *data);
+Actor* (*Worker::spawn_actor)(Message message);
 
-void *Worker::input_data = nullptr;
+Message Worker::input_data;
 
-void Worker::register_create_actor(Actor* (create_actor_f)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data), void *data) {
-	Worker::create_actor_f = create_actor_f;
-	Worker::input_data = data;
+void Worker::register_spawn_actor(Actor* (spawn_actor)(Message message), Message input_data) {
+	Worker::spawn_actor = spawn_actor;
+	Worker::input_data = input_data;
 }
 
 Worker::Worker(int pid, int master_pid, int init_actors_num, int workers_num) {
@@ -57,37 +57,30 @@ int Worker::parse_message(Message message) {
 
 	// cout << "Worker " << this->get_pid() << ": received " << message.get_string_command() << " command\n";
 
-	if(message.message_data.command == START_WORKER_COMMAND) {
+	if(message.get(COMMAND) == START_WORKER_COMMAND) {
 		// while(this->get_total_actors_num() < this->init_actors_num);
 		this->start_simulation = 1;
 		cout << "Started: ";
 		this->print();
 	}
-	else if(message.message_data.command == KILL_WORKER_COMMAND) {
+	else if(message.get(COMMAND) == KILL_WORKER_COMMAND) {
 		Message message;
-		message.message_data.command = KILL_WORKER_COMMAND;
+		message.set(COMMAND, KILL_WORKER_COMMAND);
     	Messenger::send_message(this->master_pid, message);
     	ret_val = 1;
 	}
-	else if(message.message_data.command == SPAWN_ACTOR_COMMAND) {
+	else if(message.get(COMMAND) == SPAWN_ACTOR_COMMAND) {
 		// cout << "Worker SPAWN_ACTOR_COMMAND " << message.message_data.actor_type << "\n";
-		
-		Input_data* tmp = (Input_data*)Worker::input_data;
-		tmp->x = message.message_data.x;
-		tmp->y = message.message_data.y;
-		tmp->healthy = message.message_data.healthy;
 
-		// cout << "WORKER: " << message.message_data.actor_id << " " << tmp->x << " " << tmp->y << endl;
-
-		Actor *actor = Worker::create_actor_f(message.message_data.actor_id, message.message_data.actor_type, this->master_pid, this->get_pid(), this->workers_num, tmp);
+		Actor *actor = Worker::spawn_actor(message);
 		this->add_actor(actor);
 	}
-	else if(message.message_data.command == KILL_ACTOR_COMMAND) {
+	else if(message.get(COMMAND) == KILL_ACTOR_COMMAND) {
 		// cout << "KILL_ACTOR_COMMAND\n";
-		this->remove_actor(message.message_data.actor_id);
+		this->remove_actor(message.get(ACTOR_ID));
 	}
 	else {
-		Actor *actor = this->find_actor(message.message_data.actor_id_dest);
+		Actor *actor = this->find_actor(message.get(ACTOR_ID_DEST));
 		if(actor){
 			actor->parse_message(message);
 		}
@@ -129,9 +122,9 @@ Actor* Worker::find_actor(int actor_id) {
 void Worker::kill_all_actors() {
 	for (auto actor : this->actors) {
 		Message message;
-		message.message_data.command = KILL_ACTOR_COMMAND;
-		message.message_data.actor_id = actor->get_id();
-		message.message_data.actor_type = actor->get_type();
+		message.set(COMMAND, KILL_ACTOR_COMMAND);
+		message.set(ACTOR_ID, actor->get_id());
+		message.set(ACTOR_TYPE, actor->get_type());
 		Messenger::send_message(master_pid, message);
 	}
 }

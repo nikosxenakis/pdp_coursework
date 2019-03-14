@@ -6,6 +6,8 @@
 #include <assert.h>
 #include "actor.h"
 #include "squirrel-functions.h"
+#include "actor_types.h"
+#include "message_types.h"
 
 using namespace std;
 

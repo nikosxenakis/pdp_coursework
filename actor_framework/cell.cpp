@@ -7,25 +7,25 @@
 static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 
-	if(message.message_data.command == VISIT_ACTOR_COMMAND) {
-		Message message_new;
-		int squirrel_id = message.message_data.actor_id;
+	if(message.get(COMMAND) == VISIT_ACTOR_COMMAND) {
+		int squirrel_id = message.get(ACTOR_ID);
 
-		message_new.message_data.actor_id_dest = squirrel_id;
-		message_new.message_data.command = VISIT_ACTOR_COMMAND;
-		message_new.message_data.population_influx = cell->population_influx;
-		message_new.message_data.infection_level = cell->infection_level;
-		
+		Message message_new;
+		message_new.set(ACTOR_ID_DEST, squirrel_id);
+		message_new.set(COMMAND, VISIT_ACTOR_COMMAND);
+		message_new.set(POPULATION_INFLUX, cell->population_influx);
+		message_new.set(INFECTION_LEVEL, cell->infection_level);
+
 		if (find(cell->alive_squirrels.begin(), cell->alive_squirrels.end(), squirrel_id) == cell->alive_squirrels.end())
 			cell->alive_squirrels.push_back(squirrel_id);
 
-		if (message.message_data.healthy == 0 && find(cell->infected_squirrels.begin(), cell->infected_squirrels.end(), squirrel_id) == cell->infected_squirrels.end())
+		if (message.get(HEALTHY) == 0 && find(cell->infected_squirrels.begin(), cell->infected_squirrels.end(), squirrel_id) == cell->infected_squirrels.end())
 			cell->infected_squirrels.push_back(squirrel_id);
 
-		cell->send_msg(message.message_data.actor_id, message_new);
+		cell->send_msg(message.get(ACTOR_ID), message_new);
 		cell->visited(message);
 	}
-	else if(message.message_data.command == TIMESTEP_END) {
+	else if(message.get(COMMAND) == TIMESTEP_END) {
 
 		// cout << "Cell: " << cell->timestep << " population_influx " << cell->population_influx << " infection_level " << cell->infection_level << endl;
 
@@ -51,16 +51,15 @@ static void parse_message_simulate(Actor *actor, Message message) {
 		cell->infected_squirrels.clear();
 
 		Message message_end;
-		message_end.message_data.command = TIMESTEP_END;
-		message_end.message_data.population_influx = cell->population_influx;
-		message_end.message_data.infection_level = cell->infection_level;
-
+		message_end.set(COMMAND, TIMESTEP_END);
+		message_end.set(POPULATION_INFLUX, cell->population_influx);
+		message_end.set(INFECTION_LEVEL, cell->infection_level);
 		cell->send_msg(CLOCK_ID, message_end);
 	}
 
 }
 
-Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int cell_number, int max_months): Actor(id, master_pid, worker_pid, workers_num) {
+Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int max_months): Actor(id, master_pid, worker_pid, workers_num) {
 	this->type = ACTOR_TYPE_CELL;
 	this->max_months = max_months;
 	this->timestep = 1;
@@ -84,7 +83,7 @@ Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int cell_num
 void Cell::visited(Message message) {
  	this->population_in_steps[this->timestep] = this->population_in_steps[this->timestep] + 1;
  	this->population_influx++;
- 	if(message.message_data.healthy == 0) {
+ 	if(message.get(HEALTHY) == 0) {
  		this->inflection_in_steps[this->timestep] = this->inflection_in_steps[this->timestep] + 1;
  		this->infection_level++;
  	}

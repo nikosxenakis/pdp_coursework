@@ -21,11 +21,11 @@ static void compute_live(Actor *actor) {
 
 static void parse_message_interact(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	if(message.message_data.command == VISIT_ACTOR_COMMAND) {
+	if(message.get(COMMAND) == VISIT_ACTOR_COMMAND) {
 		// cout << "Squirrel parse_message_interact: " << squirrel->get_id() << "\n";
 		squirrel->set_state(LIVE);
-		squirrel->population_influx[squirrel->step_no%50] = message.message_data.population_influx;
-		squirrel->infection_level[squirrel->step_no%50] = message.message_data.infection_level;
+		squirrel->population_influx[squirrel->step_no%50] = message.get(POPULATION_INFLUX);
+		squirrel->infection_level[squirrel->step_no%50] = message.get(INFECTION_LEVEL);
 		squirrel->step_no++;
 		
 		if(squirrel->healthy == 0)
@@ -44,8 +44,8 @@ void Squirrel::move() {
 	int cell_num = getCellFromPosition(this->x, this->y);
 	// cout << "Squirrel " << this->get_id() << ": wants to visit Cell " << this->get_id() << " in worker " << this->get_worker(this->get_id()) << "\n";
 	Message message;
-	message.message_data.command = VISIT_ACTOR_COMMAND;
-	message.message_data.healthy = this->healthy;
+	message.set(COMMAND, VISIT_ACTOR_COMMAND);
+	message.set(HEALTHY, this->healthy);
 	this->send_msg(cell_num, message);
 }
 
@@ -59,9 +59,9 @@ void Squirrel::birth() {
 	if(this->step_no%50 == 0 && willGiveBirth(avg_pop, &this->seed)) {
 		// cout << "Squirrel " << this->get_id() << " will give birth\n";
 		Message message;
-		message.message_data.healthy = 1;
-		message.message_data.x = this->x;
-		message.message_data.y = this->y;
+		message.set(HEALTHY, 1);
+		message.set(X, this->x);
+		message.set(Y, this->y);
 		this->create_actor(message);
 	}
 
@@ -116,7 +116,7 @@ void Squirrel::init(float x, float y, int healthy){
 }
 
 Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y, int healthy): Actor(id, master_pid, worker_pid, workers_num) {
-	// if(healthy == -1)	healthy = 1;
+	if(healthy != 0)	healthy = 1;
 	this->init(x, y, healthy);
 }
 

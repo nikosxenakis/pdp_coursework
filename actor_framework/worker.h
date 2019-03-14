@@ -6,7 +6,6 @@
 #include "actor.h"
 #include "message.h"
 #include "messenger.h"
-#include "input_data.h"
 
 using namespace std;
 
@@ -24,11 +23,13 @@ public:
 	vector<Actor*> actors;
 	int start_simulation;
 
-	static void* input_data;
-	static Actor* (*create_actor_f)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data);
+	static Message input_data;
+
+	static Actor* (*spawn_actor)(Message message);
 
 	Worker(int pid, int master_pid, int init_actors_num, int workers_num);
-	static void register_create_actor(Actor* (*)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data), void *data);
+
+	static void register_spawn_actor(Actor* (spawn_actor)(Message message), Message message);
 	int get_load();
 	int get_pid();
 	void print();

@@ -6,35 +6,32 @@
 #include <string>
 #include "commands.h"
 
-using namespace std;
+#define MESSAGE_SIZE 17
 
-typedef struct Message_data {
-	int command;
-	int actor_id;
-	int actor_id_dest;
-	int actor_type;
-	int worker_pid;
-	int healthy;
-	int population_influx;
-	int infection_level;
-	int alive_squirrels;
-	int infected_squirrels;
-	float x;
-	float y;
-} Message_data;
+#define COMMAND 0
+#define ACTOR_TYPE 1
+#define ACTOR_ID 2
+#define ACTOR_ID_DEST 3
+#define WORKERS_NUM 4
+#define WORKER_PID 5
+#define INIT_ACTORS_NUM 6
+#define MAX_ACTORS_NUM 7
+
+using namespace std;
 
 class Message {
 
 public:
-	Message_data message_data;
+	float message_data[MESSAGE_SIZE];
 
 	Message();
-	Message(Message_data message_data);
-	// Message(int command, int actor_type);
-	// Message(int command, int actor_id, int actor_type);
-	// Message(int command, int actor_id, int actor_type, int worker_pid);
+	// Message(float message_data[MESSAGE_SIZE]);
 	void print();
 	string get_string_command();
+	void set(int pos, float data);
+	float get(int pos);
+	string get_field_name(int pos);
+
 };
 
 #endif

@@ -5,7 +5,7 @@ Actor::Actor(int id, int master_pid, int worker_pid, int workers_num) {
 	this->master_pid = master_pid;
 	this->worker_pid = worker_pid;
 	this->workers_num = workers_num;
-	this->type = ACTOR_TYPE_NONE;
+	this->type = -1;
 	this->state = 0;
 }
 
@@ -36,28 +36,29 @@ void Actor::parse_message(Message message) {
 }
 
 void Actor::create_actor(Message message) {
-	message.message_data.command = SPAWN_ACTOR_COMMAND;
-	message.message_data.actor_type = this->type;
+	message.set(COMMAND, SPAWN_ACTOR_COMMAND);
+	message.set(WORKERS_NUM, workers_num);
+	message.set(ACTOR_TYPE, this->type);
 	Messenger::send_message(this->master_pid, message);
 }
 
 void Actor::kill_actor() {
 	Message message;
-	message.message_data.command = KILL_ACTOR_COMMAND;
-	message.message_data.actor_id = this->get_id();
+	message.set(COMMAND, KILL_ACTOR_COMMAND);
+	message.set(ACTOR_ID, this->get_id());
 	Messenger::send_message(this->worker_pid, message);
 	Messenger::send_message(this->master_pid, message);
 }
 
 void Actor::kill_all() {
 	Message message;
-	message.message_data.command = KILL_ALL_ACTORS_COMMAND;
+	message.set(COMMAND, KILL_ALL_ACTORS_COMMAND);
 	Messenger::send_message(this->master_pid, message);
 }
 
 void Actor::send_msg(int actor_id, Message message) {
-	message.message_data.actor_id = this->get_id();
-	message.message_data.actor_id_dest = actor_id;
+	message.set(ACTOR_ID, this->get_id());
+	message.set(ACTOR_ID_DEST, actor_id);
 	Messenger::send_message(this->get_worker(actor_id), message);
 }
 

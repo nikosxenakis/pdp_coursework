@@ -6,6 +6,8 @@
 #include <sstream>
 #include <fstream>
 #include "actor.h"
+#include "actor_types.h"
+#include "message_types.h"
 
 using namespace std;
 using namespace std::chrono;

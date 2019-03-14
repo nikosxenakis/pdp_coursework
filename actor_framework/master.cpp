@@ -6,14 +6,8 @@ int Master::next_actor_id = 0;
 int Master::dead_workers = 0;
 
 vector<int> Master::workers_pid;
-Actor* (*Master::create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void *data);
 
 void *Master::input_data = nullptr;
-
-void Master::register_create_actor(Actor* (create_actor)(int actor_id, int actor_type, int master_pid, int worker_pid, int workers_num, void* data), void *data) {
-	Master::create_actor = create_actor;
-	Master::input_data = data;
-}
 
 void Master::init_workers(vector<int> workers_pid) {
     Master::workers_pid = workers_pid;
@@ -29,20 +23,15 @@ int Master::get_next_worker() {
 }
 
 void Master::spawn_actor(Message message) {
-	message.message_data.command = SPAWN_ACTOR_COMMAND;
-	message.message_data.actor_id = Master::next_actor_id;		
-	message.message_data.worker_pid = Master::get_next_worker();
-	Messenger::send_message(message.message_data.worker_pid, message);
-
-	// cout << "MASTER spawn actor: id = " << Master::next_actor_id << " worker = " << message.message_data.worker_pid << " type = " << \
-	message.message_data.actor_type << " x = " << message.message_data.x << " y = " << message.message_data.y << " healthy = " << message.message_data.healthy << endl;
-	
+	message.set(COMMAND, SPAWN_ACTOR_COMMAND);
+	message.set(ACTOR_ID, Master::next_actor_id);
+	Messenger::send_message(Master::get_next_worker(), message);
 	Master::next_actor_id++;
 }
 
 void Master::start_simulation() {
 	Message message;
-	message.message_data.command = START_WORKER_COMMAND;
+	message.set(COMMAND, START_WORKER_COMMAND);
     for (auto worker_pid : Master::workers_pid) {
     	Messenger::send_message(worker_pid, message);
 	}
@@ -70,11 +59,11 @@ void Master::run() {
 int Master::parse_message(int source_pid, Message message) {
 	// cout << "Master received " << message.get_string_command() << " command\n";
 
-	if(message.message_data.command == KILL_ALL_ACTORS_COMMAND) {
+	if(message.get(COMMAND) == KILL_ALL_ACTORS_COMMAND) {
 		// cout << "KILL_ALL_ACTORS_COMMAND " << "\n";
 		return 1;
 	}
-	else if(message.message_data.command == SPAWN_ACTOR_COMMAND) {
+	else if(message.get(COMMAND) == SPAWN_ACTOR_COMMAND) {
 		// cout << "Master: SPAWN_ACTOR_COMMAND\n";
 		Master::spawn_actor(message);
 	}
@@ -86,7 +75,7 @@ void Master::finalize() {
     	
     for (auto worker_pid : Master::workers_pid) {
 		Message message;
-		message.message_data.command = KILL_WORKER_COMMAND;
+		message.set(COMMAND, KILL_WORKER_COMMAND);
 		Messenger::send_message(worker_pid, message);
 	}	
     for (auto worker_pid : Master::workers_pid) {
@@ -94,7 +83,7 @@ void Master::finalize() {
      	do {
      		//discard messages
      		message = Messenger::receive_message(worker_pid);
-     	} while (message.message_data.command != KILL_WORKER_COMMAND);
+     	} while (message.get(COMMAND) != KILL_WORKER_COMMAND);
 	}	
 	cout << "Master finalize" << endl;
 	// free all memory

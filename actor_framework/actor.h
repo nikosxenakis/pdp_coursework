@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <assert.h>
-#include "actor_types.h"
 #include "message.h"
 #include "messenger.h"
 

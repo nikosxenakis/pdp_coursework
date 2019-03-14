@@ -4,11 +4,12 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <assert.h>
 #include "actor_framework.h"
-#include "input_data.h"
 #include "actor.h"
 #include "clock.h"
 #include "cell.h"
 #include "squirrel.h"
+#include "message_types.h"
 
 #endif
