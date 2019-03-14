@@ -1,19 +1,19 @@
 #DIRECTORIES
 BASE_DIR := .
-ACTOR_DIR := $(BASE_DIR)/actor_framework
-SIMULATION_DIR := $(BASE_DIR)/parapoxvirus_simulation
+FRAMEWORK_DIR := $(BASE_DIR)/actor_framework
+SIMULATION_DIR := $(BASE_DIR)/simulation
 
 actor_framework:
 	@echo " Building actor_framework..."
-	make -C $(ACTOR_DIR) actor_framework
+	make -C $(FRAMEWORK_DIR) actor_framework.so
 
-parapoxvirus_simulation:
-	@echo " Building parapoxvirus_simulation..."
-	make -C $(ACTOR_DIR) parapoxvirus_simulation
+simulation:
+	@echo " Building simulation..."
+	make -C $(SIMULATION_DIR) simulation
 
 clean:
 	@echo " Cleaning..."
 	make -C $(SIMULATION_DIR) clean
-	make -C $(ACTOR_DIR) clean
+	make -C $(FRAMEWORK_DIR) clean
 
-.PHONY: clean actor_framework parapoxvirus_simulation
+.PHONY: clean actor_framework simulation

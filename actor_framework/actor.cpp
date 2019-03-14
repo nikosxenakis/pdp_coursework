@@ -9,6 +9,8 @@ Actor::Actor(int id, int master_pid, int worker_pid, int workers_num) {
 	this->state = 0;
 }
 
+Actor::~Actor() {}
+
 int Actor::get_id() {
 	return this->id;
 }

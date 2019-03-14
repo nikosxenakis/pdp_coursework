@@ -126,3 +126,6 @@ Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_mo
 
 	this->register_state(PARSE_MESSAGE, END_OF_MONTH, parse_message_end_of_month);
 }
+
+Clock::~Clock() {}
+

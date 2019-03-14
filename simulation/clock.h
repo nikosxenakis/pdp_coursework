@@ -31,6 +31,8 @@ public:
 	void write_output_files();
 
 	Clock(int id, int master_pid, int worker_pid, int workers_num, int max_months);
+	~Clock();
+
 };
 
 #endif

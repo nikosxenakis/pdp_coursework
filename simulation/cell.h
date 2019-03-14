@@ -26,6 +26,7 @@ public:
 	vector<int> infected_squirrels;
 
 	Cell(int id, int master_pid, int worker_pid, int workers_num, int max_months);
+	~Cell();
 
 	void visited(Message message);
 

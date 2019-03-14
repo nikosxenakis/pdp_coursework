@@ -1,5 +1,5 @@
 #COMPILER OPTIONS
-CFLAGS := -g -std=c++11 # -Wall
+CFLAGS := -g -std=c++11 -fpic # -Wall
 CC := mpicxx
 
 #DIRECTORIES
@@ -14,17 +14,12 @@ OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-actor_framework:
+actor_framework.so: $(OBJ_FILES)
 	@echo " Compiling actor_framework objective files..."
-	make $(OBJ_FILES)
-
-parapoxvirus_simulation:
-	@echo " Creating parapoxvirus_simulation executable..."
-	make $(OBJ_FILES)
-	$(CC) $(OBJ_FILES) $^ -o $@
+	$(CC) -shared $^ -o $@
 
 clean:
 	@echo " Cleaning..."
 	@rm -rf $(BUILD_DIR)/*.o
 
-.PHONY: clean parapoxvirus_simulation actor_framework
+.PHONY: clean parapoxvirus_simulation actor_framework.so

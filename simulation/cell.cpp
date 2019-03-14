@@ -80,6 +80,8 @@ Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int max_mont
 	this->register_state(PARSE_MESSAGE, SIMULATE, parse_message_simulate);
 }
 
+Cell::~Cell() {}
+
 void Cell::visited(Message message) {
  	this->population_in_steps[this->timestep] = this->population_in_steps[this->timestep] + 1;
  	this->population_influx++;

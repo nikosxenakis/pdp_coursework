@@ -123,3 +123,6 @@ Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, floa
 Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y): Actor(id, master_pid, worker_pid, workers_num) {
 	this->init(x, y, 1);
 }
+
+Squirrel::~Squirrel() {}
+

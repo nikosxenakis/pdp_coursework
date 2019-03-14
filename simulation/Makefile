@@ -14,18 +14,18 @@ SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 ACTOR_SRC_FILES := $(wildcard $(ACTOR_DIR)/*.cpp)
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRC_FILES))
 ACTOR_OBJ_FILES := $(patsubst $(ACTOR_DIR)/%.cpp, $(ACTOR_DIR)/%.o, $(ACTOR_SRC_FILES))
-EXE := $(EXE_DIR)/parapoxvirus_simulation
+EXE := $(EXE_DIR)/simulation
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-parapoxvirus_simulation:
-	@echo " Creating parapoxvirus_simulation executable..."
+simulation:
+	@echo " Creating simulation executable..."
 	make $(OBJ_FILES)
-	$(CC) -o $@ $(OBJ_FILES) $(ACTOR_OBJ_FILES) $^
+	$(CC) -L. -l:actor_framework.so -o $@ $(OBJ_FILES) $^
 
 clean:
 	@echo " Cleaning..."
-	@rm -rf parapoxvirus_simulation $(BUILD_DIR)/*.o
+	@rm -rf simulation $(BUILD_DIR)/*.o
 
-.PHONY: clean parapoxvirus_simulation
+.PHONY: clean simulation
