@@ -1,7 +1,6 @@
 module load mpt
 module load intel-compilers-17
 
-rm ./simulation/actor_framework.so
 rm ./simulation/actor.h
 rm ./simulation/actor_framework.h
 rm ./simulation/ran2.h
@@ -11,10 +10,13 @@ make clean;
 
 make actor_framework;
 
-cp ./actor_framework/actor_framework.so ./simulation/
+# eventually copy just the interface
+
 cp ./actor_framework/*.h ./simulation/
 
 make simulation;
+
+
 
 SQUIRRELS=34
 CELLS=16
@@ -25,7 +27,9 @@ MAX_ACTORS_NUM=200
 
 PROC_NUM=5
 
-LD_LIBRARY_PATH=./simulation:$LD_LIBRARY_PATH
+
+
+LD_LIBRARY_PATH=./actor_framework:$LD_LIBRARY_PATH
 
 mpirun -n $PROC_NUM ./simulation/simulation $CLOCKS $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_ACTORS_NUM $PROC_NUM
 

@@ -22,7 +22,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 simulation:
 	@echo " Creating simulation executable..."
 	make $(OBJ_FILES)
-	$(CC) -L. -l:actor_framework.so -o $@ $(OBJ_FILES) $^
+	$(CC) -L../actor_framework -l:actor_framework.so -o $@ $(OBJ_FILES) $^
 
 clean:
 	@echo " Cleaning..."
