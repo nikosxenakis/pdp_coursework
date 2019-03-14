@@ -2,6 +2,7 @@
 
 #define LIVE 0
 #define INTERACT 1
+#define DIED 2
 
 #define DELAY 1000
 
@@ -17,6 +18,10 @@ static void compute_live(Actor *actor) {
 	}
 
 	squirrel->counter++;
+}
+
+static void compute_died(Actor *actor) {
+	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 }
 
 static void parse_message_interact(Actor *actor, Message message) {
@@ -42,6 +47,7 @@ void Squirrel::move() {
 
 	squirrelStep(this->x, this->y, &this->x, &this->y, &this->seed);
 	int cell_num = getCellFromPosition(this->x, this->y);
+	assert(cell_num >=0 && cell_num <16);
 	// cout << "Squirrel " << this->get_id() << ": wants to visit Cell " << this->get_id() << " in worker " << this->get_worker(this->get_id()) << "\n";
 	Message message;
 	message.set(COMMAND, VISIT_ACTOR_COMMAND);
@@ -59,9 +65,14 @@ void Squirrel::birth() {
 	if(this->step_no%50 == 0 && willGiveBirth(avg_pop, &this->seed)) {
 		// cout << "Squirrel " << this->get_id() << " will give birth\n";
 		Message message;
+		message.set(COMMAND, SPAWN_SQUIRREL_COMMAND);
+		message.set(ACTOR_ID_DEST, CLOCK_ID);
+		this->send_msg(CLOCK_ID, message);
+		message.set(ACTOR_TYPE, ACTOR_TYPE_SQUIRREL);
 		message.set(HEALTHY, 1);
 		message.set(X, this->x);
 		message.set(Y, this->y);
+		message.set(COMMAND, SPAWN_ACTOR_COMMAND);
 		this->create_actor(message);
 	}
 
@@ -75,15 +86,28 @@ void Squirrel::catch_disease() {
 	avg_inf_level /= 50;
 	// avg_inf_level = 0;
 	// cout << "inf = " << avg_inf_level << endl;
-	if(this->healthy == 1){
+	if(this->healthy == 1){		
 		this->healthy = willCatchDisease(avg_inf_level, &this->seed) == 1 ? 0 : 1;
+		if(this->healthy == 0) {
+			Message message;
+			message.set(COMMAND, INFECTED_SQURREL_COMMAND);
+			this->send_msg(CLOCK_ID, message);
+		}
 	}
 	// cout << "res = " << this->healthy;
 }
 
 void Squirrel::die() {
-	if(this->infected_steps >= 50 && willDie(&this->seed))
+	if(this->infected_steps >= 50 && willDie(&this->seed)) {
+		// cout << "Squirrel " << this->get_id() << " will die\n";
+		this->set_state(DIED);
+		Message message;
+		message.set(COMMAND, KILL_SQURREL_COMMAND);
+		message.set(ACTOR_ID_DEST, CLOCK_ID);
+		this->send_msg(CLOCK_ID, message);
+		message.set(COMMAND, KILL_ACTOR_COMMAND);
 		this->kill_actor();
+	}
 }
 
 void Squirrel::init(float x, float y, int healthy){
@@ -111,6 +135,7 @@ void Squirrel::init(float x, float y, int healthy){
 	this->set_state(LIVE);
 
 	this->register_state(COMPUTE, LIVE, compute_live);
+	this->register_state(COMPUTE, DIED, compute_died);
 
 	this->register_state(PARSE_MESSAGE, INTERACT, parse_message_interact);
 }

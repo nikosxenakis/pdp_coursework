@@ -6,13 +6,13 @@ rm ./simulation/actor_framework.h
 rm ./simulation/ran2.h
 rm ./simulation/message.h
 
-make clean;
+
+# make clean;
 
 make actor_framework;
 
-# eventually copy just the interface
-
 cp ./actor_framework/*.h ./simulation/
+
 
 make simulation;
 

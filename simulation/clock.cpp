@@ -32,8 +32,8 @@ static void compute_end_of_month(Actor *actor) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	if(clock->cells_ready == CELL_NUM) {
 		clock->write_output_stream();
-
-		if(clock->timestep > clock->max_months) {
+		cout << "clock->alive_squirrels " << clock->alive_squirrels << " clock->infected_squirrels " << clock->infected_squirrels << endl;
+		if(clock->timestep >= clock->max_months || clock->alive_squirrels == 0 || clock->alive_squirrels > 200) {
 			// if(clock->alive_squirrels.size() > MAX_SQUIRRELS_NO)
 			// 	cout << "Simulation terminated because alive squirrels exceeded the maximum number, " << clock->alive_squirrels.size() << " squirrels alive\n";
 			clock->set_state(FINISH);
@@ -51,6 +51,25 @@ static void compute_end_of_month(Actor *actor) {
 	}
 }
 
+static void parse_message_in_month(Actor *actor, Message message) {
+	Clock *clock = dynamic_cast<Clock*>(actor);
+	if(message.get(COMMAND) == SPAWN_SQUIRREL_COMMAND) {
+		clock->alive_squirrels++;
+	}
+	else if(message.get(COMMAND) == KILL_SQURREL_COMMAND) {
+		clock->alive_squirrels--;
+		clock->infected_squirrels--;
+	}
+	else if(message.get(COMMAND) == INFECTED_SQURREL_COMMAND) {
+		clock->infected_squirrels++;
+	}
+
+	// else {
+	// 	message.print();
+	// 	assert(0);
+	// }
+
+}
 static void parse_message_end_of_month(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	if(message.get(COMMAND) == TIMESTEP_END) {
@@ -63,6 +82,18 @@ static void parse_message_end_of_month(Actor *actor, Message message) {
 		// cout << "clock: " << clock->timestep << " population_influx " << clock->population_influx[clock->cells_ready] << " infection_level " << clock->infection_level[clock->cells_ready] << endl;
 		clock->cells_ready++;
 	}
+	else if(message.get(COMMAND) == SPAWN_SQUIRREL_COMMAND) {
+		clock->alive_squirrels++;
+	}
+	else if(message.get(COMMAND) == KILL_SQURREL_COMMAND) {
+		clock->alive_squirrels--;
+		clock->infected_squirrels--;
+	}
+	else if(message.get(COMMAND) == INFECTED_SQURREL_COMMAND) {
+		clock->infected_squirrels++;
+	}	
+	// else
+	// 	assert(0);
 }
 
 void Clock::write_output_stream() {
@@ -103,13 +134,13 @@ void Clock::write_output_files() {
 	infection_level_file.close();
 }
 
-Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_months): Actor(id, master_pid, worker_pid, workers_num) {
+Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no): Actor(id, master_pid, worker_pid, workers_num) {
 	this->type = ACTOR_TYPE_CLOCK;
 	this->max_months = max_months;
 	this->timestep = 1;
 	this->cells_ready = 0;
-	// this->alive_squirrels = 0;
-	// this->infected_squirrels = 0;
+	this->alive_squirrels = init_squirrels_no;
+	this->infected_squirrels = init_inf_squirrels_no;
 	this->population_influx = vector<int>(CELL_NUM);
 	this->infection_level = vector<int>(CELL_NUM);
 	this->begin_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
@@ -124,6 +155,7 @@ Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_mo
 	this->register_state(COMPUTE, IN_MONTH, compute_in_month);
 	this->register_state(COMPUTE, END_OF_MONTH, compute_end_of_month);
 
+	this->register_state(PARSE_MESSAGE, IN_MONTH, parse_message_in_month);
 	this->register_state(PARSE_MESSAGE, END_OF_MONTH, parse_message_end_of_month);
 }
 

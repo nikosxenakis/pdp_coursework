@@ -11,6 +11,8 @@ Actor* spawn_actor(Message message) {
 	int healthy = message.get(HEALTHY);
 	int worker_pid = message.get(WORKER_PID);
 	int workers_num = message.get(WORKERS_NUM);
+	int init_squirrels_no = message.get(SQUIRRELS);
+	int init_inf_squirrels_no = message.get(INFECTION_LEVEL);
 
 	Actor *actor = nullptr;
 
@@ -18,7 +20,7 @@ Actor* spawn_actor(Message message) {
 		actor = new Cell(id, MASTER_PID, worker_pid, workers_num, max_months);
 	}
 	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CLOCK){
-		actor = new Clock(id, MASTER_PID, worker_pid, workers_num, max_months);
+		actor = new Clock(id, MASTER_PID, worker_pid, workers_num, max_months, init_squirrels_no, init_inf_squirrels_no);
 	}
 	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_SQUIRREL){
 		actor = new Squirrel(id, MASTER_PID, worker_pid, workers_num, x, y, healthy);

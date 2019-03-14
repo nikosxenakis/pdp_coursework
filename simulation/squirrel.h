@@ -10,6 +10,8 @@
 #include "message_types.h"
 #include "simulation_commands.h"
 
+#define CLOCK_ID 16
+
 using namespace std;
 
 class Squirrel: public Actor {
