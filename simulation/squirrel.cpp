@@ -56,24 +56,25 @@ void Squirrel::move() {
 }
 
 void Squirrel::birth() {
-	float avg_pop = 0;
+	if(this->step_no%50 == 0) {
+		float avg_pop = 0;
 
-	for (int i = 0; i < 50; ++i)
-		avg_pop += this->population_influx[i];
-	avg_pop /= 50;
+		for (int i = 0; i < 50; ++i)
+			avg_pop += this->population_influx[i];
+		avg_pop /= 50;
 
-	if(this->step_no%50 == 0 && willGiveBirth(avg_pop, &this->seed)) {
-		// cout << "Squirrel " << this->get_id() << " will give birth\n";
-		Message message;
-		message.set(COMMAND, SPAWN_SQUIRREL_COMMAND);
-		message.set(ACTOR_ID_DEST, CLOCK_ID);
-		this->send_msg(CLOCK_ID, message);
-		message.set(ACTOR_TYPE, ACTOR_TYPE_SQUIRREL);
-		message.set(HEALTHY, 1);
-		message.set(X, this->x);
-		message.set(Y, this->y);
-		message.set(COMMAND, SPAWN_ACTOR_COMMAND);
-		this->create_actor(message);
+		if(willGiveBirth(avg_pop, &this->seed)) {
+			// cout << "Squirrel " << this->get_id() << " will give birth\n";
+			Message message;
+			message.set(COMMAND, SPAWN_SQUIRREL_COMMAND);
+			message.set(ACTOR_ID_DEST, CLOCK_ID);
+			this->send_msg(CLOCK_ID, message);
+			message.set(HEALTHY, 1);
+			message.set(X, this->x);
+			message.set(Y, this->y);
+			message.set(COMMAND, SPAWN_ACTOR_COMMAND);
+			this->create_actor(message);
+		}
 	}
 
 }

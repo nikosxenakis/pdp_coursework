@@ -5,7 +5,7 @@
 #define FINISH 3
 
 #define CELL_NUM 16
-#define TIMESTEP_DURATION 100
+#define TIMESTEP_DURATION 50
 #define MAX_SQUIRRELS_NO 200
 
 stringstream Clock::population_influx_stream;
@@ -99,8 +99,8 @@ static void parse_message_end_of_month(Actor *actor, Message message) {
 void Clock::write_output_stream() {
 
 	if(this->timestep == 1) {
-  		Clock::population_influx_stream << "timestep\t";
-  		Clock::infection_level_stream << "timestep\t";
+  		Clock::population_influx_stream << "timestep";
+  		Clock::infection_level_stream << "timestep";
   		for (int i = 0; i < CELL_NUM; ++i) {
   			Clock::population_influx_stream << "\tCell " << i;
   			Clock::infection_level_stream << "\tCell " << i;
@@ -109,15 +109,16 @@ void Clock::write_output_stream() {
   		Clock::infection_level_stream << "\n";
 	}
 
-	Clock::population_influx_stream << this->timestep << "\t";
+	Clock::population_influx_stream << this->timestep;
+	Clock::infection_level_stream << this->timestep;
 
-	Clock::infection_level_stream << this->timestep << "\t";
 	for(auto population_influx: this->population_influx) {
 		this->population_influx_stream << "\t" << population_influx;
 	}
 	for(auto infection_level: this->infection_level) {
 		Clock::infection_level_stream << "\t" << infection_level;
 	}
+
 	Clock::population_influx_stream << endl;
 	Clock::infection_level_stream << endl;
 
