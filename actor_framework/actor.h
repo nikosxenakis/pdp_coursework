@@ -21,38 +21,39 @@ private:
 	int worker_pid;
 	int workers_num;
 	int state;
+	int type;
 	map<int, void (*)(Actor*)> compute_map;
 	map<int, void (*)(Actor*, Message)> parse_message_map;
 
+	void set_worker(int worker_pid);
+
+	int get_worker(int actor_id);
+
 protected:
 
-	int type;
+	void register_state(int type, int state, void (f)(Actor*));
+	void register_state(int type, int state, void (f)(Actor*, Message));
 
 public:
 
-	void print();
-	int get_type();
-	void compute();
-	void parse_message(Message message);
-	// void discover_actor(int worker_pid, Actor *actor);
-	// void forget_actor(int actor_id);
-	// int find_worker(int actor_id);
-	void set_worker(int worker_pid);
-	// Interface
 	Actor(int id, int master_pid, int worker_pid, int workers_num);
 	virtual ~Actor();
+
+	int get_type();
 	int get_id();
+
+	void set_type(int type);
+	void set_state(int state);
+
+	void print();
+
 	void create_actor(Message message);
 	void kill_actor();
 	void kill_all();
-	// void kill_all_actors();
-	// Actor* get_actor(int actor_id);
-	// vector<Actor*> get_actors_by_type(int actor_type);
+
+	void compute();
+	void parse_message(Message message);
 	void send_msg(int actor_id, Message message);
-	void set_state(int state);
-	void register_state(int type, int state, void (f)(Actor*));
-	void register_state(int type, int state, void (f)(Actor*, Message));
-	int get_worker(int actor_id);
 };
 
 #endif

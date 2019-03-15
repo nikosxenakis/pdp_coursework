@@ -90,7 +90,7 @@ void Squirrel::catch_disease() {
 		this->healthy = willCatchDisease(avg_inf_level, &this->seed) == 1 ? 0 : 1;
 		if(this->healthy == 0) {
 			Message message;
-			message.set(COMMAND, INFECTED_SQURREL_COMMAND);
+			message.set(COMMAND, INFECTED_SQUIRREL_COMMAND);
 			this->send_msg(CLOCK_ID, message);
 		}
 	}
@@ -102,7 +102,7 @@ void Squirrel::die() {
 		// cout << "Squirrel " << this->get_id() << " will die\n";
 		this->set_state(DIED);
 		Message message;
-		message.set(COMMAND, KILL_SQURREL_COMMAND);
+		message.set(COMMAND, KILL_SQUIRREL_COMMAND);
 		message.set(ACTOR_ID_DEST, CLOCK_ID);
 		this->send_msg(CLOCK_ID, message);
 		message.set(COMMAND, KILL_ACTOR_COMMAND);
@@ -112,7 +112,7 @@ void Squirrel::die() {
 
 void Squirrel::init(float x, float y, int healthy){
 	assert(healthy == 0 || healthy == 1);
-	this->type = ACTOR_TYPE_SQUIRREL;
+	this->set_type(ACTOR_TYPE_SQUIRREL);
 	this->x = x;
 	this->y = y;
 	this->healthy = healthy;

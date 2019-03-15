@@ -1,6 +1,6 @@
-#ifndef MESSAGE_TYPES_H
-#define MESSAGE_TYPES_H
-
+#ifndef SIMULATION_MESSAGE_TYPES_H
+#define SIMULATION_MESSAGE_TYPES_H
+	
 	//start from 8
 	#define POPULATION_INFLUX 8
 	#define INFECTION_LEVEL 9

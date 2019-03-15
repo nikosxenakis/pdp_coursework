@@ -23,6 +23,11 @@ int Actor::get_type() {
 	return this->type;
 }
 
+void Actor::set_type(int type) {
+	this->type = type;
+}
+
+
 void Actor::set_worker(int worker_pid) {
 	this->worker_pid = worker_pid;
 }

@@ -56,11 +56,11 @@ static void parse_message_in_month(Actor *actor, Message message) {
 	if(message.get(COMMAND) == SPAWN_SQUIRREL_COMMAND) {
 		clock->alive_squirrels++;
 	}
-	else if(message.get(COMMAND) == KILL_SQURREL_COMMAND) {
+	else if(message.get(COMMAND) == KILL_SQUIRREL_COMMAND) {
 		clock->alive_squirrels--;
 		clock->infected_squirrels--;
 	}
-	else if(message.get(COMMAND) == INFECTED_SQURREL_COMMAND) {
+	else if(message.get(COMMAND) == INFECTED_SQUIRREL_COMMAND) {
 		clock->infected_squirrels++;
 	}
 
@@ -85,11 +85,11 @@ static void parse_message_end_of_month(Actor *actor, Message message) {
 	else if(message.get(COMMAND) == SPAWN_SQUIRREL_COMMAND) {
 		clock->alive_squirrels++;
 	}
-	else if(message.get(COMMAND) == KILL_SQURREL_COMMAND) {
+	else if(message.get(COMMAND) == KILL_SQUIRREL_COMMAND) {
 		clock->alive_squirrels--;
 		clock->infected_squirrels--;
 	}
-	else if(message.get(COMMAND) == INFECTED_SQURREL_COMMAND) {
+	else if(message.get(COMMAND) == INFECTED_SQUIRREL_COMMAND) {
 		clock->infected_squirrels++;
 	}	
 	// else
@@ -135,7 +135,7 @@ void Clock::write_output_files() {
 }
 
 Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no): Actor(id, master_pid, worker_pid, workers_num) {
-	this->type = ACTOR_TYPE_CLOCK;
+	this->set_type(ACTOR_TYPE_CLOCK);
 	this->max_months = max_months;
 	this->timestep = 1;
 	this->cells_ready = 0;

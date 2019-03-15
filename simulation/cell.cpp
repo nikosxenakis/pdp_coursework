@@ -60,7 +60,7 @@ static void parse_message_simulate(Actor *actor, Message message) {
 }
 
 Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int max_months): Actor(id, master_pid, worker_pid, workers_num) {
-	this->type = ACTOR_TYPE_CELL;
+	this->set_type(ACTOR_TYPE_CELL);
 	this->max_months = max_months;
 	this->timestep = 1;
 	this->population_influx = 0;

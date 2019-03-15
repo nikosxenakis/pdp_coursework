@@ -10,6 +10,5 @@
 #include "clock.h"
 #include "cell.h"
 #include "squirrel.h"
-#include "message_types.h"
 
 #endif
