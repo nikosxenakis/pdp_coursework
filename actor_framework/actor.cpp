@@ -74,14 +74,12 @@ void Actor::set_state(int state) {
 	this->state = state;
 }
 
-void Actor::register_state(int type, int state, void (f)(Actor*)) {
-	if(type == COMPUTE)
-		this->compute_map[state] = f;
+void Actor::register_state(int state, void (f)(Actor*)) {
+	this->compute_map[state] = f;
 }
 
-void Actor::register_state(int type, int state, void (f)(Actor*, Message)) {
-	if(type == PARSE_MESSAGE)
-		this->parse_message_map[state] = f;
+void Actor::register_state(int state, void (f)(Actor*, Message)) {
+	this->parse_message_map[state] = f;
 }
 
 int Actor::get_worker(int actor_id) {

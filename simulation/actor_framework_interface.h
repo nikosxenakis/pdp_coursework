@@ -29,11 +29,6 @@ using namespace std;
 #define INIT_ACTORS_NUM 6
 #define MAX_ACTORS_NUM 7
 
-
-#define COMPUTE 0
-#define PARSE_MESSAGE 1
-
-
 class Message {
 public:
 	float message_data[MESSAGE_SIZE];
@@ -59,8 +54,8 @@ private:
 	map<int, void (*)(Actor*, Message)> parse_message_map;
 
 protected:
-	void register_state(int type, int state, void (f)(Actor*));
-	void register_state(int type, int state, void (f)(Actor*, Message));
+	void register_state(int state, void (f)(Actor*));
+	void register_state(int state, void (f)(Actor*, Message));
 
 public:
 	Actor(int id, int master_pid, int worker_pid, int workers_num);

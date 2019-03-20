@@ -77,7 +77,7 @@ Cell::Cell(int id, int master_pid, int worker_pid, int workers_num, int max_mont
 
 	this->set_state(SIMULATE);
 
-	this->register_state(PARSE_MESSAGE, SIMULATE, parse_message_simulate);
+	this->register_state(SIMULATE, parse_message_simulate);
 }
 
 Cell::~Cell() {}

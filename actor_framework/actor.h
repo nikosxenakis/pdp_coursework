@@ -10,9 +10,6 @@
 
 using namespace std;
 
-#define COMPUTE 0
-#define PARSE_MESSAGE 1
-
 class Actor {
 
 private:
@@ -31,8 +28,8 @@ private:
 
 protected:
 
-	void register_state(int type, int state, void (f)(Actor*));
-	void register_state(int type, int state, void (f)(Actor*, Message));
+	void register_state(int state, void (f)(Actor*));
+	void register_state(int state, void (f)(Actor*, Message));
 
 public:
 

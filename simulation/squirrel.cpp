@@ -135,10 +135,9 @@ void Squirrel::init(float x, float y, int healthy){
 
 	this->set_state(LIVE);
 
-	this->register_state(COMPUTE, LIVE, compute_live);
-	this->register_state(COMPUTE, DIED, compute_died);
-
-	this->register_state(PARSE_MESSAGE, INTERACT, parse_message_interact);
+	this->register_state(LIVE, compute_live);
+	this->register_state(DIED, compute_died);
+	this->register_state(INTERACT, parse_message_interact);
 }
 
 Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y, int healthy): Actor(id, master_pid, worker_pid, workers_num) {

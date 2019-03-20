@@ -153,11 +153,10 @@ Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_mo
 
 	this->set_state(IN_MONTH);
 
-	this->register_state(COMPUTE, IN_MONTH, compute_in_month);
-	this->register_state(COMPUTE, END_OF_MONTH, compute_end_of_month);
-
-	this->register_state(PARSE_MESSAGE, IN_MONTH, parse_message_in_month);
-	this->register_state(PARSE_MESSAGE, END_OF_MONTH, parse_message_end_of_month);
+	this->register_state(IN_MONTH, compute_in_month);
+	this->register_state(END_OF_MONTH, compute_end_of_month);
+	this->register_state(IN_MONTH, parse_message_in_month);
+	this->register_state(END_OF_MONTH, parse_message_end_of_month);
 }
 
 Clock::~Clock() {}
