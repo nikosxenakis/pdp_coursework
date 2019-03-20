@@ -1,0 +1,29 @@
+#!/bin/bash --login
+#
+#PBS -N simulation
+#PBS -l place=excl
+#PBS -A d167-s1770309
+#PBS -l walltime=0:01:00
+#PBS -l select=1:ncpus=36
+
+cd $PBS_O_WORKDIR
+
+#load compilers
+module load mpt
+module load intel-compilers-17
+
+LD_LIBRARY_PATH=./actor_framework:$LD_LIBRARY_PATH
+
+SQUIRRELS=34
+CELLS=16
+CLOCKS=1
+INFECTION_LEVEL=4
+MAX_MONTHS=24
+MAX_ACTORS_NUM=200
+
+PROC_NUM=5
+
+#run on 1 thread
+export OMP_NUM_THREADS=1
+
+mpiexec_mpt -ppn $PROC_NUM ./simulation/simulation $CLOCKS $CELLS $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_ACTORS_NUM $PROC_NUM
