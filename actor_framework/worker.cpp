@@ -40,19 +40,23 @@ void Worker::run() {
 	int outstanding, source_pid;
 	MPI_Status status;
 
-	do
-	{
+	do {
 		MPI_Iprobe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &outstanding, &status);
-		if(outstanding) {
-			source_pid=status.MPI_SOURCE;
-			Message message = Messenger::receive_message(source_pid);
-			if(this->parse_message(message)) break;
+		if(!outstanding) {
+			this->compute();
 		}
-		this->compute();
+		else {
+			source_pid=status.MPI_SOURCE;
+			Message message = Messenger::receive_message(source_pid);			
+			if(this->process(message)) break;
+		}
 	} while(1);
+
+
+
 }
 
-int Worker::parse_message(Message message) {
+int Worker::process(Message message) {
 	int ret_val = 0;
 
 	// cout << "Worker " << this->get_pid() << ": received " << message.get_string_command() << " command\n";
@@ -82,7 +86,7 @@ int Worker::parse_message(Message message) {
 	else {
 		Actor *actor = this->find_actor(message.get(ACTOR_ID_DEST));
 		if(actor){
-			actor->parse_message(message);
+			actor->process(message);
 		}
 	}
 

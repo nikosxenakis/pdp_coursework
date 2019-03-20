@@ -4,10 +4,10 @@ void (*Actor_framework::init_actors)(Message message);
 
 void Actor_framework::worker_code(int pid, Message message) {
 	int world_size, workers_num;
-	int master_pid = getCommandData();
+
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	workers_num = world_size - 1;
-	Worker *worker = new Worker(pid, master_pid, message.get(INIT_ACTORS_NUM), workers_num);
+	Worker *worker = new Worker(pid, MASTER_PID, message.get(INIT_ACTORS_NUM), workers_num);
 	worker->run();
 	worker->finalize();
 }
@@ -20,10 +20,9 @@ void Actor_framework::master_code(int pid, Message message) {
 
 	vector<int> workers_pid;
 
-    for (int i = 0; i < workers_num; ++i) {
-    	int worker_pid = startWorkerProcess();
-		workers_pid.push_back(worker_pid);
-		cout << "Worker started on MPI process " << worker_pid << endl;
+    for (int i = 1; i < world_size; ++i) {
+		workers_pid.push_back(i);
+		cout << "Worker started on MPI process " << i << endl;
 	}
 
 	Master::init_workers(workers_pid);
@@ -63,15 +62,14 @@ void Actor_framework::actor_framework(Message message) {
 	buffer = (char *)malloc( bsize );
 	MPI_Buffer_attach( buffer, bsize );
 
-	int statusCode = processPoolInit();
-	if (statusCode == 1) {
-		Actor_framework::worker_code(pid, message);
-	} else if (statusCode == 2) {
+	if (pid == MASTER_PID) {
 		Actor_framework::master_code(pid, message);
+	}
+	else {
+		Actor_framework::worker_code(pid, message);
 	}
 
 	MPI_Buffer_detach( &bbuffer, &bsize );
 
-	processPoolFinalise();
 	MPI_Finalize();
 }

@@ -28,7 +28,7 @@ private:
 	void kill_all_actors();
 
 	void compute();
-	int parse_message(Message message);
+	int process(Message message);
 
 public:
 

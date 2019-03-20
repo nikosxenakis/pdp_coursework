@@ -1,7 +1,7 @@
 #ifndef SIMULATION_MESSAGE_TYPES_H
 #define SIMULATION_MESSAGE_TYPES_H
 	
-	//start from 8
+	//start from 8 to 16
 	#define POPULATION_INFLUX 8
 	#define INFECTION_LEVEL 9
 	#define HEALTHY 10

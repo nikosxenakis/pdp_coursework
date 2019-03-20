@@ -52,7 +52,7 @@ public:
 	void kill_all();
 
 	void compute();
-	void parse_message(Message message);
+	void process(Message message);
 	void send_msg(int actor_id, Message message);
 };
 

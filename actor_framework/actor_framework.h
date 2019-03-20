@@ -3,11 +3,11 @@
 
 #include <mpi.h>
 
-#include "pool.h"
 #include "master.h"
 #include "worker.h"
 #include "messenger.h"
 
+#define MASTER_PID 0
 #define UPPER_BOUND_BUFFER_SIZE 10000
 
 class Actor_framework {

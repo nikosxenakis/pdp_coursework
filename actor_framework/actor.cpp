@@ -9,7 +9,8 @@ Actor::Actor(int id, int master_pid, int worker_pid, int workers_num) {
 	this->state = 0;
 }
 
-Actor::~Actor() {}
+Actor::~Actor() {
+}
 
 int Actor::get_id() {
 	return this->id;
@@ -37,7 +38,7 @@ void Actor::compute() {
 		this->compute_map[this->state](this);
 }
 
-void Actor::parse_message(Message message) {
+void Actor::process(Message message) {
 	if(this->parse_message_map[this->state])
 		this->parse_message_map[this->state](this, message);
 }

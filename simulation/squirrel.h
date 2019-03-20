@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
-#include "actor.h"
+#include "actor_framework_interface.h"
 #include "squirrel-functions.h"
 #include "actor_types.h"
 #include "simulation_message_types.h"

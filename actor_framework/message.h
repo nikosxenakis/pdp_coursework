@@ -20,7 +20,6 @@ public:
 	void set(int pos, float data);
 	float get(int pos);
 	string get_field_name(int pos);
-
 };
 
 #endif

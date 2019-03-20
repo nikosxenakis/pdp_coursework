@@ -5,7 +5,7 @@
 #include <chrono>
 #include <sstream>
 #include <fstream>
-#include "actor.h"
+#include "actor_framework_interface.h"
 #include "actor_types.h"
 #include "simulation_message_types.h"
 #include "simulation_commands.h"

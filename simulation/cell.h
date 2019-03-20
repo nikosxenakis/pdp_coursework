@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "actor.h"
+#include "actor_framework_interface.h"
 #include "actor_types.h"
 #include "simulation_message_types.h"
 #include "simulation_commands.h"
