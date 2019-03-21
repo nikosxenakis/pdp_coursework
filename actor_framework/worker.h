@@ -11,17 +11,44 @@ using namespace std;
 
 #define MASTER_PID 0
 
+/**
+ * @class Worker
+ * @details class containing information and functionality for the Worker process
+ */
 class Worker {
 
 private:
+	/**
+	 * @brief worker process number
+	 */
 	int pid;
+
+	/**
+	 * @brief vector that contains pointers to the actors that live in this worker
+	 */
 	vector<Actor*> actors;
-	int start_simulation;
-	static Message input_data;
+
+	/**
+	 * @brief indicates if the simulation should start or not
+	 */
+	bool start_simulation;
+
+	/**
+	 * @brief function pointer to the given callback that spawns actors
+	 */
 	static Actor* (*spawn_actor)(Message message);
 
+	/**
+	 * @brief number of spawned actors in this worker
+	 */
 	int actors_spawned;
+
+	/**
+	 * @brief number of died actors in this worker
+	 */
 	int actors_died;
+
+	static Message input_data;
 
 	void add_actor(Actor *actor);
 	void remove_actor(int actor_id);
