@@ -7,7 +7,7 @@ void Actor_framework::worker_code(int pid, Message message) {
 
 	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 	workers_num = world_size - 1;
-	Worker *worker = new Worker(pid, MASTER_PID, message.get(INIT_ACTORS_NUM), workers_num);
+	Worker *worker = new Worker(pid, message.get(INIT_ACTORS_NUM), workers_num);
 	worker->run();
 	worker->finalize();
 	delete worker;

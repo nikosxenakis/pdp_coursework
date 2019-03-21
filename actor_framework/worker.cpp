@@ -9,9 +9,8 @@ void Worker::register_spawn_actor(Actor* (spawn_actor)(Message message), Message
 	Worker::input_data = input_data;
 }
 
-Worker::Worker(int pid, int master_pid, int init_actors_num, int workers_num) {
+Worker::Worker(int pid, int init_actors_num, int workers_num) {
 	this->pid = pid;
-	this->master_pid = master_pid;
 	this->init_actors_num = init_actors_num;
 	this->workers_num = workers_num;
 	this->actors = vector<Actor*>();
@@ -52,7 +51,7 @@ int Worker::process(Message message) {
 		cout << "Worker " << this->pid << " started: actors_num = " << this->actors.size() << endl;
 	}
 	else if(message.get(COMMAND) == KILL_WORKER_COMMAND) {
-    	Messenger::send_message(this->master_pid, message);
+    	Messenger::send_message(MASTER_PID, message);
     	ret_val = 1;
 	}
 	else if(message.get(COMMAND) == SPAWN_ACTOR_COMMAND) {
@@ -115,7 +114,7 @@ void Worker::kill_all_actors() {
 		Message message;
 		message.set(COMMAND, KILL_ACTOR_COMMAND);
 		message.set(ACTOR_ID, actor->get_id());
-		Messenger::send_message(master_pid, message);
+		Messenger::send_message(MASTER_PID, message);
 	}
 }
 

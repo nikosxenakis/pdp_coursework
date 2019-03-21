@@ -9,11 +9,12 @@
 
 using namespace std;
 
+#define MASTER_PID 0
+
 class Worker {
 
 private:
 	int pid;
-	int master_pid;
 	int init_actors_num;
 	int workers_num;
 	vector<Actor*> actors;
@@ -35,7 +36,7 @@ private:
 
 public:
 
-	Worker(int pid, int master_pid, int init_actors_num, int workers_num);
+	Worker(int pid, int init_actors_num, int workers_num);
 	~Worker();
 	static void register_spawn_actor(Actor* (spawn_actor)(Message message), Message message);
 	void run();
