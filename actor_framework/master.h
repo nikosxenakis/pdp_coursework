@@ -19,6 +19,8 @@ private:
 	static vector<int> workers_pid;
 	static void* input_data;
 	static int dead_workers;
+	static int actors_spawned;
+	static int actors_died;
 
 	static int get_next_worker();
 	static void start_simulation();

@@ -32,12 +32,6 @@ public:
 	float get(int pos);
 };
 
-class Messenger {
-public:
-	static void send_message(int worker_pid, Message message);
-	static Message receive_message(int source_pid);
-};
-
 class Actor {
 private:
 	int id;

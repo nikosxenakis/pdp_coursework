@@ -20,22 +20,15 @@ Worker::Worker(int pid, int master_pid, int init_actors_num, int workers_num) {
 	this->actors_died = 0;
 }
 
-int Worker::get_load() {
-	return this->actors.size();
-}
-
 int Worker::get_pid() {
 	return this->pid;
 }
 
 void Worker::print() {
 	cout << "Worker " << this->pid << " with load = " << this->actors.size() << " its actors are: ";
-
-	for (auto actor : this->actors) {
+	for (auto actor : this->actors)
 		cout << actor->get_id() << " ";
-	}
 	cout << endl;
-	
 }
 
 void Worker::run() {
@@ -53,15 +46,12 @@ void Worker::run() {
 			if(this->process(message)) break;
 		}
 	} while(1);
-
-
-
 }
 
 int Worker::process(Message message) {
 	int ret_val = 0;
 
-	// cout << "Worker " << this->get_pid() << ": received " << message.get_string_command() << " command\n";
+	// cout << "Worker " << this->get_pid() << ": received " << message.get(COMMAND) << " command\n";
 
 	if(message.get(COMMAND) == START_WORKER_COMMAND) {
 		// while(this->get_total_actors_num() < this->init_actors_num);
@@ -75,7 +65,6 @@ int Worker::process(Message message) {
 	}
 	else if(message.get(COMMAND) == SPAWN_ACTOR_COMMAND) {
 		// cout << "Worker SPAWN_ACTOR_COMMAND " << message.message_data.actor_type << "\n";
-
 		Actor *actor = Worker::spawn_actor(message);
 		this->add_actor(actor);
 	}
@@ -85,11 +74,9 @@ int Worker::process(Message message) {
 	}
 	else {
 		Actor *actor = this->find_actor(message.get(ACTOR_ID_DEST));
-		if(actor){
+		if(actor)
 			actor->process(message);
-		}
 	}
-
 	return ret_val;
 }
 
@@ -103,17 +90,25 @@ void Worker::compute() {
 }
 
 void Worker::finalize() {
-	cout << "Worker finalize" << endl;
+	cout << "Worker " << this->pid << " finalized: actors_spawned = " << this->actors_spawned << ", actors_died = " << this->actors_died << endl;
 }
 
 void Worker::add_actor(Actor *actor) {
+	this->actors_spawned++;
 	this->actors.push_back(actor);
 }
 
 void Worker::remove_actor(int actor_id) {
-	for (int i = 0; i < this->actors.size(); ++i)
-		if(this->actors[i]->get_id() == actor_id)
+	this->actors_died++;
+	for (int i = 0; i < this->actors.size(); ++i) {
+		if(this->actors[i]->get_id() == actor_id) {
+			delete this->actors[i];
+			this->actors[i] = nullptr;
 			this->actors.erase(this->actors.begin() + i);
+			return;
+		}
+	}
+	assert(0);
 }
 
 Actor* Worker::find_actor(int actor_id) {

@@ -8,10 +8,12 @@ void Messenger::init_types() {
 }
 
 void Messenger::send_message(int worker_pid, Message message) {
+	assert(worker_pid >= 0);
 	MPI_Bsend(&message.message_data, 1, Messenger::Message_type, worker_pid, 0, MPI_COMM_WORLD);
 }
 
 void Messenger::send_blocking_message(int worker_pid, Message message) {
+	assert(worker_pid >= 0);
     MPI_Send(&message.message_data, 1, Messenger::Message_type, worker_pid, 0, MPI_COMM_WORLD);
 }
 

@@ -50,6 +50,7 @@ void Actor::create_actor(Message message) {
 }
 
 void Actor::kill_actor() {
+	// cout << "kill_actor send to " << this->worker_pid << endl;
 	Message message;
 	message.set(COMMAND, KILL_ACTOR_COMMAND);
 	message.set(ACTOR_ID, this->get_id());
