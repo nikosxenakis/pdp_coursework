@@ -20,10 +20,6 @@ static void compute_live(Actor *actor) {
 	squirrel->counter++;
 }
 
-static void compute_died(Actor *actor) {
-	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-}
-
 static void parse_message_interact(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	if(message.get(COMMAND) == VISIT_CELL_COMMAND) {
@@ -128,7 +124,6 @@ Squirrel::Squirrel(int id, int worker_pid, int workers_num, float x, float y, in
 	this->set_state(LIVE);
 
 	this->register_state(LIVE, compute_live);
-	this->register_state(DIED, compute_died);
 	this->register_state(INTERACT, parse_message_interact);
 
 }

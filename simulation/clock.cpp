@@ -66,6 +66,7 @@ static void parse_message_in_month(Actor *actor, Message message) {
 	else
 		assert(0);
 }
+
 static void parse_message_end_of_month(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	if(message.get(COMMAND) == TIMESTEP_END) {

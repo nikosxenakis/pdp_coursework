@@ -123,7 +123,6 @@ void Worker::kill_all_actors() {
 		Message message;
 		message.set(COMMAND, KILL_ACTOR_COMMAND);
 		message.set(ACTOR_ID, actor->get_id());
-		message.set(ACTOR_TYPE, actor->get_type());
 		Messenger::send_message(master_pid, message);
 	}
 }

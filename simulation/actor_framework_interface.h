@@ -48,7 +48,6 @@ protected:
 public:
 	Actor(int id, int type, int worker_pid, int workers_num);
 	virtual ~Actor();
-	int get_type();
 	int get_id();
 
 	void set_state(int state);

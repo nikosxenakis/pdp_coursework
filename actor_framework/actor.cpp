@@ -19,10 +19,6 @@ void Actor::print() {
 	cout << "Actor: id = " << this->id << ", type = " << this->type << endl;
 }
 
-int Actor::get_type() {
-	return this->type;
-}
-
 void Actor::set_worker(int worker_pid) {
 	this->worker_pid = worker_pid;
 }
