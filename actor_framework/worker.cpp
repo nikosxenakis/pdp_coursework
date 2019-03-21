@@ -9,18 +9,17 @@ void Worker::register_spawn_actor(Actor* (spawn_actor)(Message message), Message
 	Worker::input_data = input_data;
 }
 
-Worker::Worker(int pid, int init_actors_num, int workers_num) {
+Worker::Worker(int pid) {
 	this->pid = pid;
-	this->init_actors_num = init_actors_num;
-	this->workers_num = workers_num;
 	this->actors = vector<Actor*>();
 	this->start_simulation = 0;
 	this->actors_spawned = 0;
 	this->actors_died = 0;
 }
 
-int Worker::get_pid() {
-	return this->pid;
+Worker::~Worker() {
+	for(auto actor : this->actors)
+		delete actor;
 }
 
 void Worker::run() {
@@ -46,7 +45,6 @@ int Worker::process(Message message) {
 	// cout << "Worker " << this->get_pid() << ": received " << message.get(COMMAND) << " command\n";
 
 	if(message.get(COMMAND) == START_WORKER_COMMAND) {
-		// while(this->get_total_actors_num() < this->init_actors_num);
 		this->start_simulation = 1;
 		cout << "Worker " << this->pid << " started: actors_num = " << this->actors.size() << endl;
 	}
@@ -118,6 +116,4 @@ void Worker::kill_all_actors() {
 	}
 }
 
-Worker::~Worker() {
 
-}

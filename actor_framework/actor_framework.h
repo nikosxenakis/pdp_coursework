@@ -26,9 +26,8 @@ private:
 	/**
 	 * @brief create a new worker object and executes its run function
 	 * @param pid worker process pid
-	 * @param message a message containing vital infromation
 	 */
-	static void worker_code(int pid, Message message);
+	static void worker_code(int pid);
 
 	/**
 	 * @brief executes the run function of master process

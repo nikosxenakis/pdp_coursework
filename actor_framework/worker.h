@@ -15,8 +15,6 @@ class Worker {
 
 private:
 	int pid;
-	int init_actors_num;
-	int workers_num;
 	vector<Actor*> actors;
 	int start_simulation;
 	static Message input_data;
@@ -25,7 +23,6 @@ private:
 	int actors_spawned;
 	int actors_died;
 
-	int get_pid();
 	void add_actor(Actor *actor);
 	void remove_actor(int actor_id);
 	Actor* find_actor(int actor_id);
@@ -36,7 +33,7 @@ private:
 
 public:
 
-	Worker(int pid, int init_actors_num, int workers_num);
+	Worker(int pid);
 	~Worker();
 	static void register_spawn_actor(Actor* (spawn_actor)(Message message), Message message);
 	void run();

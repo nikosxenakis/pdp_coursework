@@ -2,12 +2,8 @@
 
 void (*Actor_framework::init_actors)(Message message);
 
-void Actor_framework::worker_code(int pid, Message message) {
-	int world_size, workers_num;
-
-	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-	workers_num = world_size - 1;
-	Worker *worker = new Worker(pid, message.get(INIT_ACTORS_NUM), workers_num);
+void Actor_framework::worker_code(int pid) {
+	Worker *worker = new Worker(pid);
 	worker->run();
 	worker->finalize();
 	delete worker;
@@ -59,7 +55,7 @@ void Actor_framework::actor_framework(Message message) {
 	if (pid == MASTER_PID)
 		Actor_framework::master_code(message);
 	else
-		Actor_framework::worker_code(pid, message);
+		Actor_framework::worker_code(pid);
 
 	MPI_Buffer_detach( &bbuffer, &bsize );
 	MPI_Finalize();
