@@ -16,6 +16,8 @@ Worker::Worker(int pid, int master_pid, int init_actors_num, int workers_num) {
 	this->workers_num = workers_num;
 	this->actors = vector<Actor*>();
 	this->start_simulation = 0;
+	this->actors_spawned = 0;
+	this->actors_died = 0;
 }
 
 int Worker::get_load() {
@@ -68,8 +70,6 @@ int Worker::process(Message message) {
 		this->print();
 	}
 	else if(message.get(COMMAND) == KILL_WORKER_COMMAND) {
-		Message message;
-		message.set(COMMAND, KILL_WORKER_COMMAND);
     	Messenger::send_message(this->master_pid, message);
     	ret_val = 1;
 	}

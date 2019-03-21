@@ -7,12 +7,11 @@
 static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 
-	if(message.get(COMMAND) == VISIT_ACTOR_COMMAND) {
+	if(message.get(COMMAND) == VISIT_CELL_COMMAND) {
 		int squirrel_id = message.get(ACTOR_ID);
 
 		Message message_new;
-		message_new.set(ACTOR_ID_DEST, squirrel_id);
-		message_new.set(COMMAND, VISIT_ACTOR_COMMAND);
+		message_new.set(COMMAND, VISIT_CELL_COMMAND);
 		message_new.set(POPULATION_INFLUX, cell->population_influx);
 		message_new.set(INFECTION_LEVEL, cell->infection_level);
 

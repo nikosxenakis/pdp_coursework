@@ -6,10 +6,10 @@
 #define COMMAND 0
 #define ACTOR_TYPE 1
 #define ACTOR_ID 2
-#define ACTOR_ID_DEST 3
-#define WORKERS_NUM 4
-#define WORKER_PID 5
-#define INIT_ACTORS_NUM 6
-#define MAX_ACTORS_NUM 7
+#define WORKERS_NUM 3
+#define WORKER_PID 4
+#define INIT_ACTORS_NUM 5
+#define MAX_ACTORS_NUM 6
+#define ACTOR_ID_DEST 7
 
 #endif

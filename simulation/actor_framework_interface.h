@@ -1,3 +1,8 @@
+/*
+ * Description: This is the provided functionality from the actor_framework
+ * Warning: Use it as it is any changes will lead to failure
+*/
+
 #ifndef ACTOR_FRAMEWORK_INTERFACE_H
 #define ACTOR_FRAMEWORK_INTERFACE_H
 
@@ -7,15 +12,6 @@
 
 using namespace std;
 
-// framework commands DON'T OVERRIDE THEM
-#define SPAWN_ACTOR_COMMAND 0
-#define KILL_ACTOR_COMMAND 1
-#define VISIT_ACTOR_COMMAND 2
-#define KILL_ALL_ACTORS_COMMAND 3
-#define KILL_WORKER_COMMAND 10
-#define START_WORKER_COMMAND 11
-
-// number of floats in a message
 #define MESSAGE_SIZE 17
 
 // framework message fields DON'T OVERRIDE THEM
@@ -23,11 +19,10 @@ using namespace std;
 #define COMMAND 0
 #define ACTOR_TYPE 1
 #define ACTOR_ID 2
-#define ACTOR_ID_DEST 3
-#define WORKERS_NUM 4
-#define WORKER_PID 5
-#define INIT_ACTORS_NUM 6
-#define MAX_ACTORS_NUM 7
+#define WORKERS_NUM 3
+#define WORKER_PID 4
+#define INIT_ACTORS_NUM 5
+#define MAX_ACTORS_NUM 6
 
 class Message {
 public:
@@ -56,14 +51,15 @@ private:
 protected:
 	void register_state(int state, void (f)(Actor*));
 	void register_state(int state, void (f)(Actor*, Message));
-
 public:
 	Actor(int id, int master_pid, int worker_pid, int workers_num);
 	virtual ~Actor();
 	int get_type();
 	int get_id();
+
 	void set_type(int type);
 	void set_state(int state);
+
 	void create_actor(Message message);
 	void kill_actor();
 	void kill_all();

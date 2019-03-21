@@ -31,6 +31,10 @@ protected:
 	void register_state(int state, void (f)(Actor*));
 	void register_state(int state, void (f)(Actor*, Message));
 
+	void create_actor(Message message);
+	void kill_actor();
+	void kill_all();
+
 public:
 
 	Actor(int id, int master_pid, int worker_pid, int workers_num);
@@ -44,13 +48,10 @@ public:
 
 	void print();
 
-	void create_actor(Message message);
-	void kill_actor();
-	void kill_all();
-
 	void compute();
 	void process(Message message);
 	void send_msg(int actor_id, Message message);
+
 };
 
 #endif

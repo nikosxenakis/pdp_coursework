@@ -21,6 +21,9 @@ private:
 	static Message input_data;
 	static Actor* (*spawn_actor)(Message message);
 
+	int actors_spawned;
+	int actors_died;
+
 	int get_pid();
 	void add_actor(Actor *actor);
 	void remove_actor(int actor_id);

@@ -28,7 +28,6 @@ void Actor::set_type(int type) {
 	this->type = type;
 }
 
-
 void Actor::set_worker(int worker_pid) {
 	this->worker_pid = worker_pid;
 }
@@ -65,6 +64,10 @@ void Actor::kill_all() {
 }
 
 void Actor::send_msg(int actor_id, Message message) {
+	if(message.get(COMMAND) <= 4) {
+		cerr << "Invalid message error: COMMAND code should be greater that 4\n";
+		exit(1);
+	}
 	message.set(ACTOR_ID, this->get_id());
 	message.set(ACTOR_ID_DEST, actor_id);
 	Messenger::send_message(this->get_worker(actor_id), message);
