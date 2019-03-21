@@ -107,9 +107,8 @@ void Squirrel::die() {
 	}
 }
 
-void Squirrel::init(float x, float y, int healthy){
+Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y, int healthy): Actor(id, ACTOR_TYPE_SQUIRREL, master_pid, worker_pid, workers_num) {
 	assert(healthy == 0 || healthy == 1);
-	this->set_type(ACTOR_TYPE_SQUIRREL);
 	this->x = x;
 	this->y = y;
 	this->healthy = healthy;
@@ -131,16 +130,7 @@ void Squirrel::init(float x, float y, int healthy){
 	this->register_state(LIVE, compute_live);
 	this->register_state(DIED, compute_died);
 	this->register_state(INTERACT, parse_message_interact);
-}
 
-Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y, int healthy): Actor(id, master_pid, worker_pid, workers_num) {
-	if(healthy != 0)	healthy = 1;
-	this->init(x, y, healthy);
-}
-
-Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y): Actor(id, master_pid, worker_pid, workers_num) {
-	this->init(x, y, 1);
 }
 
 Squirrel::~Squirrel() {}
-

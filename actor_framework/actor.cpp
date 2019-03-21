@@ -1,11 +1,11 @@
 #include "actor.h"
 
-Actor::Actor(int id, int master_pid, int worker_pid, int workers_num) {
+Actor::Actor(int id, int type, int master_pid, int worker_pid, int workers_num) {
 	this->id = id;
+	this->type = type;
 	this->master_pid = master_pid;
 	this->worker_pid = worker_pid;
 	this->workers_num = workers_num;
-	this->type = -1;
 	this->state = 0;
 }
 
@@ -22,10 +22,6 @@ void Actor::print() {
 
 int Actor::get_type() {
 	return this->type;
-}
-
-void Actor::set_type(int type) {
-	this->type = type;
 }
 
 void Actor::set_worker(int worker_pid) {
