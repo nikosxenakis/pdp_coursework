@@ -32,11 +32,11 @@ def create_plots(title, x_axis_title, y_axis_title, labels, x_values, y_values, 
 
     plt.legend(loc=legent_pos)
 
-    fig.savefig('./' + str(title) + '.eps', format='eps', dpi=1000)
+    fig.savefig('./data/' + str(title) + '.eps', format='eps', dpi=1000)
 
 
 
-def parse_population_influx(file):
+def parse_population_influx(file, name):
 
     i = 0;
 
@@ -62,15 +62,15 @@ def parse_population_influx(file):
         i = i + 1
 
 
-    print(titles)
-    print(timesteps)
-    print(average)
+    # print(titles)
+    # print(timesteps)
+    # print(average)
 
     create_plots(
-        str("population_influx"),
-        "Timesteps",
-        str("population_influx"),
-        ["sample 1"],
+        name,
+        "Month",
+        name,
+        [name],
         timesteps,
         [average],
         0.4,
@@ -80,4 +80,10 @@ def parse_population_influx(file):
 path = './data/population_influx.tsv'
 f = open(path, 'r')
 
-parse_population_influx(f)
+parse_population_influx(f, "population_influx")
+
+path = './data/infection_level.tsv'
+f = open(path, 'r')
+
+parse_population_influx(f, "infection_level")
+

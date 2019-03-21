@@ -1,3 +1,7 @@
+/*
+ * Description: This file includes defines of the 3 different actor types
+*/
+
 #ifndef ACTOR_TYPES_H
 #define ACTOR_TYPES_H
 

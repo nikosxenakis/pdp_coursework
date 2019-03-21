@@ -50,27 +50,28 @@ void init_actors(Message message) {
 	}
 }
 
-Message parse_args(Message *message, int argc, char* argv[]) {
+Message parse_args(int argc, char* argv[]) {
 	int clocks = atoi(argv[1]);
 	int cells = atoi(argv[2]);
 	int squirrels = atoi(argv[3]);
 
-	message->set(CLOCKS, clocks);
-	message->set(CELLS, cells);
-	message->set(SQUIRRELS, squirrels);
-	message->set(INFECTION_LEVEL, atoi(argv[4]));
-	message->set(INIT_ACTORS_NUM, clocks + cells + squirrels);
-	message->set(MAX_MONTHS, atoi(argv[5]));
-	message->set(MAX_ACTORS_NUM, atoi(argv[6]));
-	message->set(HEALTHY, 1);
-	message->set(X, 0);
-	message->set(Y, 0);
+	Message message;
+	message.set(CLOCKS, clocks);
+	message.set(CELLS, cells);
+	message.set(SQUIRRELS, squirrels);
+	message.set(INFECTION_LEVEL, atoi(argv[4]));
+	message.set(INIT_ACTORS_NUM, clocks + cells + squirrels);
+	message.set(MAX_MONTHS, atoi(argv[5]));
+	message.set(MAX_ACTORS_NUM, atoi(argv[6]));
+	message.set(HEALTHY, 1);
+	message.set(X, 0);
+	message.set(Y, 0);
+	return message;
 }
 
 int main(int argc, char* argv[]) {
 
-	Message message;
-	parse_args(&message, argc, argv);
+	Message message = parse_args(argc, argv);
 
 	Actor_framework::register_init_actors(init_actors);
 

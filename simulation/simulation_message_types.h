@@ -1,7 +1,11 @@
+/*
+ * Description: In this file there are the user defined message types and positions
+ * Warning: use numbers greater of equal that 8 and smaller or equal to 16, wrong values will crash the simulation
+*/
+
 #ifndef SIMULATION_MESSAGE_TYPES_H
 #define SIMULATION_MESSAGE_TYPES_H
 	
-	//start from 8 to 16
 	#define POPULATION_INFLUX 8
 	#define INFECTION_LEVEL 9
 	#define HEALTHY 10

@@ -93,16 +93,16 @@ static void parse_message_end_of_month(Actor *actor, Message message) {
 
 void Clock::write_output_stream() {
 
-	// if(this->timestep == 1) {
- //  		Clock::population_influx_stream << "timestep";
- //  		Clock::infection_level_stream << "timestep";
- //  		for (int i = 0; i < CELL_NUM; ++i) {
- //  			Clock::population_influx_stream << "\tCell " << i;
- //  			Clock::infection_level_stream << "\tCell " << i;
- //  		}
- //  		Clock::population_influx_stream << "\n";
- //  		Clock::infection_level_stream << "\n";
-	// }
+	if(this->timestep == 1) {
+  		Clock::population_influx_stream << "timestep";
+  		Clock::infection_level_stream << "timestep";
+  		for (int i = 0; i < CELL_NUM; ++i) {
+  			Clock::population_influx_stream << "\tCell " << i;
+  			Clock::infection_level_stream << "\tCell " << i;
+  		}
+  		Clock::population_influx_stream << "\n";
+  		Clock::infection_level_stream << "\n";
+	}
 
 	Clock::population_influx_stream << this->timestep;
 	Clock::infection_level_stream << this->timestep;
@@ -122,8 +122,8 @@ void Clock::write_output_stream() {
 
 void Clock::write_output_files() {
 	ofstream population_influx_file, infection_level_file;
-	population_influx_file.open ("./data/population_influx.tsv", std::ios::app);
-	infection_level_file.open ("./data/infection_level.tsv", std::ios::app);
+	population_influx_file.open ("./data/population_influx.tsv");
+	infection_level_file.open ("./data/infection_level.tsv");
 	population_influx_file << Clock::population_influx_stream.rdbuf();
 	infection_level_file << Clock::infection_level_stream.rdbuf();
 	population_influx_file.close();
