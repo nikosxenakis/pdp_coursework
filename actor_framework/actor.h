@@ -1,7 +1,6 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include <iostream>
 #include <map>
 #include <assert.h>
 #include "message.h"

@@ -2,11 +2,8 @@
 #define MESSENGER_H
 
 #include <mpi.h>
-#include <iostream>
 #include <assert.h>
 #include "message.h"
-
-using namespace std;
 
 class Messenger {
 
