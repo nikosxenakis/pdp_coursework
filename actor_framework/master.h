@@ -13,7 +13,6 @@ using namespace std;
 class Master {
 
 private:
-	static int pid;
 	static int workers_num;
 	static int next_actor_id;
 	static vector<int> workers_pid;
@@ -29,7 +28,7 @@ private:
 public:
 
 	static void init_workers(vector<int> workers_pid);
-	static void initialize_master(int pid, int workers_num);
+	static void initialize_master(int workers_num);
 	static void spawn_actor(Message message);
 	static void run();
 	static void finalize();

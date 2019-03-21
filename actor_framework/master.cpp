@@ -1,6 +1,5 @@
 #include "master.h"
 
-int Master::pid = 0;
 int Master::workers_num = 0;
 int Master::next_actor_id = 0;
 int Master::dead_workers = 0;
@@ -15,8 +14,7 @@ void Master::init_workers(vector<int> workers_pid) {
     Master::workers_pid = workers_pid;
 }
 
-void Master::initialize_master(int pid, int workers_num) {
-	Master::pid = pid;
+void Master::initialize_master(int workers_num) {
 	Master::workers_num = workers_num;
 }
 

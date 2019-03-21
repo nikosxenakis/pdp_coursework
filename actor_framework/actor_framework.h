@@ -32,10 +32,9 @@ private:
 
 	/**
 	 * @brief executes the run function of master process
-	 * @param pid worker process pid
 	 * @param message a message containing vital infromation
 	 */
-	static void master_code(int pid, Message message);
+	static void master_code(Message message);
 
 public:
 
