@@ -6,13 +6,8 @@ int Master::dead_workers = 0;
 int Master::actors_spawned = 0;
 int Master::actors_died = 0;
 
-vector<int> Master::workers_pid;
-
 void *Master::input_data = nullptr;
 
-void Master::init_workers(vector<int> workers_pid) {
-    Master::workers_pid = workers_pid;
-}
 
 void Master::initialize_master(int workers_num) {
 	Master::workers_num = workers_num;
@@ -36,7 +31,7 @@ void Master::spawn_actor(Message message) {
 void Master::start_simulation() {
 	Message message;
 	message.set(COMMAND, START_WORKER_COMMAND);
-    for (auto worker_pid : Master::workers_pid) {
+    for (int worker_pid = 1; worker_pid <= Master::workers_num; ++worker_pid) {
     	Messenger::send_message(worker_pid, message);
 	}
 	cout << "Master start_simulation\n";
@@ -82,12 +77,12 @@ int Master::parse_message(int source_pid, Message message) {
 
 void Master::finalize() {
     	
-    for (auto worker_pid : Master::workers_pid) {
+    for (int worker_pid = 1; worker_pid <= Master::workers_num; ++worker_pid) {
 		Message message;
 		message.set(COMMAND, KILL_WORKER_COMMAND);
 		Messenger::send_message(worker_pid, message);
 	}	
-    for (auto worker_pid : Master::workers_pid) {
+    for (int worker_pid = 1; worker_pid <= Master::workers_num; ++worker_pid) {
      	Message message;
      	do {
      		//discard messages

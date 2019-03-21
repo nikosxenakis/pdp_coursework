@@ -25,7 +25,6 @@ void Actor_framework::master_code(Message message) {
 		cout << "Worker started on MPI process " << i << endl;
 	}
 
-	Master::init_workers(workers_pid);
 	message.set(WORKERS_NUM, workers_num);
 	Actor_framework::init_actors(message);
 	Master::run();
@@ -54,7 +53,7 @@ void Actor_framework::actor_framework(Message message) {
 	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
 
     MPI_Pack_size( UPPER_BOUND_BUFFER_SIZE, MPI_BYTE, MPI_COMM_WORLD, &bsize );
-	buffer = (char *)malloc( bsize );
+	buffer = (char *) malloc( bsize );
 	MPI_Buffer_attach( buffer, bsize );
 
 	if (pid == MASTER_PID)

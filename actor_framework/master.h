@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "message.h"
 #include "messenger.h"
@@ -13,9 +12,17 @@ using namespace std;
 class Master {
 
 private:
+
+	/**
+	 * @brief number of active worker processes
+	 */
 	static int workers_num;
+
+	/**
+	 * @brief unique id for the next actor to be spawned
+	 */
 	static int next_actor_id;
-	static vector<int> workers_pid;
+
 	static void* input_data;
 	static int dead_workers;
 	static int actors_spawned;
@@ -27,7 +34,6 @@ private:
 
 public:
 
-	static void init_workers(vector<int> workers_pid);
 	static void initialize_master(int workers_num);
 	static void spawn_actor(Message message);
 	static void run();
