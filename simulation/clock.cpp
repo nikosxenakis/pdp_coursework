@@ -17,8 +17,6 @@ static void compute_in_month(Actor *actor) {
 
 	if((curr_time - clock->begin_time).count() > TIMESTEP_DURATION) {
 		clock->begin_time = curr_time;
-		cout << "Clock starts simulation for timestep " << clock->timestep << "\n";
-
 		clock->set_state(END_OF_MONTH);
 		Message message;
 		message.set(COMMAND, TIMESTEP_END);
@@ -32,7 +30,7 @@ static void compute_end_of_month(Actor *actor) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	if(clock->cells_ready == CELL_NUM) {
 		clock->write_output_stream();
-		cout << "Clock: alive_squirrels " << clock->alive_squirrels << " infected_squirrels " << clock->infected_squirrels << endl;
+		cout << "Clock: timestep = " << clock->timestep << ", alive_squirrels = " << clock->alive_squirrels << ", infected_squirrels = " << clock->infected_squirrels << endl;
 		if(clock->timestep >= clock->max_months || clock->alive_squirrels == 0 || clock->alive_squirrels > 200) {
 			// if(clock->alive_squirrels.size() > MAX_SQUIRRELS_NO)
 			// 	cout << "Simulation terminated because alive squirrels exceeded the maximum number, " << clock->alive_squirrels.size() << " squirrels alive\n";
