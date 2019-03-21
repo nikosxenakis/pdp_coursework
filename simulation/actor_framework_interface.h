@@ -24,17 +24,14 @@ using namespace std;
 #define INIT_ACTORS_NUM 5
 #define MAX_ACTORS_NUM 6
 
-// class Message {
-// public:
-// 	float message_data[MESSAGE_SIZE];
-// 	Message();
-// 	void set(int pos, float data);
-// 	float get(int pos);
-// };
-Message::Message();
-Message::set(int pos, float data);
-
-Message::get(int pos);
+class Message {
+private:
+	float message_data[MESSAGE_SIZE];
+public:
+	Message();
+	void set(int pos, float data);
+	float get(int pos);
+};
 
 class Actor {
 private:
@@ -45,7 +42,6 @@ private:
 	int type;
 	map<int, void (*)(Actor*)> compute_map;
 	map<int, void (*)(Actor*, Message)> parse_message_map;
-
 protected:
 	void register_state(int state, void (f)(Actor*));
 	void register_state(int state, void (f)(Actor*, Message));

@@ -10,10 +10,10 @@
 using namespace std;
 
 class Message {
-
-public:
+private:
 	float message_data[MESSAGE_SIZE];
-
+public:
+	friend class Messenger;
 	Message();
 	void print();
 	string get_string_command();
