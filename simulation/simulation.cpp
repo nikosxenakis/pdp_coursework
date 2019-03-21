@@ -1,7 +1,5 @@
 #include "simulation.h"
 
-#define MASTER_PID 0
-
 Actor* spawn_actor(Message message) {
 
 	int id = message.get(ACTOR_ID);
@@ -14,21 +12,19 @@ Actor* spawn_actor(Message message) {
 	int init_squirrels_no = message.get(SQUIRRELS);
 	int init_inf_squirrels_no = message.get(INFECTION_LEVEL);
 
-	Actor *actor = nullptr;
-
 	if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CELL){
-		actor = new Cell(id, MASTER_PID, worker_pid, workers_num, max_months);
+		return new Cell(id, worker_pid, workers_num, max_months);
 	}
 	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CLOCK){
-		actor = new Clock(id, MASTER_PID, worker_pid, workers_num, max_months, init_squirrels_no, init_inf_squirrels_no);
+		return new Clock(id, worker_pid, workers_num, max_months, init_squirrels_no, init_inf_squirrels_no);
 	}
 	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_SQUIRREL){
-		actor = new Squirrel(id, MASTER_PID, worker_pid, workers_num, x, y, healthy);
+		return new Squirrel(id, worker_pid, workers_num, x, y, healthy);
 	}
+	else
+		assert(0);
 
-	assert(actor != nullptr);
-
-	return actor;
+	return nullptr;
 }
 
 void init_actors(Message message) {

@@ -131,7 +131,7 @@ void Clock::write_output_files() {
 	infection_level_file.close();
 }
 
-Clock::Clock(int id, int master_pid, int worker_pid, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no): Actor(id, ACTOR_TYPE_CLOCK, master_pid, worker_pid, workers_num) {
+Clock::Clock(int id, int worker_pid, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no): Actor(id, ACTOR_TYPE_CLOCK, worker_pid, workers_num) {
 	this->max_months = max_months;
 	this->timestep = 1;
 	this->cells_ready = 0;

@@ -46,7 +46,7 @@ protected:
 	void register_state(int state, void (f)(Actor*));
 	void register_state(int state, void (f)(Actor*, Message));
 public:
-	Actor(int id, int type, int master_pid, int worker_pid, int workers_num);
+	Actor(int id, int type, int worker_pid, int workers_num);
 	virtual ~Actor();
 	int get_type();
 	int get_id();

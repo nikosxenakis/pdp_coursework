@@ -107,7 +107,7 @@ void Squirrel::die() {
 	}
 }
 
-Squirrel::Squirrel(int id, int master_pid, int worker_pid, int workers_num, float x, float y, int healthy): Actor(id, ACTOR_TYPE_SQUIRREL, master_pid, worker_pid, workers_num) {
+Squirrel::Squirrel(int id, int worker_pid, int workers_num, float x, float y, int healthy): Actor(id, ACTOR_TYPE_SQUIRREL, worker_pid, workers_num) {
 	assert(healthy == 0 || healthy == 1);
 	this->x = x;
 	this->y = y;

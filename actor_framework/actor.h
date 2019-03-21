@@ -8,13 +8,14 @@
 #include "message.h"
 #include "messenger.h"
 
+#define MASTER_PID 0
+
 using namespace std;
 
 class Actor {
 
 private:
 	int id;
-	int master_pid;
 	int worker_pid;
 	int workers_num;
 	int state;
@@ -37,7 +38,7 @@ protected:
 
 public:
 
-	Actor(int id, int type, int master_pid, int worker_pid, int workers_num);
+	Actor(int id, int type, int worker_pid, int workers_num);
 	virtual ~Actor();
 
 	int get_type();
