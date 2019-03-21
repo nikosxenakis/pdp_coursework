@@ -31,8 +31,8 @@ void Actor_framework::register_init_actors(void (init_actors)(Message message)) 
 	Actor_framework::init_actors = init_actors;
 }
 
-void Actor_framework::register_spawn_actor(Actor* (spawn_actor)(Message message), Message message) {
-	Worker::register_spawn_actor(spawn_actor, message);
+void Actor_framework::register_spawn_actor(Actor* (spawn_actor)(Message message)) {
+	Worker::register_spawn_actor(spawn_actor);
 }
 
 void Actor_framework::spawn_actor(Message message) {

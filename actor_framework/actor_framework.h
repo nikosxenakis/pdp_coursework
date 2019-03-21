@@ -47,7 +47,7 @@ public:
 	 * @brief registers the initialisation actors callback
 	 * @param spawn_actor pointer to a provided callback function that Master process uses to spawn new actors
 	 */
- 	static void register_spawn_actor(Actor* (spawn_actor)(Message message), Message message);
+ 	static void register_spawn_actor(Actor* (spawn_actor)(Message message));
 
 	/**
 	 * @brief calls the spawn actor callback function in the Master process

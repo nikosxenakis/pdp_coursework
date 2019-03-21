@@ -48,22 +48,68 @@ private:
 	 */
 	int actors_died;
 
-	static Message input_data;
-
+	/**
+	 * @brief add a new actor
+	 * @param pointer to the new actor structure
+	 */
 	void add_actor(Actor *actor);
+
+	/**
+	 * @brief removes the requested actor
+	 * @param id of the actor to kill
+	 */
 	void remove_actor(int actor_id);
+
+	/**
+	 * @brief finds the requested actor
+	 * @param id of the actor to find
+	 * @return Returns pointer to the requested actor
+	 */
 	Actor* find_actor(int actor_id);
+
+	/**
+	 * @brief kill all the actors in the worker
+	 */
 	void kill_all_actors();
 
+	/**
+	 * @brief Executes the compute function of the worker
+	 */
 	void compute();
+
+	/**
+	 * @brief Executes the parse message function of the worker
+	 * @param message The input message for worker
+	 */
 	int process(Message message);
 
 public:
 
+	/**
+	 * @brief Worker constructor
+	 * @param pid process id of worker
+	 */
 	Worker(int pid);
+
+	/**
+	 * @brief Worker destructor
+	 */
 	~Worker();
-	static void register_spawn_actor(Actor* (spawn_actor)(Message message), Message message);
+
+	/**
+	 * @brief registers the spawn actor function
+	 * @param function pointer to the given callback that spawns actors
+	 */
+	static void register_spawn_actor(Actor* (spawn_actor)(Message message));
+
+	/**
+	 * @brief main functionality of worker
+	 */
 	void run();
+
+	/**
+	 * @brief finalize method of worker
+	 */
 	void finalize();
 };
 

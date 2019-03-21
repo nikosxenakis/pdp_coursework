@@ -62,7 +62,7 @@ public:
 class Actor_framework {
 public:
 	static void register_init_actors(void (init_actors)(Message message));
-	static void register_spawn_actor(Actor* (spawn_actor)(Message message), Message message);
+	static void register_spawn_actor(Actor* (spawn_actor)(Message message));
 	static void spawn_actor(Message message);
 	static void actor_framework(Message message);
 };

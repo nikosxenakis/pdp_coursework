@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 
 	Actor_framework::register_init_actors(init_actors);
 
-	Actor_framework::register_spawn_actor(spawn_actor, message);
+	Actor_framework::register_spawn_actor(spawn_actor);
 
 	Actor_framework::actor_framework(message);
 
