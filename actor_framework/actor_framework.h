@@ -10,6 +10,11 @@
 #define MASTER_PID 0
 #define UPPER_BOUND_BUFFER_SIZE 10000
 
+/**
+ * @class Actor_framework
+ * @brief Base abstract class of Actors
+ * @details A class that is inhereted by Actors in the user simulation poviding a mechanism to communicate with other actors and operate
+ */
 class Actor_framework {
 
 private:

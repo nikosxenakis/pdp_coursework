@@ -29,6 +29,7 @@ void Master::spawn_actor(Message message) {
 	message.set(COMMAND, SPAWN_ACTOR_COMMAND);
 	message.set(ACTOR_ID, Master::next_actor_id);
 	message.set(WORKER_PID, worker_pid);
+	message.set(WORKERS_NUM, Master::workers_num);
 	Messenger::send_message(worker_pid, message);
 	Master::next_actor_id++;
 	Master::actors_spawned++;

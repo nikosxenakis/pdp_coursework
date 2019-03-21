@@ -10,6 +10,7 @@ void Actor_framework::worker_code(int pid, Message message) {
 	Worker *worker = new Worker(pid, MASTER_PID, message.get(INIT_ACTORS_NUM), workers_num);
 	worker->run();
 	worker->finalize();
+	delete worker;
 }
 
 void Actor_framework::master_code(int pid, Message message) {
