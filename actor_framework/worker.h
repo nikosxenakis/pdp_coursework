@@ -37,7 +37,6 @@ public:
 
 	Worker(int pid, int master_pid, int init_actors_num, int workers_num);
 	~Worker();
-	void print();
 	static void register_spawn_actor(Actor* (spawn_actor)(Message message), Message message);
 	void run();
 	void finalize();

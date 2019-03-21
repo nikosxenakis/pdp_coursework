@@ -1,5 +1,5 @@
 #COMPILER OPTIONS
-CFLAGS := -g -std=c++11 -fpic # -Wall
+CFLAGS := -g -std=c++11 -fpic -Wall
 CC := mpicxx
 
 #DIRECTORIES

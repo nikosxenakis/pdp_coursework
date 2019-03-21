@@ -1,3 +1,6 @@
+/**
+ * @brief Defines of the commands that the framework uses
+ */
 #ifndef FRAMEWORK_COMMANDS_H
 #define FRAMEWORK_COMMANDS_H
 

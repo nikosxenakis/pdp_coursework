@@ -24,13 +24,6 @@ int Worker::get_pid() {
 	return this->pid;
 }
 
-void Worker::print() {
-	cout << "Worker " << this->pid << " with load = " << this->actors.size() << " its actors are: ";
-	for (auto actor : this->actors)
-		cout << actor->get_id() << " ";
-	cout << endl;
-}
-
 void Worker::run() {
 	int outstanding, source_pid;
 	MPI_Status status;
@@ -56,8 +49,7 @@ int Worker::process(Message message) {
 	if(message.get(COMMAND) == START_WORKER_COMMAND) {
 		// while(this->get_total_actors_num() < this->init_actors_num);
 		this->start_simulation = 1;
-		cout << "Started: ";
-		this->print();
+		cout << "Worker " << this->pid << " started: actors_num = " << this->actors.size() << endl;
 	}
 	else if(message.get(COMMAND) == KILL_WORKER_COMMAND) {
     	Messenger::send_message(this->master_pid, message);
@@ -100,7 +92,7 @@ void Worker::add_actor(Actor *actor) {
 
 void Worker::remove_actor(int actor_id) {
 	this->actors_died++;
-	for (int i = 0; i < this->actors.size(); ++i) {
+	for (unsigned int i = 0; i < this->actors.size(); ++i) {
 		if(this->actors[i]->get_id() == actor_id) {
 			delete this->actors[i];
 			this->actors[i] = nullptr;

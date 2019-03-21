@@ -1,3 +1,6 @@
+/**
+ * @brief Defines of the message size and message positions
+ */
 #ifndef FRAMEWORK_MESSAGE_TYPES_H
 #define FRAMEWORK_MESSAGE_TYPES_H
 
