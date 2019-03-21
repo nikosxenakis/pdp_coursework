@@ -1,9 +1,8 @@
 #include "actor.h"
 
-Actor::Actor(int id, int type, int worker_pid, int workers_num) {
+Actor::Actor(int id, int type, int workers_num) {
 	this->id = id;
 	this->type = type;
-	this->worker_pid = worker_pid;
 	this->workers_num = workers_num;
 	this->state = 0;
 }
@@ -17,10 +16,6 @@ int Actor::get_id() {
 
 void Actor::print() {
 	cout << "Actor: id = " << this->id << ", type = " << this->type << endl;
-}
-
-void Actor::set_worker(int worker_pid) {
-	this->worker_pid = worker_pid;
 }
 
 void Actor::compute() {
@@ -41,11 +36,11 @@ void Actor::create_actor(Message message) {
 }
 
 void Actor::kill_actor() {
-	// cout << "kill_actor send to " << this->worker_pid << endl;
+	int actor_id = this->get_id();
 	Message message;
 	message.set(COMMAND, KILL_ACTOR_COMMAND);
-	message.set(ACTOR_ID, this->get_id());
-	Messenger::send_message(this->worker_pid, message);
+	message.set(ACTOR_ID, actor_id);
+	Messenger::send_message(this->get_worker(actor_id), message);
 	Messenger::send_message(MASTER_PID, message);
 }
 

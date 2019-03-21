@@ -31,7 +31,7 @@ public:
 	void write_output_stream();
 	void write_output_files();
 
-	Clock(int id, int worker_pid, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no);
+	Clock(int id, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no);
 	~Clock();
 
 };

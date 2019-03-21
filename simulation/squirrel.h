@@ -28,7 +28,7 @@ public:
 	vector<int> population_influx;
 	vector<int> infection_level;
 
-	Squirrel(int id, int worker_pid, int workers_num, float x, float y, int healthy);
+	Squirrel(int id, int workers_num, float x, float y, int healthy);
 	~Squirrel();
 
 	void print();

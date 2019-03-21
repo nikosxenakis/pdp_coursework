@@ -12,18 +12,24 @@
 
 using namespace std;
 
+/**
+ * @class Actor
+ * @brief Base abstract class of Actors
+ * @details A class that is inhereted by Actors in the user simulation poviding a mechanism to communicate with other actors and operate
+ */
 class Actor {
 
 private:
+    /**
+	 * @unique identification of actor
+	 */
 	int id;
-	int worker_pid;
 	int workers_num;
 	int state;
 	int type;
 	map<int, void (*)(Actor*)> compute_map;
 	map<int, void (*)(Actor*, Message)> parse_message_map;
 
-	void set_worker(int worker_pid);
 
 	int get_worker(int actor_id);
 
@@ -38,8 +44,8 @@ protected:
 
 public:
 
-	Actor(int id, int type, int worker_pid, int workers_num);
-	virtual ~Actor();
+	Actor(int id, int type, int workers_num);
+	virtual ~Actor() = 0;
 
 	int get_id();
 

@@ -24,7 +24,7 @@ public:
 	int infection_level;
 	vector<int> inflection_in_steps;
 
-	Cell(int id, int worker_pid, int workers_num, int max_months);
+	Cell(int id, int workers_num, int max_months);
 	~Cell();
 
 	void visited(Message message);

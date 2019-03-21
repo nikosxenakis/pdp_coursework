@@ -31,7 +31,7 @@ static void parse_message_simulate(Actor *actor, Message message) {
 	cell->send_msg(actor_id, message);
 }
 
-Cell::Cell(int id, int worker_pid, int workers_num, int max_months): Actor(id, ACTOR_TYPE_CELL, worker_pid, workers_num) {
+Cell::Cell(int id, int workers_num, int max_months): Actor(id, ACTOR_TYPE_CELL, workers_num) {
 	this->max_months = max_months;
 	this->timestep = 1;
 	this->population_influx = 0;

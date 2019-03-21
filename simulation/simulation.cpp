@@ -4,22 +4,21 @@ Actor* spawn_actor(Message message) {
 
 	int id = message.get(ACTOR_ID);
 	int max_months = message.get(MAX_MONTHS);
-	int x = message.get(X);
-	int y = message.get(Y);
-	int healthy = message.get(HEALTHY);
-	int worker_pid = message.get(WORKER_PID);
 	int workers_num = message.get(WORKERS_NUM);
-	int init_squirrels_no = message.get(SQUIRRELS);
-	int init_inf_squirrels_no = message.get(INFECTION_LEVEL);
 
-	if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CELL){
-		return new Cell(id, worker_pid, workers_num, max_months);
+	if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CELL) {
+		return new Cell(id, workers_num, max_months);
 	}
-	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CLOCK){
-		return new Clock(id, worker_pid, workers_num, max_months, init_squirrels_no, init_inf_squirrels_no);
+	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CLOCK) {
+		int init_squirrels_no = message.get(SQUIRRELS);
+		int init_inf_squirrels_no = message.get(INFECTION_LEVEL);
+		return new Clock(id, workers_num, max_months, init_squirrels_no, init_inf_squirrels_no);
 	}
-	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_SQUIRREL){
-		return new Squirrel(id, worker_pid, workers_num, x, y, healthy);
+	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_SQUIRREL) {
+		int x = message.get(X);
+		int y = message.get(Y);
+		int healthy = message.get(HEALTHY);
+		return new Squirrel(id, workers_num, x, y, healthy);
 	}
 	else
 		assert(0);
@@ -28,15 +27,15 @@ Actor* spawn_actor(Message message) {
 }
 
 void init_actors(Message message) {
-	for (int i = 0; i < message.get(CELLS); ++i){
+	for (int i = 0; i < message.get(CELLS); ++i) {
 		message.set(ACTOR_TYPE, ACTOR_TYPE_CELL);
 		Actor_framework::spawn_actor(message);
 	}
-	for (int i = 0; i < message.get(CLOCKS); ++i){
+	for (int i = 0; i < message.get(CLOCKS); ++i) {
 		message.set(ACTOR_TYPE, ACTOR_TYPE_CLOCK);
 		Actor_framework::spawn_actor(message);
 	}
-	for (int i = 0; i < message.get(SQUIRRELS); ++i){
+	for (int i = 0; i < message.get(SQUIRRELS); ++i) {
 		message.set(ACTOR_TYPE, ACTOR_TYPE_SQUIRREL);
 		message.set(X, 0.0);
 		message.set(Y, 0.0);
