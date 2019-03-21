@@ -24,13 +24,17 @@ using namespace std;
 #define INIT_ACTORS_NUM 5
 #define MAX_ACTORS_NUM 6
 
-class Message {
-public:
-	float message_data[MESSAGE_SIZE];
-	Message();
-	void set(int pos, float data);
-	float get(int pos);
-};
+// class Message {
+// public:
+// 	float message_data[MESSAGE_SIZE];
+// 	Message();
+// 	void set(int pos, float data);
+// 	float get(int pos);
+// };
+Message::Message();
+Message::set(int pos, float data);
+
+Message::get(int pos);
 
 class Actor {
 private:
