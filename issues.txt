@@ -5,17 +5,10 @@ months.
 
 o Each time the month changes the cells should be updated to represent the past 3
 months
+
 • Land cells each have an infectionLevel which is calculated as the total number of infected
 squirrels that have been in the specific cell in the past 2 months.
-o All squirrels are born healthy so won’t contribute to this level
-o If a squirrel steps and ends up in the same cell, this counts as a squirrel arriving
-in the cell. (In other words, every hop can be treated in the same way, as a
-squirrel arriving in a cell.)
+
+
 o Each time the month changes the cells should be updated to represent the past 2
 months
-• After every 50 steps, a squirrel will reproduce with a probability depending only on the
-average populationInflux of all of the cells they have visited in their last 50 steps.
-• After every step, the squirrel will catch the disease with a probability depending on the
-infectionLevel of all the cells they have visited in the last 50 steps.
-• An infected squirrel will live for a minimum of 50 steps, after this then they will die with
-a fixed probability of 1/6 for each step after.

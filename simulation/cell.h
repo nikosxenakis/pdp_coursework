@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <assert.h>
+#include <numeric>
 #include "actor_framework_interface.h"
 #include "actor_types.h"
 #include "simulation_message_types.h"
@@ -17,19 +18,15 @@ using namespace std;
 class Cell: public Actor {
 
 public:
-	int max_months;
 	int timestep;
-	populationInflux 
 
 	/**
 	 * @brief value calculated as the total number of squirrels that have stepped into the specific cell at some point during the past 3 months
 	 */
-	int population_influx;
-	vector<int> population_in_steps;
-	int infection_level;
-	vector<int> inflection_in_steps;
+	vector<int> population_influx;
+	vector<int> infection_level;
 
-	Cell(int id, int workers_num, int max_months);
+	Cell(int id, int workers_num);
 	~Cell();
 
 	void visited(Message message);

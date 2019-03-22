@@ -6,9 +6,9 @@ static void compute_live(Actor *actor) {
 	if(squirrel->counter % DELAY == 0) {
 		squirrel->set_state(INTERACT);
 		squirrel->birth();
-		squirrel->catch_disease();
 		squirrel->die();
 		squirrel->move();
+		squirrel->catch_disease();
 	}
 	squirrel->counter++;
 }
@@ -18,8 +18,8 @@ static void parse_message_interact(Actor *actor, Message message) {
 	if(message.get(COMMAND) == VISIT_CELL_COMMAND) {
 		// cout << "Squirrel parse_message_interact: " << squirrel->get_id() << "\n";
 		squirrel->set_state(LIVE);
-		squirrel->population_influx[squirrel->step_no%50] = message.get(POPULATION_INFLUX);
-		squirrel->infection_level[squirrel->step_no%50] = message.get(INFECTION_LEVEL);
+		squirrel->population_influx[squirrel->step_no%STEPS_MEMORY] = message.get(POPULATION_INFLUX);
+		squirrel->infection_level[squirrel->step_no%STEPS_MEMORY] = message.get(INFECTION_LEVEL);
 		squirrel->step_no++;
 		
 		if(squirrel->healthy == 0)
@@ -45,7 +45,7 @@ Squirrel::Squirrel(int id, int workers_num, float x, float y, int healthy): Acto
 	// called once for each actor
 	initialiseRNG(&this->seed);
 
-	for (int i = 0; i < 50; ++i) {
+	for (int i = 0; i < STEPS_MEMORY; ++i) {
 		this->population_influx.push_back(0);
 		this->infection_level.push_back(0);
 	}
@@ -69,12 +69,12 @@ void Squirrel::move() {
 }
 
 void Squirrel::birth() {
-	if(this->step_no%50 == 0) {
+	if(this->step_no%STEPS_MEMORY == 0) {
 		float avg_pop = 0;
 
-		for (int i = 0; i < 50; ++i)
+		for (int i = 0; i < STEPS_MEMORY; ++i)
 			avg_pop += this->population_influx[i];
-		avg_pop /= 50;
+		avg_pop /= STEPS_MEMORY;
 
 		if(willGiveBirth(avg_pop, &this->seed)) {
 			Message message;
@@ -91,15 +91,16 @@ void Squirrel::birth() {
 
 }
 
+
 void Squirrel::catch_disease() {
 	float avg_inf_level = 0;
 
 	if(this->healthy == 0)
 		return;
 
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < STEPS_MEMORY; ++i)
 		avg_inf_level += this->infection_level[i];
-	avg_inf_level /= 50;
+	avg_inf_level /= STEPS_MEMORY;
 
 	this->healthy = !willCatchDisease(avg_inf_level, &this->seed);
 	if(this->healthy == 0) {
@@ -110,7 +111,8 @@ void Squirrel::catch_disease() {
 }
 
 void Squirrel::die() {
-	if(this->infected_steps >= 50 && willDie(&this->seed)) {
+	if(this->infected_steps >= STEPS_MEMORY && willDie(&this->seed)) {
+		assert(this->healthy == 0);
 		this->set_state(DIED);
 		Message message;
 		message.set(COMMAND, KILL_SQUIRREL_COMMAND);

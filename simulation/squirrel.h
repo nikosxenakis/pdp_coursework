@@ -17,6 +17,7 @@
 #define DIED 2
 
 #define DELAY 1000
+#define STEPS_MEMORY 50
 
 using namespace std;
 
@@ -66,8 +67,19 @@ public:
 	 */
 	void move();
 
+	/**
+	 * @brief After every 50 steps, a squirrel will reproduce with a probability depending only on the average populationInflux of all of the cells they have visited in their last 50 steps
+	 */
 	void birth();
+
+	/**
+	 * @brief After every step, the squirrel will catch the disease with a probability depending on the infectionLevel of all the cells they have visited in the last 50 steps
+	 */
 	void catch_disease();
+
+	/**
+	 * @brief An infected squirrel will live for a minimum of 50 steps, after this then they will die with a fixed probability of 1/6 for each step after
+	 */
 	void die();
 };
 

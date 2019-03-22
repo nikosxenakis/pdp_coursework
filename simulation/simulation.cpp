@@ -3,15 +3,15 @@
 Actor* spawn_actor(Message message) {
 
 	int id = message.get(ACTOR_ID);
-	int max_months = message.get(MAX_MONTHS);
 	int workers_num = message.get(WORKERS_NUM);
 
 	if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CELL) {
-		return new Cell(id, workers_num, max_months);
+		return new Cell(id, workers_num);
 	}
 	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_CLOCK) {
 		int init_squirrels_no = message.get(SQUIRRELS);
 		int init_inf_squirrels_no = message.get(INFECTION_LEVEL);
+		int max_months = message.get(MAX_MONTHS);
 		return new Clock(id, workers_num, max_months, init_squirrels_no, init_inf_squirrels_no);
 	}
 	else if(message.get(ACTOR_TYPE) == ACTOR_TYPE_SQUIRREL) {
