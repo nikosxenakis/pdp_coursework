@@ -19,6 +19,11 @@ class Cell: public Actor {
 public:
 	int max_months;
 	int timestep;
+	populationInflux 
+
+	/**
+	 * @brief value calculated as the total number of squirrels that have stepped into the specific cell at some point during the past 3 months
+	 */
 	int population_influx;
 	vector<int> population_in_steps;
 	int infection_level;

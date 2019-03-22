@@ -82,11 +82,6 @@ protected:
 	 */
 	void kill_actor();
 
-	/**
-	 * @brief Sends message to the master to kill all actors, after this call the simulation is finilised
-	 */
-	void kill_all();
-
 public:
 
 	/**
@@ -130,6 +125,11 @@ public:
 	 * @param message The message to send
 	 */
 	void send_msg(int actor_id, Message message);
+
+	/**
+	 * @brief Sends message to the master to kill all actors, after this call the simulation is finilised
+	 */
+	void kill_all();
 };
 
 #endif

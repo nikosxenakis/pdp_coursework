@@ -6,6 +6,9 @@
 #include "framework_commands.h"
 #include "framework_message_types.h"
 
+/**
+ * @brief Number of elements in a message
+ */
 #define MESSAGE_SIZE 17
 
 /**

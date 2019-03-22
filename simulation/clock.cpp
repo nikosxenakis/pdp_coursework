@@ -28,12 +28,15 @@ static void compute_in_month(Actor *actor) {
 
 static void compute_end_of_month(Actor *actor) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
+
 	if(clock->cells_ready == CELL_NUM) {
 		clock->write_output_stream();
 		cout << "Month " << clock->timestep << ": alive_squirrels = " << clock->alive_squirrels << ", infected_squirrels = " << clock->infected_squirrels << endl;
 		if(clock->timestep >= clock->max_months || clock->alive_squirrels == 0 || clock->alive_squirrels > 200) {
-			// if(clock->alive_squirrels.size() > MAX_SQUIRRELS_NO)
-			// 	cout << "Simulation terminated because alive squirrels exceeded the maximum number, " << clock->alive_squirrels.size() << " squirrels alive\n";
+			if(clock->alive_squirrels == 0)
+				cout << "Simulation termination: all squirrels died\n";
+			if(clock->alive_squirrels > 200)
+				cout << "Simulation termination: squirrels exceeded 200\n";
 			clock->set_state(FINISH);
 			clock->write_output_files();
 			clock->kill_all();
@@ -41,8 +44,6 @@ static void compute_end_of_month(Actor *actor) {
 		else {
 			clock->cells_ready = 0;
 			clock->timestep++;
-			// this->alive_squirrels.clear();
-			// this->infected_squirrels.clear();
 			clock->begin_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 			clock->set_state(IN_MONTH);
 		}
@@ -70,11 +71,6 @@ static void parse_message_end_of_month(Actor *actor, Message message) {
 	if(message.get(COMMAND) == TIMESTEP_END) {
 		clock->population_influx[clock->cells_ready] = message.get(POPULATION_INFLUX);
 		clock->infection_level[clock->cells_ready] = message.get(INFECTION_LEVEL);
-
-		// clock->alive_squirrels[clock->cells_ready] = message.message_data.alive_squirrels;
-		// clock->infected_squirrels[clock->cells_ready] = message.message_data.infected_squirrels;
-
-		// cout << "clock: " << clock->timestep << " population_influx " << clock->population_influx[clock->cells_ready] << " infection_level " << clock->infection_level[clock->cells_ready] << endl;
 		clock->cells_ready++;
 	}
 	else if(message.get(COMMAND) == SPAWN_SQUIRREL_COMMAND) {
