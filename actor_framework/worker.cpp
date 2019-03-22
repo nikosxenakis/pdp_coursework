@@ -98,7 +98,7 @@ void Worker::run() {
 		}
 		else {
 			source_pid=status.MPI_SOURCE;
-			Message message = Messenger::receive_message(source_pid);			
+			Message message = Messenger::receive_message(source_pid);
 			if(this->process(message)) break;
 		}
 	} while(1);

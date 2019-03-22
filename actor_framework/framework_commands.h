@@ -9,5 +9,4 @@
 	#define KILL_ALL_ACTORS_COMMAND 2
 	#define KILL_WORKER_COMMAND 3
 	#define START_WORKER_COMMAND 4
-
 #endif

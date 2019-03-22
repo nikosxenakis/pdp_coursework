@@ -1,9 +1,10 @@
 #include "cell.h"
 
-#define SIMULATE 0
-
-#define CLOCK_ID 16
-
+/**
+ * @brief
+ * @param actor
+ * @param message
+ */
 static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
 	int actor_id;
@@ -40,7 +41,6 @@ Cell::Cell(int id, int workers_num): Actor(id, ACTOR_TYPE_CELL, workers_num) {
 		this->infection_level[i] = 0;
 
 	this->set_state(SIMULATE);
-
 	this->register_state(SIMULATE, parse_message_simulate);
 }
 
