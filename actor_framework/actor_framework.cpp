@@ -40,23 +40,29 @@ void Actor_framework::spawn_actor(Message message) {
 }
 
 void Actor_framework::actor_framework(Message message) {
-	int pid;
+	int pid, world_size;
 	int bsize;
 	char *buffer, *bbuffer;
 
 	MPI_Init(NULL, NULL);
 	Messenger::init_types();
 	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
+	MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+	if(world_size < 2) {
+		cerr << "The simulation must run on more that 1 process\n";
+	}
+	else {
+	    MPI_Pack_size( UPPER_BOUND_BUFFER_SIZE, MPI_BYTE, MPI_COMM_WORLD, &bsize );
+		buffer = (char *) malloc( bsize );
+		MPI_Buffer_attach( buffer, bsize );
 
-    MPI_Pack_size( UPPER_BOUND_BUFFER_SIZE, MPI_BYTE, MPI_COMM_WORLD, &bsize );
-	buffer = (char *) malloc( bsize );
-	MPI_Buffer_attach( buffer, bsize );
+		if (pid == MASTER_PID)
+			Actor_framework::master_code(message);
+		else
+			Actor_framework::worker_code(pid);
 
-	if (pid == MASTER_PID)
-		Actor_framework::master_code(message);
-	else
-		Actor_framework::worker_code(pid);
+		MPI_Buffer_detach( &bbuffer, &bsize );
+	}
 
-	MPI_Buffer_detach( &bbuffer, &bsize );
 	MPI_Finalize();
 }
