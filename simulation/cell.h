@@ -10,7 +10,9 @@
 #include "simulation_message_types.h"
 #include "simulation_commands.h"
 
+// State
 #define SIMULATE 0
+
 #define CLOCK_ID 16
 
 using namespace std;
@@ -20,9 +22,9 @@ class Cell: public Actor {
 public:
 
 	/**
-	 * @brief current timestep in the cell
+	 * @brief current month in the cell
 	 */
-	int timestep;
+	int month;
 
 	/**
 	 * @brief populationInflux is a vector containing the total number of squirrels that have stepped into the specific cell at some point during the past 3 months
@@ -47,7 +49,7 @@ public:
 	~Cell();
 
 	/**
-	 * @brief Cell function when is visited by a squirrel
+	 * @brief This function is called when the cell is visited by a squirrel
 	 * @param message input message containing health status from the squirrel
 	 */
 	void visited(Message message);

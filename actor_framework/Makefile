@@ -22,4 +22,4 @@ clean:
 	@echo " Cleaning..."
 	@rm -rf $(BUILD_DIR)/*.o
 
-.PHONY: clean parapoxvirus_simulation actor_framework.so
+.PHONY: clean actor_framework.so

@@ -1,16 +1,12 @@
 #include "clock.h"
 
-#define IN_MONTH 0
-#define END_OF_MONTH 1
-#define FINISH 3
-
-#define CELL_NUM 16
-#define TIMESTEP_DURATION 50
-#define MAX_SQUIRRELS_NO 200
-
 stringstream Clock::population_influx_stream;
 stringstream Clock::infection_level_stream;
 
+/**
+ * @brief in month computation when clock is waiting for month to complete
+ * @param actor Pointer to this Actor
+ */
 static void compute_in_month(Actor *actor) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	milliseconds curr_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
@@ -26,13 +22,17 @@ static void compute_in_month(Actor *actor) {
 	}
 }
 
+/**
+ * @brief in the end of month computation where clock waits cells to respond
+ * @param actor Pointer to this Actor
+ */
 static void compute_end_of_month(Actor *actor) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 
 	if(clock->cells_ready == CELL_NUM) {
 		clock->write_output_stream();
-		cout << "Month " << clock->timestep << ": alive_squirrels = " << clock->alive_squirrels << ", infected_squirrels = " << clock->infected_squirrels << endl;
-		if(clock->timestep >= clock->max_months || clock->alive_squirrels == 0 || clock->alive_squirrels > 200) {
+		cout << "Month " << clock->month << ": alive_squirrels = " << clock->alive_squirrels << ", infected_squirrels = " << clock->infected_squirrels << endl;
+		if(clock->month >= clock->max_months || clock->alive_squirrels == 0 || clock->alive_squirrels > 200) {
 			if(clock->alive_squirrels == 0)
 				cout << "Simulation termination: all squirrels died\n";
 			if(clock->alive_squirrels > 200)
@@ -43,13 +43,18 @@ static void compute_end_of_month(Actor *actor) {
 		}
 		else {
 			clock->cells_ready = 0;
-			clock->timestep++;
+			clock->month++;
 			clock->begin_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 			clock->set_state(IN_MONTH);
 		}
 	}
 }
 
+/**
+ * @brief parses messages for squirrels updates
+ * @param actor Pointer to this Actor
+ * @param message Input message
+ */
 static void parse_message_in_month(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	if(message.get(COMMAND) == SPAWN_SQUIRREL_COMMAND) {
@@ -66,6 +71,11 @@ static void parse_message_in_month(Actor *actor, Message message) {
 		assert(0);
 }
 
+/**
+ * @brief parses messages for squirrels and cell updates
+ * @param actor Pointer to this Actor
+ * @param message Input message
+ */
 static void parse_message_end_of_month(Actor *actor, Message message) {
 	Clock *clock = dynamic_cast<Clock*>(actor);
 	if(message.get(COMMAND) == TIMESTEP_END) {
@@ -89,9 +99,9 @@ static void parse_message_end_of_month(Actor *actor, Message message) {
 
 void Clock::write_output_stream() {
 
-	if(this->timestep == 1) {
-  		Clock::population_influx_stream << "timestep";
-  		Clock::infection_level_stream << "timestep";
+	if(this->month == 1) {
+  		Clock::population_influx_stream << "month";
+  		Clock::infection_level_stream << "month";
   		for (int i = 0; i < CELL_NUM; ++i) {
   			Clock::population_influx_stream << "\tCell " << i;
   			Clock::infection_level_stream << "\tCell " << i;
@@ -100,8 +110,8 @@ void Clock::write_output_stream() {
   		Clock::infection_level_stream << "\n";
 	}
 
-	Clock::population_influx_stream << this->timestep;
-	Clock::infection_level_stream << this->timestep;
+	Clock::population_influx_stream << this->month;
+	Clock::infection_level_stream << this->month;
 
 	for(auto population_influx: this->population_influx) {
 		this->population_influx_stream << "\t" << population_influx;
@@ -112,8 +122,6 @@ void Clock::write_output_stream() {
 
 	Clock::population_influx_stream << endl;
 	Clock::infection_level_stream << endl;
-
-	// cout << "alive_squirrels = " << this->alive_squirrels << "\t" << "infected_squirrels = " << this->infected_squirrels << endl;
 }
 
 void Clock::write_output_files() {
@@ -128,7 +136,7 @@ void Clock::write_output_files() {
 
 Clock::Clock(int id, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no): Actor(id, ACTOR_TYPE_CLOCK, workers_num) {
 	this->max_months = max_months;
-	this->timestep = 1;
+	this->month = 1;
 	this->cells_ready = 0;
 	this->alive_squirrels = init_squirrels_no;
 	this->infected_squirrels = init_inf_squirrels_no;

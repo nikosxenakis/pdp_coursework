@@ -1,18 +1,25 @@
 #include "squirrel.h"
 
+/**
+ * @brief main computation cycle when squirrel is alive
+ * @param actor Pointer to this Actor
+ */
 static void compute_live(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	
 	if(squirrel->counter % DELAY == 0) {
-		squirrel->set_state(INTERACT);
 		squirrel->birth();
 		squirrel->die();
 		squirrel->move();
-		squirrel->catch_disease();
 	}
 	squirrel->counter++;
 }
 
+/**
+ * @brief parses the response of the visited cell and updates its values
+ * @param actor Pointer to this Actor
+ * @param message Input message
+ */
 static void parse_message_interact(Actor *actor, Message message) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
 	if(message.get(COMMAND) == VISIT_CELL_COMMAND) {
@@ -38,16 +45,16 @@ Squirrel::Squirrel(int id, int workers_num, float x, float y, int healthy): Acto
 	this->step_no = 0;
 	this->infected_steps = 0;
 	this->counter = 0;
-	this->population_influx = vector<int>();
-	this->infection_level = vector<int>();
+	this->population_influx = vector<int>(STEPS_MEMORY);
+	this->infection_level = vector<int>(STEPS_MEMORY);
 	this->seed = -this->get_id() - 1;
 
 	// called once for each actor
 	initialiseRNG(&this->seed);
 
 	for (int i = 0; i < STEPS_MEMORY; ++i) {
-		this->population_influx.push_back(0);
-		this->infection_level.push_back(0);
+		this->population_influx[i] = 0;
+		this->infection_level[i] = 0;
 	}
 
 	this->set_state(LIVE);
@@ -59,6 +66,7 @@ Squirrel::Squirrel(int id, int workers_num, float x, float y, int healthy): Acto
 Squirrel::~Squirrel() {}
 
 void Squirrel::move() {
+	this->set_state(INTERACT);
 	squirrelStep(this->x, this->y, &this->x, &this->y, &this->seed);
 	int cell_num = getCellFromPosition(this->x, this->y);
 	assert(cell_num >=0 && cell_num <16);
@@ -66,6 +74,7 @@ void Squirrel::move() {
 	message.set(COMMAND, VISIT_CELL_COMMAND);
 	message.set(HEALTHY, this->healthy);
 	this->send_msg(cell_num, message);
+	this->catch_disease();
 }
 
 void Squirrel::birth() {
@@ -88,7 +97,6 @@ void Squirrel::birth() {
 			this->create_actor(message);
 		}
 	}
-
 }
 
 
@@ -120,5 +128,3 @@ void Squirrel::die() {
 		this->kill_actor();
 	}
 }
-
-

@@ -1,9 +1,9 @@
 #include "cell.h"
 
 /**
- * @brief
- * @param actor
- * @param message
+ * @brief parses the types of messages for this cell and do the appropriate actions
+ * @param actor Pointer to this Actor
+ * @param message Input message
  */
 static void parse_message_simulate(Actor *actor, Message message) {
 	Cell *cell = dynamic_cast<Cell*>(actor);
@@ -15,13 +15,14 @@ static void parse_message_simulate(Actor *actor, Message message) {
 	}
 	else if(message.get(COMMAND) == TIMESTEP_END) {
 		actor_id = CLOCK_ID;
-		cell->timestep++;
-		cell->population_influx[cell->timestep%3] = 0;
-		cell->infection_level[cell->timestep%2] = 0;
+		cell->month++;
+		cell->population_influx[cell->month%3] = 0;
+		cell->infection_level[cell->month%2] = 0;
 	}
 	else
 		assert(0);
 
+	// sum the population_influx and infection level
 	int curr_population_influx = accumulate(cell->population_influx.begin(), cell->population_influx.end(), 0);
 	int curr_infection_level = accumulate(cell->infection_level.begin(), cell->infection_level.end(), 0);
 
@@ -31,7 +32,7 @@ static void parse_message_simulate(Actor *actor, Message message) {
 }
 
 Cell::Cell(int id, int workers_num): Actor(id, ACTOR_TYPE_CELL, workers_num) {
-	this->timestep = 1;
+	this->month = 1;
 	this->population_influx = vector<int>(3);
 	this->infection_level = vector<int>(2);
 
@@ -47,7 +48,7 @@ Cell::Cell(int id, int workers_num): Actor(id, ACTOR_TYPE_CELL, workers_num) {
 Cell::~Cell() {}
 
 void Cell::visited(Message message) {
- 	this->population_influx[this->timestep%3]++;
+ 	this->population_influx[this->month%3]++;
  	if(message.get(HEALTHY) == 0)
- 		this->infection_level[this->timestep%2]++;
+ 		this->infection_level[this->month%2]++;
 }
