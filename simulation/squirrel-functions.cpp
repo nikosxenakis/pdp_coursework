@@ -78,5 +78,5 @@ int getCellFromPosition(float x, float y){
  * Returns if a squirrel will act
  */
 int willAct(long * state) {
-    return(ran2(state)<(0.5));
+    return(ran2(state)<(0.333));
 }
