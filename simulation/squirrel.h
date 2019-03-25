@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <chrono>
 #include "actor_framework_interface.h"
 #include "squirrel-functions.h"
 #include "actor_types.h"
@@ -18,10 +19,11 @@
 #define DIED 2
 
 // Squirrels defines
-#define DELAY 1000
 #define STEPS_MEMORY 50
+#define NEXT_STEP_DELAY 10
 
 using namespace std;
+using namespace std::chrono;
 
 /**
  * @class Squirrel
@@ -78,6 +80,11 @@ public:
 	 */
 	vector<int> infection_level;
 
+ 	/**
+	 * @brief Time in milliseconds that the previous step was
+	 */
+	milliseconds begin_time;
+
 	/**
 	 * @brief Squirrel constructor
 	 * @param id id of the squirrel
@@ -114,6 +121,11 @@ public:
 	 * @brief An infected squirrel will live for a minimum of 50 steps, after this then they will die with a fixed probability of 1/6 for each step after
 	 */
 	void die();
+
+	/**
+	 * @brief Decide if the squirrel should act
+	 */
+	bool should_act();
 };
 
 #endif

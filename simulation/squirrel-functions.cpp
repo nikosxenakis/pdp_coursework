@@ -73,3 +73,10 @@ int willDie(long * state) {
 int getCellFromPosition(float x, float y){
     return((int)(x*4)+4*(int)(y*4));
 }
+
+/**
+ * Returns if a squirrel will act
+ */
+int willAct(long * state) {
+    return(ran2(state)<(0.5));
+}

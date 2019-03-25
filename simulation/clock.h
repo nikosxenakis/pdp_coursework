@@ -21,7 +21,7 @@ using namespace std::chrono;
 
 // Clock defines
 #define CELL_NUM 16
-#define TIMESTEP_DURATION 50
+#define TIMESTEP_DURATION 1000
 #define MAX_SQUIRRELS_NO 200
 
 class Clock: public Actor {

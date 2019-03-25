@@ -6,13 +6,16 @@
  */
 static void compute_live(Actor *actor) {
 	Squirrel *squirrel = dynamic_cast<Squirrel*>(actor);
-	
-	if(squirrel->counter % DELAY == 0) {
-		squirrel->birth();
-		squirrel->die();
-		squirrel->move();
+	milliseconds curr_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+
+	if((curr_time - squirrel->begin_time).count() > NEXT_STEP_DELAY) {
+		squirrel->begin_time = curr_time;
+		if(squirrel->should_act()) {
+			squirrel->birth();
+			squirrel->die();
+			squirrel->move();	
+		}
 	}
-	squirrel->counter++;
 }
 
 /**
@@ -48,6 +51,7 @@ Squirrel::Squirrel(int id, int workers_num, float x, float y, int healthy): Acto
 	this->population_influx = vector<int>(STEPS_MEMORY);
 	this->infection_level = vector<int>(STEPS_MEMORY);
 	this->seed = -this->get_id() - 1;
+	this->begin_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 
 	// called once for each actor
 	initialiseRNG(&this->seed);
@@ -127,4 +131,8 @@ void Squirrel::die() {
 		this->send_msg(CLOCK_ID, message);
 		this->kill_actor();
 	}
+}
+
+bool Squirrel::should_act() {
+	return willAct(&this->seed);
 }

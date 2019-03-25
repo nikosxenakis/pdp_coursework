@@ -13,4 +13,6 @@ int willDie(long *);
 
 int getCellFromPosition(float, float);
 
+int willAct(long *);
+
 #endif
