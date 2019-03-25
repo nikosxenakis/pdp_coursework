@@ -30,7 +30,7 @@ def create_plots(title, x_axis_title, y_axis_title, labels, x_values, y_values, 
     #     ax.xaxis.set_minor_locator(ml)
     #     ax.xaxis.grid(which="minor", color='k', linestyle='-.', linewidth=0.7)
 
-    plt.legend(loc=legent_pos)
+    # plt.legend(loc=legent_pos)
 
     fig.savefig('./data/' + str(title) + '.eps', format='eps', dpi=1000)
 
@@ -77,13 +77,56 @@ def parse_population_influx(file, name):
         "upper left"
     )
 
+
+def parse_alive_squirrels(file, name):
+
+    i = 0;
+
+    title = ()
+    timesteps = ()
+    average = ()
+
+    for line in file:
+        data = line.strip().split('\t')
+
+        if i == 0:
+            titles = data
+        else:
+            timesteps = timesteps + (int(data[0]),)            
+            average = average + (data[1],)
+
+        i = i + 1
+
+
+    # print(titles)
+    # print(timesteps)
+    # print(average)
+
+    create_plots(
+        name,
+        "Month",
+        name,
+        [name],
+        timesteps,
+        [average],
+        0.4,
+        "upper left"
+    )
+
+
+
 path = './data/population_influx.tsv'
 f = open(path, 'r')
-
 parse_population_influx(f, "population_influx")
 
 path = './data/infection_level.tsv'
 f = open(path, 'r')
-
 parse_population_influx(f, "infection_level")
 
+path = './data/alive_squirrels.tsv'
+f = open(path, 'r')
+parse_alive_squirrels(f, "alive_squirrels")
+
+path = './data/infected_squirrels.tsv'
+f = open(path, 'r')
+parse_alive_squirrels(f, "infected_squirrels")

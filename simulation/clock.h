@@ -67,6 +67,9 @@ public:
 	 */
 	static stringstream infection_level_stream;
 
+	static stringstream alive_squirrels_stream;
+	static stringstream infected_squirrels_stream;
+
  	/**
 	 * @brief number of alive squirrels
 	 */

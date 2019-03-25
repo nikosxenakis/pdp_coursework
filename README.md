@@ -54,7 +54,12 @@ To visualise the data of population_influx and infection_level run:
 python plot.py
 ```
 
-This command will create two eps files in data/ folder
+This command will create four eps files in data/ folder. These figures represent:
+
+1. Population influx for each cell across all months
+2. Infection level for each cell across all months
+3. Number of alive squirrels for each month
+4. Number of infected squirrels for each month
 
 ## Documentation
 

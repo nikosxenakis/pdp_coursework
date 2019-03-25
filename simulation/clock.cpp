@@ -2,6 +2,8 @@
 
 stringstream Clock::population_influx_stream;
 stringstream Clock::infection_level_stream;
+stringstream Clock::alive_squirrels_stream;
+stringstream Clock::infected_squirrels_stream;
 
 /**
  * @brief in month computation when clock is waiting for month to complete
@@ -102,12 +104,17 @@ void Clock::write_output_stream() {
 	if(this->month == 1) {
   		Clock::population_influx_stream << "month";
   		Clock::infection_level_stream << "month";
+  		Clock::alive_squirrels_stream << "month";
+  		Clock::infected_squirrels_stream << "month";
+
   		for (int i = 0; i < CELL_NUM; ++i) {
   			Clock::population_influx_stream << "\tCell " << i;
   			Clock::infection_level_stream << "\tCell " << i;
   		}
   		Clock::population_influx_stream << "\n";
   		Clock::infection_level_stream << "\n";
+  		Clock::alive_squirrels_stream << "\tSquirrels Number\n";
+  		Clock::infected_squirrels_stream << "\tSquirrels Number\n";
 	}
 
 	Clock::population_influx_stream << this->month;
@@ -122,16 +129,27 @@ void Clock::write_output_stream() {
 
 	Clock::population_influx_stream << endl;
 	Clock::infection_level_stream << endl;
+
+	Clock::alive_squirrels_stream << this->month << "\t" << this->alive_squirrels << endl;
+	Clock::infected_squirrels_stream << this->month << "\t" << this->infected_squirrels << endl;
 }
 
 void Clock::write_output_files() {
-	ofstream population_influx_file, infection_level_file;
+	ofstream population_influx_file, infection_level_file, alive_squirrels_file, infected_squirrels_file;
 	population_influx_file.open ("./data/population_influx.tsv");
 	infection_level_file.open ("./data/infection_level.tsv");
+	alive_squirrels_file.open ("./data/alive_squirrels.tsv");
+	infected_squirrels_file.open ("./data/infected_squirrels.tsv");
+
 	population_influx_file << Clock::population_influx_stream.rdbuf();
 	infection_level_file << Clock::infection_level_stream.rdbuf();
+	alive_squirrels_file << Clock::alive_squirrels_stream.rdbuf();
+	infected_squirrels_file << Clock::infected_squirrels_stream.rdbuf();
+
 	population_influx_file.close();
 	infection_level_file.close();
+	alive_squirrels_file.close();
+	infected_squirrels_file.close();
 }
 
 Clock::Clock(int id, int workers_num, int max_months, int init_squirrels_no, int init_inf_squirrels_no): Actor(id, ACTOR_TYPE_CLOCK, workers_num) {
