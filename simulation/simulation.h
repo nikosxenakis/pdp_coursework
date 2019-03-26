@@ -7,6 +7,9 @@
 #include "cell.h"
 #include "squirrel.h"
 
+#define CELLS_NO 16
+#define CLOCKS_NO 1
+
 /**
  * @brief Spawns a new actor specific for the simulation passing data to the appropriate constructor using the message data structure
  * @param the input message containing information for the new actor

@@ -9,7 +9,6 @@ static void compute_live(Actor *actor) {
 	milliseconds curr_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 
 	if((curr_time - squirrel->begin_time).count() > NEXT_STEP_DELAY) {
-		squirrel->begin_time = curr_time;
 		if(squirrel->should_act()) {
 			squirrel->birth();
 			squirrel->die();
@@ -31,7 +30,8 @@ static void parse_message_interact(Actor *actor, Message message) {
 		squirrel->population_influx[squirrel->step_no%STEPS_MEMORY] = message.get(POPULATION_INFLUX);
 		squirrel->infection_level[squirrel->step_no%STEPS_MEMORY] = message.get(INFECTION_LEVEL);
 		squirrel->step_no++;
-		
+		squirrel->begin_time = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+
 		if(squirrel->healthy == 0)
 			squirrel->infected_steps++;
 	}
@@ -47,7 +47,6 @@ Squirrel::Squirrel(int id, int workers_num, float x, float y, int healthy): Acto
 	this->healthy = healthy;
 	this->step_no = 0;
 	this->infected_steps = 0;
-	this->counter = 0;
 	this->population_influx = vector<int>(STEPS_MEMORY);
 	this->infection_level = vector<int>(STEPS_MEMORY);
 	this->seed = -this->get_id() - 1;

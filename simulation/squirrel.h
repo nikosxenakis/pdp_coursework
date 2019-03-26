@@ -20,7 +20,7 @@
 
 // Squirrels defines
 #define STEPS_MEMORY 50
-#define NEXT_STEP_DELAY 10
+#define NEXT_STEP_DELAY 50
 
 using namespace std;
 using namespace std::chrono;
@@ -62,13 +62,6 @@ public:
 	 * @brief Squirrels infected steps
 	 */
 	int infected_steps;
-
-	/**
-	 * @brief Counter controlling when Squirrel computes
-	 * 1 out of DELAY=1000 times that the squirrel will be in this compute will execute the functions
-	 * Squirrel does not have the consept of time it will use the counter variable to decide if it will execute its main functionality
-	 */
-	int counter;
 
 	/**
 	 * @brief Vector containing the population influx of the last 50 visited Cells

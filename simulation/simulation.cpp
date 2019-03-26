@@ -51,18 +51,17 @@ void init_actors(Message message) {
 }
 
 Message parse_args(int argc, char* argv[]) {
-	int clocks = atoi(argv[1]);
-	int cells = atoi(argv[2]);
-	int squirrels = atoi(argv[3]);
+	int squirrels = atoi(argv[1]);
+	int max_squirrels_num = atoi(argv[4]);
 
 	Message message;
-	message.set(CLOCKS, clocks);
-	message.set(CELLS, cells);
+	message.set(CLOCKS, CLOCKS_NO);
+	message.set(CELLS, CELLS_NO);
 	message.set(SQUIRRELS, squirrels);
-	message.set(INFECTION_LEVEL, atoi(argv[4]));
-	message.set(INIT_ACTORS_NUM, clocks + cells + squirrels);
-	message.set(MAX_MONTHS, atoi(argv[5]));
-	message.set(MAX_ACTORS_NUM, atoi(argv[6]));
+	message.set(INFECTION_LEVEL, atoi(argv[2]));
+	message.set(INIT_ACTORS_NUM, CLOCKS_NO + CELLS_NO + squirrels);
+	message.set(MAX_MONTHS, atoi(argv[3]));
+	message.set(MAX_ACTORS_NUM, max_squirrels_num + CLOCKS_NO + CELLS_NO);
 	message.set(HEALTHY, 1);
 	message.set(X, 0);
 	message.set(Y, 0);
