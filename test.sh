@@ -30,7 +30,7 @@ echo "Start Scenario 2"
 	mpirun -n $PROC_NUM ./simulation/simulation $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_SQUIRRELS_NUM
 
 echo "Start Scenario 3"
-#Scenario 3: If all squirrels are infected the simulation will terminate in early stage
+#Scenario 3: If all squirrels are infected the simulation will probably terminate in early stage
 	INFECTION_LEVEL=34
 	SQUIRRELS=34
 	mpirun -n $PROC_NUM ./simulation/simulation $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_SQUIRRELS_NUM

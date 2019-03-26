@@ -42,13 +42,15 @@ This script will run a number of behavioural scenarios, these are:
 
 ## Output
 
-The output of the simulation is displayed in 3 files:
+The output of the simulation is displayed in 5 files:
 
 1. Standard Output: it contains information about the initialisation and finalisation of the simulation and during each months prints the number of alive and infected squirrels
 2. data/population_influx.tsv: contains for each simulated month of the simulation the population influx for each cell
 3. data/infection_level.tsv: contains for each simulated month of the simulation the infection level for each cell
+4. data/alive_squirrels.tsv: contains for each simulated month of the number of alive squirrels
+5. data/infected_squirrels.tsv: contains for each simulated month of the number of infected squirrels
 
-To visualise the data of population_influx and infection_level run:
+To visualise the data run:
 
 ```
 python plot.py
