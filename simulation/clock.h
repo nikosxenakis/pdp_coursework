@@ -24,6 +24,11 @@ using namespace std::chrono;
 #define TIMESTEP_DURATION 1000
 #define MAX_SQUIRRELS_NO 200
 
+/**
+ * @class Clock
+ * @brief Derived class of Actor
+ * @details class Clock is an Actor holding vital information for this entity and providing functionality
+ */
 class Clock: public Actor {
 
 public:

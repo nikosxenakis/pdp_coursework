@@ -13,7 +13,7 @@ using namespace std;
 
 /**
  * @class Worker
- * @details class containing information and functionality for the Worker process
+ * @brief class containing information and functionality for the Worker process
  */
 class Worker {
 

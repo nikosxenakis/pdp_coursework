@@ -9,7 +9,7 @@ using namespace std;
 
 /**
  * @class Master
- * @details class containing information and functionality for the Master process
+ * @brief class containing information and functionality for the Master process
  */
 class Master {
 

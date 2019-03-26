@@ -1,3 +1,7 @@
+/**
+ * @file cell.h
+ */
+
 #ifndef CELL_H
 #define CELL_H
 
@@ -17,6 +21,11 @@
 
 using namespace std;
 
+/**
+ * @class Cell
+ * @brief Derived class of Actor
+ * @details class Cell is an Actor holding vital information for this entity and providing functionality
+ */
 class Cell: public Actor {
 
 public:

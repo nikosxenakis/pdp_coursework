@@ -66,6 +66,13 @@ This command will create four eps files in data/ folder. These figures represent
 ## Documentation
 
 C++ header files contain in line documentation
+We used [DoxyGen](https://github.com/doxygen/doxygen)
+To auto-generate a website-documentation run
+
+```
+./documentation.sh
+```
+You can check by opening with your browser the documentation/index.html file the project directory
 
 ## Version Control
 

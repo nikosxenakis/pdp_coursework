@@ -13,7 +13,7 @@
 
 /**
  * @class Message
- * @details class containing the array that contains the data for communication across the processes
+ * @brief class containing the array that contains the data for communication across the processes
  */
 class Message {
 

@@ -7,7 +7,7 @@
 
 /**
  * @class Messenger
- * @details class that provides functionality to send messages over MPI
+ * @brief class that provides functionality to send messages over MPI
  */
 class Messenger {
 
