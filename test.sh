@@ -31,8 +31,8 @@ echo "Start Scenario 2"
 
 echo "Start Scenario 3"
 #Scenario 3: If all squirrels are infected the simulation will probably terminate in early stage
-	INFECTION_LEVEL=34
-	SQUIRRELS=34
+	INFECTION_LEVEL=5
+	SQUIRRELS=5
 	mpirun -n $PROC_NUM ./simulation/simulation $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_SQUIRRELS_NUM
 
 echo "Start Scenario 4"
@@ -43,7 +43,16 @@ echo "Start Scenario 4"
 echo "Start Scenario 5"
 #Scenario 5: running for 48 months
 	PROC_NUM=5
-	SQUIRRELS=40
-	INFECTION_LEVEL=3
+	SQUIRRELS=34
+	INFECTION_LEVEL=4
 	MAX_MONTHS=48
+	mpirun -n $PROC_NUM ./simulation/simulation $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_SQUIRRELS_NUM
+
+echo "Start Scenario 6"
+#Scenario 6: running of 36 processes
+	PROC_NUM=36
+	MAX_MONTHS=12
+	SQUIRRELS=7
+	INFECTION_LEVEL=4
+
 	mpirun -n $PROC_NUM ./simulation/simulation $SQUIRRELS $INFECTION_LEVEL $MAX_MONTHS $MAX_SQUIRRELS_NUM
