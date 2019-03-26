@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # data_analyzer.py
-#B136013
+# Exam number: B136013
 #
 import os
 import matplotlib.pyplot as plt

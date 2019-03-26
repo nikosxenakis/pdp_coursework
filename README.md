@@ -1,6 +1,8 @@
 # Parallel Design Patterns Coursework
 Red squirrels are in decline in the UK and as such there is considerable effort to save them, however a disease called squirrel parapoxvirus is especially perilous to red squirrels and can often kill them, wiping out entire habitats. This application simulates the lifes of squirrels. The program is separated in two solutions. One is the actor framework and the other the simulation.
 
+# Exam number: B136013
+
 ## Prerequisites
 
 * Compiler: [mpicxx](https://www.mpich.org/static/docs/v3.1/www1/mpicxx.html)
