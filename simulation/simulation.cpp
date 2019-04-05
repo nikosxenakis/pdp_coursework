@@ -52,15 +52,23 @@ void init_actors(Message message) {
 
 Message parse_args(int argc, char* argv[]) {
 	int squirrels = atoi(argv[1]);
+	int infection_level = atoi(argv[2]);
+	int max_months = atoi(argv[3]);
 	int max_squirrels_num = atoi(argv[4]);
+
+	if(squirrels <= 0 || infection_level < 0 || max_months <= 0 || max_squirrels_num <=0 || \
+		squirrels < infection_level || squirrels >= max_squirrels_num) {
+		cerr << "Invalid arguments\n";
+		exit(1);
+	}
 
 	Message message;
 	message.set(CLOCKS, CLOCKS_NO);
 	message.set(CELLS, CELLS_NO);
 	message.set(SQUIRRELS, squirrels);
-	message.set(INFECTION_LEVEL, atoi(argv[2]));
+	message.set(INFECTION_LEVEL, infection_level);
 	message.set(INIT_ACTORS_NUM, CLOCKS_NO + CELLS_NO + squirrels);
-	message.set(MAX_MONTHS, atoi(argv[3]));
+	message.set(MAX_MONTHS, max_months);
 	message.set(MAX_ACTORS_NUM, max_squirrels_num + CLOCKS_NO + CELLS_NO);
 	message.set(HEALTHY, 1);
 	message.set(X, 0);

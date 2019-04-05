@@ -1,6 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
+#include <iostream>
 #include <assert.h>
 #include "actor_framework_interface.h"
 #include "clock.h"
@@ -9,6 +10,8 @@
 
 #define CELLS_NO 16
 #define CLOCKS_NO 1
+
+using namespace std;
 
 /**
  * @brief Spawns a new actor specific for the simulation passing data to the appropriate constructor using the message data structure
